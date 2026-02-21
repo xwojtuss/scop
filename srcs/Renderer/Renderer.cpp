@@ -19,24 +19,66 @@ void	Renderer::run() {
 void	Renderer::initWindow() {
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	// glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, APP_NAME, NULL, NULL);
+	window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Vulkan", nullptr, nullptr);
+	glfwSetWindowUserPointer(window, this);
+	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+}
+
+void	Renderer::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+	auto app = reinterpret_cast<Renderer*>(glfwGetWindowUserPointer(window));
+	app->framebufferResized = true;
+
+	(void)width;
+	(void)height;
 }
 
 void	Renderer::initVulkan() {
 	createInstance();
 	createSurface();
-	VkPhysicalDevice	physicalDevice = pickPhysicalDevice();
-	createLogicalDevice(physicalDevice);
-	createSwapChain(physicalDevice);
+	pickPhysicalDevice();
+	createLogicalDevice();
+	createSwapChain();
 	createImageViews();
 	createRenderPass();
 	createGraphicsPipeline();
 	createFramebuffers();
-	createCommandPool(physicalDevice);
+	createCommandPool();
 	createCommandBuffer();
 	createSyncObjects();
+}
+
+void	Renderer::cleanupSwapChain() {
+	for (auto framebuffer : swapChainFramebuffers) {
+		vkDestroyFramebuffer(device, framebuffer, nullptr);
+	}
+
+	for (auto imageView : swapChainImageViews) {
+		vkDestroyImageView(device, imageView, nullptr);
+	}
+
+	vkDestroySwapchainKHR(device, swapChain, nullptr);
+}
+
+void	Renderer::recreateSwapChain() {
+	int width = 0, height = 0;
+
+	glfwGetFramebufferSize(window, &width, &height);
+
+	while (width == 0 || height == 0) {
+		glfwGetFramebufferSize(window, &width, &height);
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle(device);
+
+
+	cleanupSwapChain();
+
+	createSwapChain();
+	createImageViews();
+	createFramebuffers();
 }
 
 void	Renderer::createFramebuffers() {
@@ -62,7 +104,7 @@ void	Renderer::createFramebuffers() {
 	}
 }
 
-void	Renderer::createCommandPool(VkPhysicalDevice physicalDevice) {
+void	Renderer::createCommandPool() {
 	QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 
 	VkCommandPoolCreateInfo poolInfo{};
@@ -239,10 +281,10 @@ void	Renderer::createInstance() {
 		throw std::runtime_error("failed to create instance!");
 }
 
-VkPhysicalDevice	Renderer::pickPhysicalDevice() {
-	VkPhysicalDevice	physicalDevice = VK_NULL_HANDLE;
+void	Renderer::pickPhysicalDevice() {
 	uint32_t			deviceCount = 0;
 
+	physicalDevice = VK_NULL_HANDLE;
 	vkEnumeratePhysicalDevices(instance, &deviceCount, NULL);
 	if (deviceCount == 0) {
 		throw std::runtime_error("failed to find GPUs with Vulkan support!");
@@ -261,20 +303,19 @@ VkPhysicalDevice	Renderer::pickPhysicalDevice() {
 
 	if (physicalDevice == VK_NULL_HANDLE)
 		throw std::runtime_error("failed to find a suitable GPU!");
-	return physicalDevice;
 }
 
-bool	Renderer::isDeviceSuitable(VkPhysicalDevice physicalDevice) {
-	QueueFamilyIndices			indices = findQueueFamilies(physicalDevice);
+bool	Renderer::isDeviceSuitable(VkPhysicalDevice dev) {
+	QueueFamilyIndices			indices = findQueueFamilies(dev);
 	VkPhysicalDeviceProperties	deviceProperties;
 	VkPhysicalDeviceFeatures	deviceFeatures;
 
-	vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
-	vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
+	vkGetPhysicalDeviceProperties(dev, &deviceProperties);
+	vkGetPhysicalDeviceFeatures(dev, &deviceFeatures);
 
-	bool	extensionsSupported = checkDeviceExtensionSupport(physicalDevice);
+	bool	extensionsSupported = checkDeviceExtensionSupport(dev);
 	if (!extensionsSupported) return false;
-	SwapChainSupportDetails	swapChainSupport = querySwapChainSupport(physicalDevice);
+	SwapChainSupportDetails	swapChainSupport = querySwapChainSupport(dev);
 	bool swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 
 	return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
@@ -298,13 +339,13 @@ bool	Renderer::checkDeviceExtensionSupport(VkPhysicalDevice device) {
 	return requiredExtensions.empty();
 }
 
-QueueFamilyIndices	Renderer::findQueueFamilies(VkPhysicalDevice physicalDevice) {
+QueueFamilyIndices	Renderer::findQueueFamilies(VkPhysicalDevice dev) {
 	QueueFamilyIndices	indices;
 	uint32_t			queueFamilyCount = 0;
 
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, NULL);
+	vkGetPhysicalDeviceQueueFamilyProperties(dev, &queueFamilyCount, NULL);
 	std::vector<VkQueueFamilyProperties>	queueFamilies(queueFamilyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
+	vkGetPhysicalDeviceQueueFamilyProperties(dev, &queueFamilyCount, queueFamilies.data());
 
 	int	i = 0;
 	for (std::vector<VkQueueFamilyProperties>::const_iterator it = queueFamilies.begin();
@@ -312,7 +353,7 @@ QueueFamilyIndices	Renderer::findQueueFamilies(VkPhysicalDevice physicalDevice) 
 		it++) {
 		if ((*it).queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 			VkBool32	presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
+			vkGetPhysicalDeviceSurfaceSupportKHR(dev, i, surface, &presentSupport);
 			if (presentSupport) indices.presentFamily = i;
 			indices.graphicsFamily = i;
 		}
@@ -323,7 +364,7 @@ QueueFamilyIndices	Renderer::findQueueFamilies(VkPhysicalDevice physicalDevice) 
 	return indices;
 }
 
-void	Renderer::createLogicalDevice(VkPhysicalDevice physicalDevice) {
+void	Renderer::createLogicalDevice() {
 	QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -431,7 +472,7 @@ VkExtent2D	Renderer::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabiliti
 	}
 }
 
-void	Renderer::createSwapChain(VkPhysicalDevice physicalDevice) {
+void	Renderer::createSwapChain() {
 	SwapChainSupportDetails	swapChainSupport = querySwapChainSupport(physicalDevice);
 
 	VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -711,12 +752,19 @@ void	Renderer::mainLoop() {
 
 void	Renderer::drawFrame() {
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
-	
-	uint32_t imageIndex = 0;
 
-	vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
-	
+	uint32_t imageIndex = 0;
+	VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+		recreateSwapChain();
+		return;
+	} else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+		throw std::runtime_error("failed to acquire swap chain image!");
+	}
+
+	// Only reset the fence if we are submitting work
+	vkResetFences(device, 1, &inFlightFences[currentFrame]);
 	
 	vkResetCommandBuffer(commandBuffers[currentFrame],  0);
 	recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
@@ -753,36 +801,44 @@ void	Renderer::drawFrame() {
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr;
 
-	vkQueuePresentKHR(presentQueue, &presentInfo);
+	result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+		framebufferResized = false;
+		recreateSwapChain();
+	} else if (result != VK_SUCCESS) {
+		throw std::runtime_error("failed to present swap chain image!");
+	}
 
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 void	Renderer::cleanup() {
-	for (std::size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+	cleanupSwapChain();
+
+	vkDestroyPipeline(device, graphicsPipeline, nullptr);
+	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+
+	vkDestroyRenderPass(device, renderPass, nullptr);
+
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 		vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
 		vkDestroyFence(device, inFlightFences[i], nullptr);
 	}
+
 	vkDestroyCommandPool(device, commandPool, nullptr);
 
-	for (auto framebuffer : swapChainFramebuffers) {
-		vkDestroyFramebuffer(device, framebuffer, nullptr);
-	}
+	vkDestroyDevice(device, nullptr);
 
-	vkDestroyPipeline(device, graphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-	vkDestroyRenderPass(device, renderPass, nullptr);
+	// if (enableValidationLayers) {
+	// 	DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+	// }
 
-	for (std::vector<VkImageView>::const_iterator it = swapChainImageViews.begin();
-		it != swapChainImageViews.end();
-		it++) {
-		vkDestroyImageView(device, *it, nullptr);
-	}
-	vkDestroySwapchainKHR(device, swapChain, nullptr);
-	vkDestroyDevice(device, NULL);
-	vkDestroySurfaceKHR(instance, surface, NULL);
-	vkDestroyInstance(instance, NULL);
+	vkDestroySurfaceKHR(instance, surface, nullptr);
+	vkDestroyInstance(instance, nullptr);
+
 	glfwDestroyWindow(window);
+
 	glfwTerminate();
 }

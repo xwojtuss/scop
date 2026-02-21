@@ -72,6 +72,8 @@ class Renderer {
 		std::vector<VkSemaphore>	imageAvailableSemaphores;
 		std::vector<VkSemaphore>	renderFinishedSemaphores;
 		std::vector<VkFence>		inFlightFences;
+		bool						framebufferResized = false;
+		VkPhysicalDevice			physicalDevice;
 		uint32_t					currentFrame = 0;
 
 		static const std::vector<const char*>	deviceExtensions;
@@ -83,20 +85,22 @@ class Renderer {
 		void					createSyncObjects();
 		void					createInstance();
 		void					createCommandBuffer();
-		void					createCommandPool(VkPhysicalDevice physicalDevice);
+		void					cleanupSwapChain();
+		void					createCommandPool();
 		void					createFramebuffers();
+		void					recreateSwapChain();
 		void					recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void					createRenderPass();
-		VkPhysicalDevice		pickPhysicalDevice();
+		void					pickPhysicalDevice();
 		QueueFamilyIndices		findQueueFamilies(VkPhysicalDevice physicalDevice);
-		void					createLogicalDevice(VkPhysicalDevice physicalDevice);
+		void					createLogicalDevice();
 		bool					isDeviceSuitable(VkPhysicalDevice device);
 		bool					checkDeviceExtensionSupport(VkPhysicalDevice device);
 		SwapChainSupportDetails	querySwapChainSupport(VkPhysicalDevice device);
 		VkSurfaceFormatKHR		chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR		chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D				chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-		void					createSwapChain(VkPhysicalDevice physicalDevice);
+		void					createSwapChain();
 		void					createImageViews();
 		void					createSurface();
 		void					createGraphicsPipeline();
@@ -106,8 +110,10 @@ class Renderer {
 		void					drawFrame();
 		void					cleanup();
 
-	public:
+		static void				framebufferResizeCallback(GLFWwindow* window, int width, int height);
+		
+		public:
 		void				run();
-};
-
-std::vector<char>	readFile(const std::string& filename);
+	};
+	
+	std::vector<char>	readFile(const std::string& filename);

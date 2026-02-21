@@ -79,8 +79,11 @@ class Renderer {
 		uint32_t					currentFrame = 0;
 		VkBuffer					vertexBuffer;
 		VkDeviceMemory				vertexBufferMemory;
+		VkBuffer					indexBuffer;
+		VkDeviceMemory				indexBufferMemory;
 
 		static const std::vector<Vertex>		vertices;
+		static const std::vector<uint16_t>		indices;
 		static const std::vector<const char*>	deviceExtensions;
 		static const std::vector<const char*>	validationLayers;
 		static const std::size_t MAX_FRAMES_IN_FLIGHT;
@@ -90,6 +93,9 @@ class Renderer {
 		void					createSyncObjects();
 		void					createInstance();
 		void					createVertexBuffer();
+		void					createIndexBuffer();
+		void					createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void					copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 		void					createCommandBuffer();
 		void					cleanupSwapChain();
 		void					createCommandPool();

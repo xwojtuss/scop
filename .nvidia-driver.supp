@@ -1,0 +1,25 @@
+# NVIDIA driver suppressions for valgrind
+
+{
+   nvidia_realloc_size_zero
+   Memcheck:Param
+   realloc(size)
+   fun:*
+   obj:*/libnvidia-glcore*.so*
+}
+
+{
+   nvidia_posix_memalign_invalid_size
+   Memcheck:Param
+   posix_memalign(size)
+   fun:*
+   obj:*/libnvidia-glcore*.so*
+}
+
+{
+   nvidia_invalid_close_fd
+   Memcheck:Param
+   close(fd)
+   fun:*
+   obj:*/libnvidia-glcore*.so*
+}

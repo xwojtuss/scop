@@ -66,13 +66,24 @@ class Renderer {
 		VkRenderPass				renderPass;
 		VkPipelineLayout			pipelineLayout;
 		VkPipeline					graphicsPipeline;
+		std::vector<VkFramebuffer>	swapChainFramebuffers;
+		VkCommandPool				commandPool;
+		VkCommandBuffer				commandBuffer;
+		VkSemaphore					imageAvailableSemaphore;
+		VkSemaphore					renderFinishedSemaphore;
+		VkFence						inFlightFence;
 
 		static const std::vector<const char*>	deviceExtensions;
 		static const std::vector<const char*>	validationLayers;
 
 		void					initWindow();
 		void					initVulkan();
+		void					createSyncObjects();
 		void					createInstance();
+		void					createCommandBuffer();
+		void					createCommandPool(VkPhysicalDevice physicalDevice);
+		void					createFramebuffers();
+		void					recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void					createRenderPass();
 		VkPhysicalDevice		pickPhysicalDevice();
 		QueueFamilyIndices		findQueueFamilies(VkPhysicalDevice physicalDevice);
@@ -90,6 +101,7 @@ class Renderer {
 		VkShaderModule			createShaderModule(const std::vector<char>& code);
 		bool					checkValidationLayerSupport();
 		void					mainLoop();
+		void					drawFrame();
 		void					cleanup();
 
 	public:

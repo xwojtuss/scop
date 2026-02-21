@@ -1,6 +1,8 @@
 #include <exception>
 #include <iostream>
 #include <cstdlib>
+
+#define ALGEBRA_IMPLEMENTATION
 #include "Renderer.hpp"
 
 int	main(void) {

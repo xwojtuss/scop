@@ -24,6 +24,8 @@
 #include <vector>
 #include <cstring>
 
+#include "Vertex.hpp"
+
 #ifdef NDEBUG
 	const bool enableValidationLayers = false;
 #else
@@ -75,7 +77,10 @@ class Renderer {
 		bool						framebufferResized = false;
 		VkPhysicalDevice			physicalDevice;
 		uint32_t					currentFrame = 0;
+		VkBuffer					vertexBuffer;
+		VkDeviceMemory				vertexBufferMemory;
 
+		static const std::vector<Vertex>		vertices;
 		static const std::vector<const char*>	deviceExtensions;
 		static const std::vector<const char*>	validationLayers;
 		static const std::size_t MAX_FRAMES_IN_FLIGHT;
@@ -84,11 +89,13 @@ class Renderer {
 		void					initVulkan();
 		void					createSyncObjects();
 		void					createInstance();
+		void					createVertexBuffer();
 		void					createCommandBuffer();
 		void					cleanupSwapChain();
 		void					createCommandPool();
 		void					createFramebuffers();
 		void					recreateSwapChain();
+		uint32_t				findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		void					recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void					createRenderPass();
 		void					pickPhysicalDevice();

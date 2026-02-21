@@ -12,11 +12,14 @@ VERT_SHADERS := $(wildcard shaders/*.vert)
 OBJS := ${SRCS:.cpp=.o}
 SHADER_OBJS := $(FRAG_SHADERS:.frag=.frag.spv) $(VERT_SHADERS:.vert=.vert.spv)
 
-HEADERS := -Isrcs ${addprefix -I, ${wildcard srcs/*/}}
+HEADERS := -Isrcs -Ialgebra -Isrcs/Vertex ${addprefix -I, ${wildcard srcs/*/}}
 
 all: ${NAME}
 
-${NAME}: ${OBJS} ${SHADER_OBJS}
+algebra/:
+	git submodule update --init --recursive
+
+${NAME}: algebra/ ${OBJS} ${SHADER_OBJS}
 	${COMPILER} ${FLAGS} ${HEADERS} ${OBJS} -o $@ ${LINKFLAGS}
 
 %.o: %.cpp
@@ -36,4 +39,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re submodules

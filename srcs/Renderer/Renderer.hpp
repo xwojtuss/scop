@@ -90,6 +90,10 @@ class Renderer {
 		VkBuffer					indexBuffer;
 		VkDeviceMemory				indexBufferMemory;
 		VkDescriptorPool			descriptorPool;
+		VkImage						textureImage;
+		VkDeviceMemory				textureImageMemory;
+		VkImageView					textureImageView;
+		VkSampler					textureSampler;
 		std::vector<VkDescriptorSet>descriptorSets;
 		std::vector<VkBuffer>		uniformBuffers;
 		std::vector<VkDeviceMemory>	uniformBuffersMemory;
@@ -103,6 +107,15 @@ class Renderer {
 
 		void					initWindow();
 		void					initVulkan();
+		void					createTextureSampler();
+		VkImageView				createImageView(VkImage image, VkFormat format);
+		void					createTextureImageView();
+		void					copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		void					transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+		VkCommandBuffer			beginSingleTimeCommands();
+		void					endSingleTimeCommands(VkCommandBuffer commandBuffer);
+		void					createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void					createTextureImage();
 		void					createSyncObjects();
 		void					createDescriptorPool();
 		void					createDescriptorSets();

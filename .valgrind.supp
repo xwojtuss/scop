@@ -1,0 +1,334 @@
+# Comprehensive Valgrind suppressions for Vulkan/OpenGL applications
+# Usage: valgrind --suppressions=valgrind.supp --suppressions=.nvidia-driver.supp ./scop
+
+# ===== D-Bus Leaks =====
+# D-Bus is a system message bus that doesn't cleanup on exit by design
+{
+   dbus_message_loader_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:calloc
+   ...
+   fun:*dbus_message_loader*
+   obj:*/libdbus-1.so*
+}
+
+{
+   dbus_connection_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:*alloc
+   ...
+   fun:dbus_*
+   obj:*/libdbus-1.so*
+}
+
+{
+   dbus_string_leak
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   ...
+   fun:*dbus_string*
+   obj:*/libdbus-1.so*
+}
+
+{
+   dbus_pending_call_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:*alloc
+   ...
+   fun:dbus_pending_call_block
+   obj:*/libdbus-1.so*
+}
+
+{
+   dbus_bus_register_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:*alloc
+   ...
+   fun:dbus_bus_register
+   obj:*/libdbus-1.so*
+}
+
+# ===== X11 Leaks =====
+# X11 libraries maintain static caches that persist until process exit
+{
+   x11_locale_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:*XlcCreateLC
+   obj:*/libX11.so*
+}
+
+{
+   x11_open_display_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:XOpenDisplay
+   obj:*/libX11.so*
+}
+
+{
+   x11_resource_manager_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:Xrm*
+   obj:*/libX11.so*
+}
+
+{
+   x11_input_method_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:*XimOpenIM
+   obj:*/libX11.so*
+}
+
+{
+   x11_locale_database_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:*XlcCreateLocaleDataBase
+   obj:*/libX11.so*
+}
+
+{
+   x11_setlocale_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:XSetLocaleModifiers
+   obj:*/libX11.so*
+}
+
+# ===== GLFW Leaks =====
+# GLFW initializes system resources that persist
+{
+   glfw_init_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:glfwInit
+   obj:*/libglfw.so*
+}
+
+{
+   glfw_regex_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:re*
+   ...
+   fun:glfwInit
+}
+
+# ===== Vulkan Leaks =====
+# Vulkan loader and validation layers cache data
+{
+   vulkan_loader_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libvulkan.so*
+}
+
+{
+   vulkan_validation_layer_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libVkLayer_khronos_validation.so*
+}
+
+{
+   vulkan_mesa_device_select_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libVkLayer_MESA_device_select.so*
+}
+
+{
+   vulkan_radeon_driver_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libvulkan_radeon.so*
+}
+
+# ===== LLVM Leaks =====
+# LLVM is used by Mesa/Vulkan drivers for shader compilation
+{
+   llvm_regex_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   fun:llvm_regcomp
+   obj:*/libLLVM*.so*
+}
+
+{
+   llvm_init_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libLLVM*.so*
+}
+
+# ===== Dynamic Linker Leaks =====
+# The dynamic linker maintains internal structures
+{
+   dl_close_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:_dl_close*
+}
+
+{
+   dl_init_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   fun:_dl_init
+}
+
+# ===== Invalid File Descriptors =====
+{
+   invalid_fd_close
+   Memcheck:Param
+   close(fd)
+   fun:close
+   ...
+}
+
+# ===== NVIDIA driver suppressions =====
+
+{
+   nvidia_realloc_size_zero_warning
+   Memcheck:Cond
+   fun:realloc
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_realloc_size_zero_value
+   Memcheck:Cond
+   ...
+   fun:realloc
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_posix_memalign_invalid_size_warning
+   Memcheck:Cond
+   fun:posix_memalign
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_posix_memalign_invalid_size_value
+   Memcheck:Cond
+   ...
+   fun:posix_memalign
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_realloc_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_glx_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libGLX_nvidia*.so*
+}
+
+{
+   nvidia_rtcore_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia-rtcore*.so*
+}
+
+{
+   nvidia_gpucomp_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia-gpucomp*.so*
+}
+
+{
+   nvidia_realloc_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia*.so*
+}
+
+{
+   nvidia_glx_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libGLX_nvidia*.so*
+}
+
+{
+   nvidia_rtcore_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia-rtcore*.so*
+}
+
+{
+   nvidia_gpucomp_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:*alloc
+   ...
+   obj:*/libnvidia-gpucomp*.so*
+}

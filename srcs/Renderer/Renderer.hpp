@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -94,6 +95,9 @@ class Renderer {
 		VkDeviceMemory				textureImageMemory;
 		VkImageView					textureImageView;
 		VkSampler					textureSampler;
+		VkImage						depthImage;
+		VkDeviceMemory				depthImageMemory;
+		VkImageView					depthImageView;
 		std::vector<VkDescriptorSet>descriptorSets;
 		std::vector<VkBuffer>		uniformBuffers;
 		std::vector<VkDeviceMemory>	uniformBuffersMemory;
@@ -107,8 +111,12 @@ class Renderer {
 
 		void					initWindow();
 		void					initVulkan();
+		bool					hasStencilComponent(VkFormat format);
+		VkFormat				findDepthFormat();
+		VkFormat				findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		void					createDepthResources();
 		void					createTextureSampler();
-		VkImageView				createImageView(VkImage image, VkFormat format);
+		VkImageView				createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 		void					createTextureImageView();
 		void					copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 		void					transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);

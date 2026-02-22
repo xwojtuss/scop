@@ -21,6 +21,9 @@
 #define WIN_HEIGHT 600
 #define APP_NAME "scop"
 
+#define MODEL_PATH "models/room.obj"
+#define TEXTURE_PATH "textures/room.png"
+
 #include <algorithm>
 #include <fstream>
 #include <limits>
@@ -30,6 +33,7 @@
 #include <vector>
 #include <cstring>
 #include <chrono>
+#include <unordered_map>
 
 #include "Vertex.hpp"
 #include "UniformBufferObject.hpp"
@@ -103,14 +107,15 @@ class Renderer {
 		std::vector<VkDeviceMemory>	uniformBuffersMemory;
 		std::vector<void*>			uniformBuffersMapped;
 
-		static const std::vector<Vertex>		vertices;
-		static const std::vector<uint16_t>		indices;
+		static std::vector<Vertex>		vertices;
+		static std::vector<uint32_t>		indices;
 		static const std::vector<const char*>	deviceExtensions;
 		static const std::vector<const char*>	validationLayers;
 		static const std::size_t MAX_FRAMES_IN_FLIGHT;
 
 		void					initWindow();
 		void					initVulkan();
+		void					loadModel();
 		bool					hasStencilComponent(VkFormat format);
 		VkFormat				findDepthFormat();
 		VkFormat				findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

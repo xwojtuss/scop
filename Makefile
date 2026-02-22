@@ -1,6 +1,6 @@
 COMPILER := c++
 SHADER_COMPILER := glslc
-FLAGS := -Wall -Wextra -Werror -std=c++17 -O2 -g
+FLAGS := -Wall -Wextra -Werror -std=c++17 -O3
 LINKFLAGS := -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
 
 NAME := scop

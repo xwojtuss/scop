@@ -6,6 +6,11 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #ifdef _WIN32
 # define GLFW_EXPOSE_NATIVE_WIN32
 # include <GLFW/glfw3native.h>
@@ -23,8 +28,10 @@
 #include <stdexcept>
 #include <vector>
 #include <cstring>
+#include <chrono>
 
 #include "Vertex.hpp"
+#include "UniformBufferObject.hpp"
 
 #ifdef NDEBUG
 	const bool enableValidationLayers = false;
@@ -66,6 +73,7 @@ class Renderer {
 		VkFormat					swapChainImageFormat;
 		VkExtent2D					swapChainExtent;
 		VkRenderPass				renderPass;
+		VkDescriptorSetLayout		descriptorSetLayout;
 		VkPipelineLayout			pipelineLayout;
 		VkPipeline					graphicsPipeline;
 		std::vector<VkFramebuffer>	swapChainFramebuffers;
@@ -81,6 +89,11 @@ class Renderer {
 		VkDeviceMemory				vertexBufferMemory;
 		VkBuffer					indexBuffer;
 		VkDeviceMemory				indexBufferMemory;
+		VkDescriptorPool			descriptorPool;
+		std::vector<VkDescriptorSet>descriptorSets;
+		std::vector<VkBuffer>		uniformBuffers;
+		std::vector<VkDeviceMemory>	uniformBuffersMemory;
+		std::vector<void*>			uniformBuffersMapped;
 
 		static const std::vector<Vertex>		vertices;
 		static const std::vector<uint16_t>		indices;
@@ -91,6 +104,11 @@ class Renderer {
 		void					initWindow();
 		void					initVulkan();
 		void					createSyncObjects();
+		void					createDescriptorPool();
+		void					createDescriptorSets();
+		void					updateUniformBuffer(uint32_t currentImage);
+		void					createUniformBuffers();
+		void					createDescriptorSetLayout();
 		void					createInstance();
 		void					createVertexBuffer();
 		void					createIndexBuffer();

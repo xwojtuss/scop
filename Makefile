@@ -12,7 +12,7 @@ VERT_SHADERS := $(wildcard shaders/*.vert)
 OBJS := ${SRCS:.cpp=.o}
 SHADER_OBJS := $(FRAG_SHADERS:.frag=.frag.spv) $(VERT_SHADERS:.vert=.vert.spv)
 
-HEADERS := -Isrcs -Ialgebra -Isrcs/Vertex ${addprefix -I, ${wildcard srcs/*/}}
+HEADERS := -Isrcs -Ialgebra -Isrcs/Vertex -Isrcs/UniformBufferObject ${addprefix -I, ${wildcard srcs/*/}}
 
 all: ${NAME}
 

@@ -100,9 +100,13 @@ class Renderer {
 		VkDeviceMemory				textureImageMemory;
 		VkImageView					textureImageView;
 		VkSampler					textureSampler;
+		VkImage						colorImage;
+		VkDeviceMemory				colorImageMemory;
+		VkImageView					colorImageView;
 		VkImage						depthImage;
 		VkDeviceMemory				depthImageMemory;
 		VkImageView					depthImageView;
+		VkSampleCountFlagBits		msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 		std::vector<VkDescriptorSet>descriptorSets;
 		std::vector<VkBuffer>		uniformBuffers;
 		std::vector<VkDeviceMemory>	uniformBuffersMemory;
@@ -117,6 +121,8 @@ class Renderer {
 		void					initWindow();
 		void					initVulkan();
 		void					loadModel();
+		VkSampleCountFlagBits	getMaxUsableSampleCount();
+		void					createColorResources();
 		void					generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 		bool					hasStencilComponent(VkFormat format);
 		VkFormat				findDepthFormat();
@@ -129,7 +135,7 @@ class Renderer {
 		void					transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 		VkCommandBuffer			beginSingleTimeCommands();
 		void					endSingleTimeCommands(VkCommandBuffer commandBuffer);
-		void					createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void					createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		void					createTextureImage();
 		void					createSyncObjects();
 		void					createDescriptorPool();
@@ -142,7 +148,7 @@ class Renderer {
 		void					createIndexBuffer();
 		void					createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		void					copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-		void					createCommandBuffer();
+		void					createCommandBuffers();
 		void					cleanupSwapChain();
 		void					createCommandPool();
 		void					createFramebuffers();

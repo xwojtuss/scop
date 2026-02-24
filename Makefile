@@ -5,21 +5,18 @@ LINKFLAGS := -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
 
 NAME := scop
 
-SRCS := srcs/main.cpp ${wildcard srcs/*/*.cpp}
+SRCS := srcs/main.cpp ${wildcard srcs/*/*.cpp} ${wildcard srcs/*/*/*.cpp} ${wildcard srcs/*/*/*/*.cpp}
 FRAG_SHADERS := $(wildcard shaders/*.frag)
 VERT_SHADERS := $(wildcard shaders/*.vert)
 
 OBJS := ${SRCS:.cpp=.o}
 SHADER_OBJS := $(FRAG_SHADERS:.frag=.frag.spv) $(VERT_SHADERS:.vert=.vert.spv)
 
-HEADERS := -Isrcs -Ialgebra -Isrcs/Vertex -Isrcs/UniformBufferObject ${addprefix -I, ${wildcard srcs/*/}}
+HEADERS := ${addprefix -I, ${wildcard srcs/*/}}
 
 all: ${NAME}
 
-algebra/:
-	git submodule update --init --recursive
-
-${NAME}: algebra/ ${OBJS} ${SHADER_OBJS}
+${NAME}: ${OBJS} ${SHADER_OBJS}
 	${COMPILER} ${FLAGS} ${HEADERS} ${OBJS} -o $@ ${LINKFLAGS}
 
 %.o: %.cpp
@@ -32,7 +29,7 @@ ${NAME}: algebra/ ${OBJS} ${SHADER_OBJS}
 	${SHADER_COMPILER} $< -o $@
 
 clean:
-	rm ${OBJS} ${SHADER_OBJS}
+	rm -f ${OBJS} ${SHADER_OBJS}
 
 fclean: clean
 	rm -f ${NAME}

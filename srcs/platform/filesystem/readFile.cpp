@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "readFile.hpp"
 
 std::vector<char>	readFile(const std::string& filename) {
 	std::ifstream		file(filename, std::ios::ate | std::ios::binary);
@@ -14,4 +14,3 @@ std::vector<char>	readFile(const std::string& filename) {
 
 	return buffer;
 }
-

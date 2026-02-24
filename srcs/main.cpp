@@ -2,11 +2,13 @@
 #include <iostream>
 #include <cstdlib>
 
-#define ALGEBRA_IMPLEMENTATION
-#include "Renderer.hpp"
+#include "app/Application.hpp"
+#include "platform/window/glfw/GLFWWindow.hpp"
+#include "render/vulkan/VulkanRenderer.hpp"
 
 int	main(void) {
-	Renderer	app;
+	scene::Scene		scene;
+	app::Application	app(scene);
 
 	try {
 		app.run();

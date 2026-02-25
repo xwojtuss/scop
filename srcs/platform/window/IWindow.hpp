@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "../render/input/InputManager.hpp"
+
 namespace platform::window {
 
 constexpr uint32_t	winWidth = 800;
@@ -23,5 +25,11 @@ public:
 	virtual void*			getHandle() const = 0;
 	virtual const char**	getExtensions(uint32_t* count) const = 0;
 	virtual double			getTime() const = 0;
+	virtual void			setMouseCursorVisible(bool visible) = 0;
+	virtual void			setMouseCursorPosition(double x, double y) = 0;
+	virtual void			setMouseCursorPositionToCenter() = 0;
+	virtual void			resetInput() = 0;
+
+	virtual render::input::InputManager&	getInputManager() = 0;
 };
 }

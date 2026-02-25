@@ -10,17 +10,26 @@
 #include "../render/vulkan/VulkanRenderer.hpp"
 #include "../assets/TinyObjLoader.hpp"
 #include "../assets/StbTextureLoader.hpp"
+#include "../render/input/InputTypes.hpp"
 
 namespace app {
 class Application {
 private:
-	std::unique_ptr<platform::window::IWindow>	m_window;
-	std::unique_ptr<render::IRenderer>			m_renderer;
-	std::unique_ptr<scene::Scene>				m_scene;
-	std::unique_ptr<assets::IModelLoader>		m_modelLoader;
-	std::unique_ptr<assets::ITextureLoader>		m_textureLoader;
+	std::unique_ptr<platform::window::IWindow>		m_window;
+	std::unique_ptr<render::IRenderer>				m_renderer;
+	std::unique_ptr<scene::Scene>					m_scene;
+	std::unique_ptr<assets::IModelLoader>			m_modelLoader;
+	std::unique_ptr<assets::ITextureLoader>			m_textureLoader;
 
+	/**
+	 * Runs once per render frame
+	 */
 	void	update();
+
+	/**
+	 * Runs once per app::simulationFPS
+	 */
+	void	simulate();
 	void	render();
 
 public:

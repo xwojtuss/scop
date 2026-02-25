@@ -10,14 +10,17 @@
 
 #include "../IWindow.hpp"
 #include "../app/ApplicationInfo.hpp"
+#include "../../../render/input/InputManager.hpp"
 
 namespace platform::window::glfw {
 class GLFWWindow : public platform::window::IWindow {
 private:
-	GLFWwindow*	window;
+	GLFWwindow*					m_window;
+	render::input::InputManager	m_inputManager;
 	bool		m_wasResized = false;
 
 	static void	framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height);
+	static void	cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos);
 
 public:
 	GLFWWindow();
@@ -34,5 +37,11 @@ public:
 	void*			getHandle() const override;
 	const char**	getExtensions(uint32_t* count) const override;
 	double			getTime() const override;
+	void			setMouseCursorVisible(bool visible) override;
+	void			setMouseCursorPosition(double x, double y) override;
+	void			setMouseCursorPositionToCenter() override;
+	void			resetInput() override;
+
+	render::input::InputManager&	getInputManager() override;
 };
 }

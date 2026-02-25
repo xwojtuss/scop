@@ -6,37 +6,50 @@ GLFWWindow::GLFWWindow() {
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-	window = glfwCreateWindow(winWidth, winHeight, app::appName, nullptr, nullptr);
-	glfwSetWindowUserPointer(window, this);
-	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+	m_window = glfwCreateWindow(winWidth, winHeight, app::appName, nullptr, nullptr);
+	glfwSetWindowUserPointer(m_window, this);
+	glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);
+
+	if (glfwRawMouseMotionSupported())
+		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	glfwSetCursorPosCallback(m_window, cursorPositionCallback);
+}
+
+void	GLFWWindow::cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos) {
+	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
+	
+	m_window->getInputManager().processMouseMove(xpos, ypos);
 }
 
 void	GLFWWindow::framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height) {
-	auto window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
-	window->m_wasResized = true;
+	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
+	m_window->m_wasResized = true;
 	(void)width;
 	(void)height;
 }
 
 uint32_t	GLFWWindow::getWidth() const {
 	int width;
-	glfwGetFramebufferSize(window, &width, nullptr);
+	glfwGetFramebufferSize(m_window, &width, nullptr);
 	return static_cast<uint32_t>(width);
 }
 
 uint32_t	GLFWWindow::getHeight() const {
 	int height;
-	glfwGetFramebufferSize(window, nullptr, &height);
+	glfwGetFramebufferSize(m_window, nullptr, &height);
 	return static_cast<uint32_t>(height);
 }
 
 void	GLFWWindow::waitUntilNotMinimized() {
 	int width = 0, height = 0;
 
-	glfwGetFramebufferSize(window, &width, &height);
+	glfwGetFramebufferSize(m_window, &width, &height);
 
 	while (width == 0 || height == 0) {
-		glfwGetFramebufferSize(window, &width, &height);
+		glfwGetFramebufferSize(m_window, &width, &height);
 		glfwWaitEvents();
 	}
 
@@ -45,13 +58,13 @@ void	GLFWWindow::waitUntilNotMinimized() {
 
 void	GLFWWindow::getFramebufferSize(uint32_t* width, uint32_t* height) const {
 	int w, h;
-	glfwGetFramebufferSize(window, &w, &h);
+	glfwGetFramebufferSize(m_window, &w, &h);
 	*width = static_cast<uint32_t>(w);
 	*height = static_cast<uint32_t>(h);
 }
 
 bool	GLFWWindow::shouldClose() const {
-	return glfwWindowShouldClose(window);
+	return glfwWindowShouldClose(m_window);
 }
 
 void	GLFWWindow::pollEvents() {
@@ -63,7 +76,7 @@ bool GLFWWindow::wasResized() const {
 }
 
 void*	GLFWWindow::getHandle() const {
-	return window;
+	return m_window;
 }
 
 double	GLFWWindow::getTime() const {
@@ -76,11 +89,33 @@ const char**	GLFWWindow::getExtensions(uint32_t* count) const {
 
 float	GLFWWindow::getAspectRatio() const {
 	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
+	glfwGetFramebufferSize(m_window, &width, &height);
 	return static_cast<float>(width) / static_cast<float>(height);
 }
 
+void	GLFWWindow::setMouseCursorVisible(bool visible) {
+	glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
+void	GLFWWindow::setMouseCursorPosition(double x, double y) {
+	glfwSetCursorPos(m_window, x, y);
+}
+
+void	GLFWWindow::setMouseCursorPositionToCenter() {
+	int width, height;
+	glfwGetFramebufferSize(m_window, &width, &height);
+	setMouseCursorPosition(width / 2.0, height / 2.0);
+}
+
+render::input::InputManager&	GLFWWindow::getInputManager() {
+	return m_inputManager;
+}
+
+void	GLFWWindow::resetInput() {
+	m_inputManager.resetCommand();
+}
+
 GLFWWindow::~GLFWWindow() {
-	glfwDestroyWindow(window);
+	glfwDestroyWindow(m_window);
 	glfwTerminate();
 }

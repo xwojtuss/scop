@@ -287,8 +287,8 @@ void	VulkanFrameData::updateFrameUBO(scene::Camera& camera, float aspectRatio) {
 	camera.updateProjection(aspectRatio);
 	
 	FrameUBO ubo{};
-	ubo.view = camera.view;
-	ubo.proj = camera.projection;
+	ubo.view = camera.getView();
+	ubo.proj = camera.getProjection();
 	ubo.proj[1][1] *= -1;
 
 	memcpy(m_frameUBOsMapped[m_currentFrame], &ubo, sizeof(ubo));

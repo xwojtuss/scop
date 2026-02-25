@@ -16,12 +16,20 @@ GLFWWindow::GLFWWindow() {
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glfwSetCursorPosCallback(m_window, cursorPositionCallback);
+	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
 }
 
 void	GLFWWindow::cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos) {
 	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
 	
 	m_window->getInputManager().processMouseMove(xpos, ypos);
+}
+
+void	GLFWWindow::mouseButtonCallback(GLFWwindow* rawWindow, int button, int action, int mods) {
+	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
+
+	(void)mods;
+	m_window->getInputManager().processMouseButton(button, platform::input::glfw::glfwToInputAction(action));
 }
 
 void	GLFWWindow::framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height) {
@@ -109,10 +117,6 @@ void	GLFWWindow::setMouseCursorPositionToCenter() {
 
 render::input::InputManager&	GLFWWindow::getInputManager() {
 	return m_inputManager;
-}
-
-void	GLFWWindow::resetInput() {
-	m_inputManager.resetCommand();
 }
 
 GLFWWindow::~GLFWWindow() {

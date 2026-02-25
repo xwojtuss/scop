@@ -2,36 +2,27 @@
 
 using namespace render::input;
 
-InputManager::InputManager() : m_currentCommand{}, m_mouseProcessor(0.01f) {
+InputManager::InputManager() : m_mouseProcessor(0.005f) {
 }
 
-const InputCommand&	InputManager::getCurrentCommand() const {
-	return m_currentCommand;
-}
+InputCommand	InputManager::buildCommand() {
+	InputCommand command = {};
 
-const InputCommand&	InputManager::getPreviousCommand() const {
-	return m_previousCommand;
-}
+	double deltaX, deltaY;
+	m_mouseProcessor.getMouseDelta(&deltaX, &deltaY);
 
-const InputCommand	InputManager::getDeltaCommand() const {
-	InputCommand delta{};
-	delta.moveForward = m_currentCommand.moveForward - m_previousCommand.moveForward;
-	delta.moveRight = m_currentCommand.moveRight - m_previousCommand.moveRight;
-	delta.lookUp = m_currentCommand.lookUp - m_previousCommand.lookUp;
-	delta.lookRight = m_currentCommand.lookRight - m_previousCommand.lookRight;
-	delta.eventBits = m_currentCommand.eventBits ^ m_previousCommand.eventBits;
+	command.lookRight += static_cast<float>(deltaX);
+	command.lookUp += static_cast<float>(deltaY);
 
-	return delta;
-}
-
-void	InputManager::resetCommand() {
-	m_mouseProcessor.reset();
-	m_previousCommand = m_currentCommand;
-	m_currentCommand = {};
+	return command;
 }
 
 void	InputManager::processMouseMove(double xpos, double ypos) {
-	m_mouseProcessor.processMouseMove(-xpos, -ypos, m_currentCommand);
+	m_mouseProcessor.processMouseMove(-xpos, -ypos);
+}
+
+void	InputManager::processMouseButton(int button, InputActions action) {
+	m_mouseProcessor.processMouseButton(button, action);
 }
 
 InputManager::~InputManager() {

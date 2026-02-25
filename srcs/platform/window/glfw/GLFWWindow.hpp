@@ -10,6 +10,7 @@
 
 #include "../IWindow.hpp"
 #include "../app/ApplicationInfo.hpp"
+#include "../../input/GLFWInput.hpp"
 #include "../../../render/input/InputManager.hpp"
 
 namespace platform::window::glfw {
@@ -21,6 +22,7 @@ private:
 
 	static void	framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height);
 	static void	cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos);
+	static void	mouseButtonCallback(GLFWwindow* rawWindow, int button, int action, int mods);
 
 public:
 	GLFWWindow();
@@ -40,7 +42,6 @@ public:
 	void			setMouseCursorVisible(bool visible) override;
 	void			setMouseCursorPosition(double x, double y) override;
 	void			setMouseCursorPositionToCenter() override;
-	void			resetInput() override;
 
 	render::input::InputManager&	getInputManager() override;
 };

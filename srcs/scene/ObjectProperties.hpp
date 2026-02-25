@@ -2,12 +2,15 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <cmath>
 
+#include "WorldInfo.hpp"
 #include "../assets/Resources.hpp"
 
 // This will one day hopefully be turned into components
 
 namespace scene {
+constexpr float		maxPitch = glm::radians(80.0f);
 struct Transform {
 	glm::vec3	position;
 	glm::quat	rotation;
@@ -24,46 +27,39 @@ struct Transform {
 	}
 
 	glm::vec3	forward() const {
-		return rotation * glm::vec3(0.0f, 0.0f, -1.0f);
+		return rotation * worldinfo::forward;
 	}
 
 	glm::vec3	right() const {
-		return rotation * glm::vec3(1.0f, 0.0f, 0.0f);
+		return rotation * worldinfo::right;
 	}
 
 	glm::vec3	left() const {
-		return rotation * glm::vec3(-1.0f, 0.0f, 0.0f);
+		return rotation * worldinfo::left;
 	}
 
 	glm::vec3	up() const {
-		return rotation * glm::vec3(0.0f, 1.0f, 0.0f);
+		return rotation * worldinfo::up;
 	}
 
 	glm::vec3	down() const {
-		return rotation * glm::vec3(0.0f, -1.0f, 0.0f);
+		return rotation * worldinfo::down;
 	}
 
 	void	move(const glm::vec3& delta) {
 		position += delta;
 	}
 
-	void	rotate(float angle, const glm::vec3& axis) {
-		rotation = glm::rotate(rotation, angle, axis);
-	}
-
-	void	rotate(const glm::quat& delta) {
-		rotation = delta * rotation;
-	}
-
-	void	rotate(float angleX, float angleY, float angleZ) {
-		rotation = glm::rotate(rotation, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
-		rotation = glm::rotate(rotation, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
-		rotation = glm::rotate(rotation, angleZ, glm::vec3(0.0f, 0.0f, 1.0f));
-	}
-
 	void	rotate(float angleX, float angleY) {
-		rotation = glm::rotate(rotation, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
-		rotation = glm::rotate(rotation, angleX, right());
+		float pitch = std::asin(glm::clamp(forward().y, -1.0f, 1.0f));
+		float clampedDelta = glm::clamp(pitch + angleX, -maxPitch, maxPitch) - pitch;
+		
+		if (clampedDelta > maxPitch) clampedDelta = maxPitch;
+		else if (clampedDelta < -maxPitch) clampedDelta = -maxPitch;
+		
+		glm::quat rotX = glm::angleAxis(clampedDelta, right());
+		glm::quat rotY = glm::angleAxis(angleY, worldinfo::up);
+		rotation = glm::normalize(rotY * rotX * rotation);
 	}
 
 	void	scaleBy(const glm::vec3& factor) {

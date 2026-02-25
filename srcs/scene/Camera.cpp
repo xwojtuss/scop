@@ -2,7 +2,7 @@
 
 using namespace scene;
 
-Camera::Camera() : m_transform{}, m_moveSpeed(2.5f), fov(45.0f) {
+Camera::Camera() : m_transform{}, m_moveSpeed(2.5f), fov(90.0f) {
 	updateView();
 	updateProjection(platform::window::aspectRatio);
 }

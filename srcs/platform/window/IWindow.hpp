@@ -28,7 +28,6 @@ public:
 	virtual void			setMouseCursorVisible(bool visible) = 0;
 	virtual void			setMouseCursorPosition(double x, double y) = 0;
 	virtual void			setMouseCursorPositionToCenter() = 0;
-	virtual void			resetInput() = 0;
 
 	virtual render::input::InputManager&	getInputManager() = 0;
 };

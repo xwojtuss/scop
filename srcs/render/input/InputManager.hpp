@@ -6,18 +6,14 @@
 namespace render::input {
 class InputManager {
 private:
-	InputCommand		m_currentCommand;
-	InputCommand		m_previousCommand;
 	MouseInputProcessor	m_mouseProcessor;
 
 public:
 	InputManager();
 	~InputManager();
 
-	const InputCommand&	getCurrentCommand() const;
-	const InputCommand&	getPreviousCommand() const;
-	const InputCommand	getDeltaCommand() const;
-	void				resetCommand();
-	void				processMouseMove(double xpos, double ypos);
+	InputCommand	buildCommand();
+	void			processMouseMove(double xpos, double ypos);
+	void			processMouseButton(int button, InputActions action);
 };
 }

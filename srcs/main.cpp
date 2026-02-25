@@ -3,8 +3,6 @@
 #include <cstdlib>
 
 #include "app/Application.hpp"
-#include "platform/window/glfw/GLFWWindow.hpp"
-#include "render/vulkan/VulkanRenderer.hpp"
 
 int	main(void) {
 	scene::Scene		scene;

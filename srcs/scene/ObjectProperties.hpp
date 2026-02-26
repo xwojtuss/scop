@@ -24,7 +24,7 @@ struct Transform {
 	glm::vec3	up() const;
 	glm::vec3	down() const;
 	void	move(float deltaForward, float deltaRight, float deltaUp);
-	void	moveLockY(float deltaForward, float deltaRight);
+	void	moveLockY(float deltaForward, float deltaRight, float deltaUp);
 	void	rotate(float angleX, float angleY);
 	void	scaleBy(const glm::vec3& factor);
 	void	scaleBy(float factor);

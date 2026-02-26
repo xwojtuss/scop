@@ -35,6 +35,12 @@ void Camera::move(float dt)
 		m_velocity.y * dt,
 		m_velocity.z * dt
 	);
+
+	// m_transform.moveLockY(
+	// 	m_velocity.x * dt,
+	// 	m_velocity.y * dt,
+	// 	m_velocity.z * dt
+	// );
 }
 
 void	Camera::stopMoving() {

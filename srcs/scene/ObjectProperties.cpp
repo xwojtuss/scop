@@ -33,7 +33,7 @@ glm::vec3	Transform::down() const {
 	return rotation * worldinfo::down;
 }
 
-void	Transform::moveLockY(float deltaForward, float deltaRight) {
+void	Transform::moveLockY(float deltaForward, float deltaRight, float deltaUp) {
 	glm::vec3 forward = glm::normalize(glm::vec3(rotation * glm::vec3(0,0,-1)));
 
 	forward.y = 0;
@@ -42,7 +42,7 @@ void	Transform::moveLockY(float deltaForward, float deltaRight) {
 	glm::vec3 right = glm::normalize(glm::vec3(rotation * glm::vec3(1,0,0)));
 	right.y = 0;
 
-	position += forward * deltaForward + right * deltaRight;
+	position += forward * deltaForward + right * deltaRight + glm::vec3(0,1,0) * deltaUp;
 }
 
 void	Transform::move(float deltaForward, float deltaRight, float deltaUp) {

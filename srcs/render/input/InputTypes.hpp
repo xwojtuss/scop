@@ -11,14 +11,15 @@ enum InputEvent {
 	MoveBackward = 1 << 1,
 	MoveRight = 1 << 2,
 	MoveLeft = 1 << 3,
-	AnyMove = MoveForward | MoveBackward | MoveRight | MoveLeft,
 	Jump = 1 << 4,
-	Crouch = 1 << 5
+	Crouch = 1 << 5,
+	AnyMove = MoveForward | MoveBackward | MoveRight | MoveLeft | Jump | Crouch
 };
 
 struct InputCommand {
 	float		moveForward;
 	float		moveRight;
+	float		moveUp;
 	float		lookUp;
 	float		lookRight;
 	InputEvents	startedEvents;

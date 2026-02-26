@@ -28,7 +28,7 @@ public:
 
 	void				updateView();
 	void				updateProjection(float aspectRatio);
-	void				startMoving(float accelerationForward, float accelerationRight);
+	void				startMoving(float accelerationForward, float accelerationRight, float accelerationUp);
 	void				move(float deltaTime);
 	void				stopMoving();
 	Transform&			getTransform();

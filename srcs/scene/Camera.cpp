@@ -15,8 +15,8 @@ void	Camera::updateView() {
 	m_view = glm::lookAt(m_transform.position, m_transform.position + m_transform.forward(), m_transform.up());
 }
 
-void	Camera::startMoving(float accelerationForward, float accelerationRight) {
-	m_inputDir = glm::vec3(accelerationForward, accelerationRight, 0.0f);
+void	Camera::startMoving(float accelerationForward, float accelerationRight, float accelerationUp) {
+	m_inputDir = glm::vec3(accelerationForward, accelerationRight, accelerationUp);
 	m_isMoving = true;
 }
 
@@ -33,14 +33,12 @@ void Camera::move(float dt)
 	m_transform.move(
 		m_velocity.x * dt,
 		m_velocity.y * dt,
-		0.0f
+		m_velocity.z * dt
 	);
 }
 
 void	Camera::stopMoving() {
-	// m_velocity = glm::vec3(0.0f);
 	m_inputDir = glm::vec3(0.0f);
-
 }
 
 Transform&	Camera::getTransform() {

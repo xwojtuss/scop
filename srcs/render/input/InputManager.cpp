@@ -26,6 +26,8 @@ InputCommand	InputManager::buildCommand() {
 	command.moveForward -= hasEvent(activeEvents, InputEvent::MoveBackward) * 1.0f;
 	command.moveRight = hasEvent(activeEvents, InputEvent::MoveRight) * 1.0f;
 	command.moveRight -= hasEvent(activeEvents, InputEvent::MoveLeft) * 1.0f;
+	command.moveUp = hasEvent(activeEvents, InputEvent::Jump) * 1.0f;
+	command.moveUp -= hasEvent(activeEvents, InputEvent::Crouch) * 1.0f;
 	
 	return command;
 }

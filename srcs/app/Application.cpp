@@ -85,7 +85,7 @@ void	Application::simulate() {
 	render::input::InputCommand	command = m_window->getInputManager().buildCommand();
 
 	if (render::input::hasAnyEvent(command.activeEvents, render::input::InputEvent::AnyMove))
-		m_scene->getCamera().startMoving(command.moveForward, command.moveRight);
+		m_scene->getCamera().startMoving(command.moveForward, command.moveRight, command.moveUp);
 	else
 		m_scene->getCamera().stopMoving();
 

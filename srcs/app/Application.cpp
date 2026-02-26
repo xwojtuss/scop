@@ -7,6 +7,8 @@ Application::Application(const scene::Scene& scene) : m_scene(std::make_unique<s
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer>(*m_window);
 	m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
+
+	m_window->getInputManager().getKeyInputProcessor().resetBindings();
 }
 
 void	Application::run() {
@@ -50,9 +52,6 @@ void	Application::run() {
 
 	m_scene->addRenderable(renderable6);
 
-	
-
-
 	while (!m_window->shouldClose()) {
 		m_window->pollEvents();
 		simulate();
@@ -76,7 +75,8 @@ void	Application::update() {
 void	Application::simulate() {
 	double time = m_window->getTime();
 	static double lastSimulateTime = 0.0;
-
+	auto dt = time - lastSimulateTime;
+	
 	if (m_window->wasResized() || time - lastSimulateTime < simulationFrameRate) {
 		return;
 	}
@@ -84,8 +84,13 @@ void	Application::simulate() {
 
 	render::input::InputCommand	command = m_window->getInputManager().buildCommand();
 
-	m_scene->getCamera().getTransform().rotate(command.lookUp, command.lookRight);
-	m_scene->getCamera().getTransform().move(glm::vec3(command.moveRight, 0.0f, command.moveForward) * m_scene->getCamera().getMoveSpeed());
+	if (render::input::hasAnyEvent(command.activeEvents, render::input::InputEvent::AnyMove))
+		m_scene->getCamera().startMoving(command.moveForward, command.moveRight);
+	else
+		m_scene->getCamera().stopMoving();
+
+	m_scene->getCamera().move(dt);
+	m_scene->getCamera().getTransform().rotate(command.lookUp * dt, command.lookRight * dt);
 	m_scene->getCamera().updateView();
 }
 

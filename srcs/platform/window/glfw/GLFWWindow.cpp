@@ -17,6 +17,8 @@ GLFWWindow::GLFWWindow() {
 
 	glfwSetCursorPosCallback(m_window, cursorPositionCallback);
 	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
+	glfwSetKeyCallback(m_window, keyCallback);
+
 }
 
 void	GLFWWindow::cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos) {
@@ -31,12 +33,22 @@ void	GLFWWindow::mouseButtonCallback(GLFWwindow* rawWindow, int button, int acti
 	(void)mods;
 	m_window->getInputManager().processMouseButton(button, platform::input::glfw::glfwToInputAction(action));
 }
+#include <iostream>
+
+void	GLFWWindow::keyCallback(GLFWwindow* rawWindow, int key, int scancode, int action, int mods) {
+	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
+
+	(void)key;
+	m_window->getInputManager().processKey(scancode, platform::input::glfw::glfwToInputAction(action), platform::input::glfw::glfwToInputMods(mods));
+}
 
 void	GLFWWindow::framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height) {
 	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
 	m_window->m_wasResized = true;
+
 	(void)width;
 	(void)height;
+	m_window->setMouseCursorPositionToCenter();
 }
 
 uint32_t	GLFWWindow::getWidth() const {

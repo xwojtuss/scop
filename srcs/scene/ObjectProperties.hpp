@@ -16,59 +16,20 @@ struct Transform {
 	glm::quat	rotation;
 	glm::vec3	scale;
 
-	Transform() : position(0.0f), rotation(1.0f, 0.0f, 0.0f, 0.0f), scale(1.0f) {}
+	Transform();
 
-	operator glm::mat4() const {
-		glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-		glm::mat4 rotationMat = glm::toMat4(rotation);
-		glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), scale);
+	glm::vec3	forward() const;
+	glm::vec3	right() const;
+	glm::vec3	left() const;
+	glm::vec3	up() const;
+	glm::vec3	down() const;
+	void	move(float deltaForward, float deltaRight, float deltaUp);
+	void	moveLockY(float deltaForward, float deltaRight);
+	void	rotate(float angleX, float angleY);
+	void	scaleBy(const glm::vec3& factor);
+	void	scaleBy(float factor);
 
-		return translation * rotationMat * scaleMat;
-	}
-
-	glm::vec3	forward() const {
-		return rotation * worldinfo::forward;
-	}
-
-	glm::vec3	right() const {
-		return rotation * worldinfo::right;
-	}
-
-	glm::vec3	left() const {
-		return rotation * worldinfo::left;
-	}
-
-	glm::vec3	up() const {
-		return rotation * worldinfo::up;
-	}
-
-	glm::vec3	down() const {
-		return rotation * worldinfo::down;
-	}
-
-	void	move(const glm::vec3& delta) {
-		position += delta;
-	}
-
-	void	rotate(float angleX, float angleY) {
-		float pitch = std::asin(glm::clamp(forward().y, -1.0f, 1.0f));
-		float clampedDelta = glm::clamp(pitch + angleX, -maxPitch, maxPitch) - pitch;
-		
-		if (clampedDelta > maxPitch) clampedDelta = maxPitch;
-		else if (clampedDelta < -maxPitch) clampedDelta = -maxPitch;
-		
-		glm::quat rotX = glm::angleAxis(clampedDelta, right());
-		glm::quat rotY = glm::angleAxis(angleY, worldinfo::up);
-		rotation = glm::normalize(rotY * rotX * rotation);
-	}
-
-	void	scaleBy(const glm::vec3& factor) {
-		scale *= factor;
-	}
-
-	void	scaleBy(float factor) {
-		scale *= factor;
-	}
+	operator glm::mat4() const;
 };
 
 struct Renderable {

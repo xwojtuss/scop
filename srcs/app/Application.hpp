@@ -10,7 +10,6 @@
 #include "../render/vulkan/VulkanRenderer.hpp"
 #include "../assets/TinyObjLoader.hpp"
 #include "../assets/StbTextureLoader.hpp"
-#include "../render/input/InputTypes.hpp"
 
 namespace app {
 class Application {

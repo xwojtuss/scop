@@ -9,4 +9,6 @@ constexpr glm::vec3		up = glm::vec3(0.0f, 1.0f, 0.0f);
 constexpr glm::vec3		down = -up;
 constexpr glm::vec3		forward = glm::vec3(0.0f, 0.0f, -1.0f);
 constexpr glm::vec3		backward = -forward;
+
+constexpr float			drag = 0.99f;
 }

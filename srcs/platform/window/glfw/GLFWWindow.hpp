@@ -2,15 +2,15 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#define VK_USE_PLATFORM_WIN32_KHR
 #ifdef _WIN32
+# define VK_USE_PLATFORM_WIN32_KHR
 # define GLFW_EXPOSE_NATIVE_WIN32
 # include <GLFW/glfw3native.h>
 #endif
 
 #include "../IWindow.hpp"
 #include "../app/ApplicationInfo.hpp"
-#include "../../input/GLFWInput.hpp"
+#include "../../input/glfw/GLFWInput.hpp"
 #include "../../../render/input/InputManager.hpp"
 
 namespace platform::window::glfw {
@@ -23,6 +23,7 @@ private:
 	static void	framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height);
 	static void	cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos);
 	static void	mouseButtonCallback(GLFWwindow* rawWindow, int button, int action, int mods);
+	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	GLFWWindow();

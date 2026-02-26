@@ -16,7 +16,7 @@ public:
 	~MouseInputProcessor();
 
 	void	processMouseMove(double xpos, double ypos);
-	void	processMouseButton(int button, InputActions action);
-	void	getMouseDelta(double* deltaX, double* deltaY);
+	void	processMouseButton(int button, InputAction action);
+	void	getMouseDelta(double& deltaX, double& deltaY);
 };
 }

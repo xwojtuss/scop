@@ -15,14 +15,14 @@ void	MouseInputProcessor::processMouseMove(double xpos, double ypos) {
 	m_lastMouseY = ypos;
 }
 
-void	MouseInputProcessor::getMouseDelta(double* deltaX, double* deltaY) {
-	*deltaX = m_accumulatedMouseX * m_sensitivity;
-	*deltaY = m_accumulatedMouseY * m_sensitivity;
+void	MouseInputProcessor::getMouseDelta(double& deltaX, double& deltaY) {
+	deltaX = m_accumulatedMouseX * m_sensitivity;
+	deltaY = m_accumulatedMouseY * m_sensitivity;
 	m_accumulatedMouseX = 0.0;
 	m_accumulatedMouseY = 0.0;
 }
 
-void	MouseInputProcessor::processMouseButton(int button, InputActions action) {
+void	MouseInputProcessor::processMouseButton(int button, InputAction action) {
 	(void)button;
 	(void)action;
 }

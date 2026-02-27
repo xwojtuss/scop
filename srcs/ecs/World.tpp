@@ -20,5 +20,5 @@ template <typename SystemType>
 void	World::createSystem() {
 	SystemType& system = m_systemManager.addSystem<SystemType>();
 	system.registerWorld(this);
-	system.subscribe(m_systemManager.getDispatcher());
+	system.bindEvents(m_systemManager.getDispatcher());
 }

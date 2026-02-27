@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EntityHandle.hpp"
+#include "../World.hpp"
 
 using namespace ecs;
 

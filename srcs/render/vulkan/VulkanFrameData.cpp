@@ -283,24 +283,6 @@ void	VulkanFrameData::incrementCurrentFrame() {
 	m_currentFrame = (m_currentFrame + 1) % maxFramesInFlight;
 }
 
-void	VulkanFrameData::updateFrameUBO(scene::Camera& camera, float aspectRatio) {
-	camera.updateProjection(aspectRatio);
-	
-	FrameUBO ubo{};
-	ubo.view = camera.getView();
-	ubo.proj = camera.getProjection();
-	ubo.proj[1][1] *= -1;
-
-	memcpy(m_frameUBOsMapped[m_currentFrame], &ubo, sizeof(ubo));
-}
-
-void	VulkanFrameData::applyObjectTransform(const scene::Renderable& renderable, VkPipelineLayout pipelineLayout) {
-	ObjectUBO objectUbo{};
-	objectUbo.model = renderable.transform;
-
-	vkCmdPushConstants(getCurrentCommandBuffer(), pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
-}
-
 VkSemaphore	VulkanFrameData::submitCommandBuffer(VulkanContext& context) {
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -339,6 +321,10 @@ VkSemaphore	VulkanFrameData::getCurrentRenderFinishedSemaphore() const {
 
 uint32_t	VulkanFrameData::getCurrentFrame() const {
 	return m_currentFrame;
+}
+
+void*	VulkanFrameData::getCurrentMappedFrameUBO() {
+	return m_frameUBOsMapped[m_currentFrame];
 }
 
 void	VulkanFrameData::cleanup(VulkanContext& context) {

@@ -26,7 +26,8 @@ public:
 
 	template <typename SystemType>
 	void								createSystem();	
-	SystemManager&						getSystemManager();};
+	SystemManager&						getSystemManager();
+};
 }
 
 #include "World.tpp"

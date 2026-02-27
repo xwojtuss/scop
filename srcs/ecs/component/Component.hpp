@@ -9,14 +9,6 @@ template <typename ComponentType>
 struct Component {
 	static int	getId();
 };
-
-struct Message : public Component<Message> {
-	char	message[256];
-};
-
-struct Number : public Component<Number> {
-	int	value;
-};
 }
 
 #include "Component.tpp"

@@ -11,8 +11,8 @@
 #include "VulkanVertexUtils.hpp"
 #include "../render/IRenderer.hpp"
 #include "../../platform/window/IWindow.hpp"
-#include "../../scene/Scene.hpp"
 #include "../../platform/filesystem/readFile.hpp"
+#include "../../ecs/system/SystemManager.hpp"
 
 namespace render::vulkan {
 
@@ -32,7 +32,7 @@ private:
 
 	void					createPipeline();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
-	void					recordCommandBuffer(VkCommandBuffer commandBuffer, std::vector<scene::Renderable>& renderables, uint32_t frameIndex);
+	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame);
 	void					cleanup();
 
 public:
@@ -42,9 +42,10 @@ public:
 	assets::MeshHandle		createMesh(const assets::MeshData&) override;
 	assets::TextureHandle	createTexture(const assets::TextureData&) override;
 	void					beginFrame() override;
-	void					render(scene::Scene&) override;
+	void					render(ecs::SystemManager& systemManager) override;
 	void					endFrame() override;
 	void					setClearColor(float r, float g, float b, float a) override;
-	
+	void					drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) override;
+	void					updateCamera(const component::Camera& camera) override;
 };
 }

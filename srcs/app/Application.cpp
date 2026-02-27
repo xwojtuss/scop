@@ -2,56 +2,61 @@
 
 using namespace app;
 
-Application::Application(const scene::Scene& scene) : m_scene(std::make_unique<scene::Scene>(scene)) {
+Application::Application() {
 	m_window = std::make_unique<platform::window::glfw::GLFWWindow>();
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer>(*m_window);
+	m_world = std::make_unique<ecs::World>();
 	m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();
+
+	init();
+}
+
+void	Application::init() {
+	m_world->createSystem<ecs::CameraSystem>();
+	m_world->createSystem<ecs::MovementSystem>();
+	m_world->createSystem<ecs::RenderSystem>();
+
+	ecs::EntityHandle camera = m_world->createEntity();
+	ecs::component::Transform transform{};
+	ecs::component::Camera cameraComponent{};
+
+	transform.position = glm::vec3(0.0f, 0.0f, 3.0f);
+	transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	cameraComponent.fov = 45.0f;
+	camera.addComponent(transform);
+	camera.addComponent(cameraComponent);
+
+	camera.registerToSystem<ecs::CameraSystem>();
+
+	ecs::EntityHandle movingEntity = m_world->createEntity();
+	ecs::component::Transform movingTransform{};
+	ecs::component::Velocity velocity{};
+
+	movingEntity.addComponent(movingTransform);
+	movingEntity.addComponent(velocity);
+
+	movingEntity.registerToSystem<ecs::MovementSystem>();
+
+	ecs::EntityHandle renderableEntity = m_world->createEntity();
+	ecs::component::Transform renderableTransform{};
+	ecs::component::Mesh meshComponent{};
+
+	renderableTransform.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
+	meshComponent.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
+
+	renderableEntity.addComponent(renderableTransform);
+	renderableEntity.addComponent(meshComponent);
+	renderableEntity.registerToSystem<ecs::RenderSystem>();
 }
 
 void	Application::run() {
-	scene::Renderable renderable;
-
-	renderable.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
-	renderable.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
-	renderable.transform.position = glm::vec3(0.0f, 0.0f, 2.0f);
-	renderable.transform.rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-	renderable.transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	m_scene->addRenderable(renderable);
-
-	scene::Renderable renderable2(renderable);
-
-	renderable2.transform.position = glm::vec3(0.0f, 0.0f, -2.0f);
-
-	m_scene->addRenderable(renderable2);
-
-	scene::Renderable renderable3(renderable);
-
-	renderable3.transform.position = glm::vec3(2.0f, 0.0f, 0.0f);
-
-	m_scene->addRenderable(renderable3);
-
-	scene::Renderable renderable4(renderable);
-
-	renderable4.transform.position = glm::vec3(-2.0f, 0.0f, 0.0f);
-
-	m_scene->addRenderable(renderable4);
-
-	scene::Renderable renderable5(renderable);
-
-	renderable5.transform.position = glm::vec3(0.0f, 2.0f, 0.0f);
-
-	m_scene->addRenderable(renderable5);
-
-	scene::Renderable renderable6(renderable);
-
-	renderable6.transform.position = glm::vec3(0.0f, -2.0f, 0.0f);
-
-	m_scene->addRenderable(renderable6);
-
 	while (!m_window->shouldClose()) {
 		m_window->pollEvents();
 		simulate();
@@ -61,6 +66,7 @@ void	Application::run() {
 }
 
 void	Application::update() {
+	m_world->getSystemManager().onRender(m_window->getAspectRatio());
 	// auto time = m_window->getTime();
 	// double temp = 0.5f * sin(time);
 	// double temp2 = 0.5f * cos(time);
@@ -73,29 +79,29 @@ void	Application::update() {
 }
 
 void	Application::simulate() {
-	double time = m_window->getTime();
-	static double lastSimulateTime = 0.0;
-	auto dt = time - lastSimulateTime;
+	// double time = m_window->getTime();
+	// static double lastSimulateTime = 0.0;
+	// auto dt = time - lastSimulateTime;
 	
-	if (m_window->wasResized() || time - lastSimulateTime < simulationFrameRate) {
-		return;
-	}
-	lastSimulateTime = time;
+	// if (m_window->wasResized() || time - lastSimulateTime < simulationFrameRate) {
+	// 	return;
+	// }
+	// lastSimulateTime = time;
 
-	render::input::InputCommand	command = m_window->getInputManager().buildCommand();
+	// render::input::InputCommand	command = m_window->getInputManager().buildCommand();
 
-	if (render::input::hasAnyEvent(command.activeEvents, render::input::InputEvent::AnyMove))
-		m_scene->getCamera().startMoving(command.moveForward, command.moveRight, command.moveUp);
-	else
-		m_scene->getCamera().stopMoving();
+	// if (render::input::hasAnyEvent(command.activeEvents, render::input::InputEvent::AnyMove))
+	// 	m_scene->getCamera().startMoving(command.moveForward, command.moveRight, command.moveUp);
+	// else
+	// 	m_scene->getCamera().stopMoving();
 
-	m_scene->getCamera().move(dt);
-	m_scene->getCamera().getTransform().rotate(command.lookUp * dt, command.lookRight * dt);
-	m_scene->getCamera().updateView();
+	// m_scene->getCamera().move(dt);
+	// m_scene->getCamera().getTransform().rotate(command.lookUp * dt, command.lookRight * dt);
+	// m_scene->getCamera().updateView();
 }
 
 void	Application::render() {
 	m_renderer->beginFrame();
-	m_renderer->render(*m_scene);
+	m_renderer->render(m_world->getSystemManager());
 	m_renderer->endFrame();
 }

@@ -21,7 +21,9 @@ public:
 	template <typename SystemType>
 	SystemType*	getSystem();
 	
-	void		onTick();
+	void		onRender(float aspectRatio);
+	void		onRendererDraw(render::IRenderer& renderer);
+	void		onRendererFrame(render::IRenderer& renderer);
 	Dispatcher&	getDispatcher();
 };
 }

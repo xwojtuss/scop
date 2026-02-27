@@ -227,8 +227,37 @@ assets::TextureHandle	VulkanRenderer::createTexture(const assets::TextureData& t
 	return m_resourceManager->createTexture(textureData, *m_context, *m_frameData);
 }
 
-void	VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, std::vector<scene::Renderable>& renderables, uint32_t frameIndex) {
+void	VulkanRenderer::drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) {
+	VkBuffer vertexBuffers[] = {m_resourceManager->getMesh(mesh).vertexBuffer};
+	VkDeviceSize offsets[] = {0};
+	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 0, 1, vertexBuffers, offsets);
+
+	vkCmdBindIndexBuffer(m_frameData->getCurrentCommandBuffer(), m_resourceManager->getMesh(mesh).indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 1, 1, &m_resourceManager->getTexture(texture).descriptorSet, 0, nullptr);
+
+	// Push constants for object transform
+	ObjectUBO objectUbo{};
+	objectUbo.model = transform.toModelMatrix();
+	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
+
+	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(m_resourceManager->getMesh(mesh).indexCount), 1, 0, 0, 0);
+}
+
+void	VulkanRenderer::updateCamera(const component::Camera& camera) {
+	FrameUBO frameUbo{};
+
+	frameUbo.view = camera.view;
+	frameUbo.proj = camera.projection;
+	frameUbo.proj[1][1] *= -1;
+
+	memcpy(m_frameData->getCurrentMappedFrameUBO(), &frameUbo, sizeof(frameUbo));
+}
+
+void	VulkanRenderer::recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame) {
 	if (!m_frameIndex.has_value()) return;
+
+	VkCommandBuffer commandBuffer = m_frameData->getCurrentCommandBuffer();
 
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -267,27 +296,12 @@ void	VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, std::vec
 	scissor.extent = m_swapchain->getExtent();
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 	
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, m_frameData->getDescriptorSet(frameIndex), 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, m_frameData->getDescriptorSet(currentFrame), 0, nullptr);
 
-	for (auto& renderable : renderables) {
-		VkBuffer vertexBuffers[] = {m_resourceManager->getMesh(renderable.mesh).vertexBuffer};
-		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+	systemManager.onRendererDraw(*this);
 
-		vkCmdBindIndexBuffer(commandBuffer, m_resourceManager->getMesh(renderable.mesh).indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 1, 1, &m_resourceManager->getTexture(renderable.texture).descriptorSet, 0, nullptr);
-
-		// Push constants for object transform
-		ObjectUBO objectUbo{};
-		objectUbo.model = renderable.transform;
-		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
-
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_resourceManager->getMesh(renderable.mesh).indexCount), 1, 0, 0, 0);
-	}
-
-	vkCmdEndRenderPass(commandBuffer);
-	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+	vkCmdEndRenderPass(m_frameData->getCurrentCommandBuffer());
+	if (vkEndCommandBuffer(m_frameData->getCurrentCommandBuffer()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }
@@ -315,16 +329,16 @@ void	VulkanRenderer::beginFrame() {
 	}
 }
 
-void	VulkanRenderer::render(scene::Scene& scene) {
+void	VulkanRenderer::render(ecs::SystemManager& systemManager) {
 	if (!m_frameIndex.has_value()) return;
 
-	m_frameData->updateFrameUBO(scene.getCamera(), m_context->getWindow().getAspectRatio());
+	systemManager.onRendererFrame(*this);
 
 	// Only reset the fence if we are submitting work
 	m_frameData->resetFences(*m_context, m_frameData->getCurrentFrame());
 	
 	vkResetCommandBuffer(m_frameData->getCurrentCommandBuffer(), 0);
-	recordCommandBuffer(m_frameData->getCurrentCommandBuffer(), scene.getRenderables(), m_frameData->getCurrentFrame());
+	recordCurrentCommandBuffer(systemManager, m_frameData->getCurrentFrame());
 }
 
 void	VulkanRenderer::endFrame() {

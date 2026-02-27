@@ -6,7 +6,6 @@
 
 #include "../../render/GpuTypes.hpp"
 #include "../../assets/Resources.hpp"
-#include "../../scene/Scene.hpp"
 
 namespace render::vulkan {
 
@@ -39,7 +38,7 @@ private:
 	void	createTextureDescriptorSetLayout(const VulkanContext& context);
 	void	createDescriptorPool(const VulkanContext&);
 	
-public:
+	public:
 	VulkanFrameData(VulkanContext&, VulkanResourceManager&);
 	
 	VkDescriptorSetLayout	getFrameDescriptorSetLayout() const;
@@ -52,15 +51,14 @@ public:
 	VkCommandBuffer			getCommandBuffer(uint32_t currentFrame) const;
 	VkCommandBuffer			getCurrentCommandBuffer() const;
 	void					incrementCurrentFrame();
-	void					updateFrameUBO(scene::Camera& camera, float aspectRatio);
 	VkSemaphore				submitCommandBuffer(VulkanContext& context);
-	void					applyObjectTransform(const scene::Renderable&, VkPipelineLayout pipelineLayout);
 	uint32_t				getCurrentFrame() const;
 	VkDescriptorSet*		getDescriptorSet(uint32_t frameIndex);
+	void*					getCurrentMappedFrameUBO();
 	VkSemaphore				getCurrentImageAvailableSemaphore() const;
 	VkSemaphore				getCurrentRenderFinishedSemaphore() const;
 	void					cleanup(VulkanContext& context);
-
+	
 	static VkCommandBuffer	beginSingleTimeCommands(VkCommandPool commandPool, VkDevice device);
 	static void				endSingleTimeCommands(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue graphicsQueue, VkDevice device);
 };

@@ -10,15 +10,22 @@
 #include "../render/vulkan/VulkanRenderer.hpp"
 #include "../assets/TinyObjLoader.hpp"
 #include "../assets/StbTextureLoader.hpp"
+#include "../ecs/entity/EntityHandle.hpp"
+#include "../ecs/system/types/CameraSystem.hpp"
+#include "../ecs/system/types/MovementSystem.hpp"
+#include "../ecs/system/types/RenderSystem.hpp"
+#include "../ecs/World.hpp"
 
 namespace app {
 class Application {
 private:
 	std::unique_ptr<platform::window::IWindow>		m_window;
 	std::unique_ptr<render::IRenderer>				m_renderer;
-	std::unique_ptr<scene::Scene>					m_scene;
+	std::unique_ptr<ecs::World>						m_world;
 	std::unique_ptr<assets::IModelLoader>			m_modelLoader;
 	std::unique_ptr<assets::ITextureLoader>			m_textureLoader;
+
+	void	init();
 
 	/**
 	 * Runs once per render frame
@@ -32,7 +39,7 @@ private:
 	void	render();
 
 public:
-	Application(const scene::Scene& scene);
+	Application();
 
 	void	run();
 };

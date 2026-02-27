@@ -5,8 +5,7 @@
 #include "app/Application.hpp"
 
 int	main(void) {
-	scene::Scene		scene;
-	app::Application	app(scene);
+	app::Application	app;
 
 	try {
 		app.run();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 #include "component/IComponentManager.hpp"
 #include "component/ComponentManager.hpp"
@@ -13,9 +13,9 @@ struct EntityHandle;
 
 class World {
 private:
-	SystemManager									m_systemManager;
-	std::vector<std::unique_ptr<IComponentManager>>	m_componentManagers;
-	EntityManager									m_entityManager;
+	SystemManager												m_systemManager;
+	std::unordered_map<int, std::unique_ptr<IComponentManager>>	m_componentManagers;
+	EntityManager												m_entityManager;
 
 public:
 	template <typename ComponentType>
@@ -24,8 +24,12 @@ public:
 	EntityHandle						createEntity();
 	void								destroyEntity(const Entity& entity);
 
-	template <typename SystemType>
-	void								createSystem();	
+	template <typename SystemType, typename... Args>
+	void								createSystem(Args&&... args);
+
+	template <typename SystemType, typename... Args>
+	void								createDispatchingSystem(Args&&... args);
+
 	SystemManager&						getSystemManager();
 };
 }

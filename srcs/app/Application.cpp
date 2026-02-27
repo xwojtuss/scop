@@ -18,28 +18,28 @@ void	Application::init() {
 	m_world->createSystem<ecs::CameraSystem>();
 	m_world->createSystem<ecs::MovementSystem>();
 	m_world->createSystem<ecs::RenderSystem>();
+	m_world->createDispatchingSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
+	ecs::component::Velocity velocity{};
 	ecs::component::Camera cameraComponent{};
+	ecs::component::Input inputComponent{};
 
 	transform.position = glm::vec3(0.0f, 0.0f, 3.0f);
 	transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	velocity.acceleration = 5.0f;
+	velocity.maxSpeed = 5.0f;
 	cameraComponent.fov = 45.0f;
 	camera.addComponent(transform);
+	camera.addComponent(velocity);
 	camera.addComponent(cameraComponent);
+	camera.addComponent(inputComponent);
 
+	camera.registerToSystem<ecs::MovementSystem>();
+	camera.registerToSystem<ecs::PlayerInputSystem>();
 	camera.registerToSystem<ecs::CameraSystem>();
-
-	ecs::EntityHandle movingEntity = m_world->createEntity();
-	ecs::component::Transform movingTransform{};
-	ecs::component::Velocity velocity{};
-
-	movingEntity.addComponent(movingTransform);
-	movingEntity.addComponent(velocity);
-
-	movingEntity.registerToSystem<ecs::MovementSystem>();
 
 	ecs::EntityHandle renderableEntity = m_world->createEntity();
 	ecs::component::Transform renderableTransform{};
@@ -79,25 +79,16 @@ void	Application::update() {
 }
 
 void	Application::simulate() {
-	// double time = m_window->getTime();
-	// static double lastSimulateTime = 0.0;
-	// auto dt = time - lastSimulateTime;
+	double time = m_window->getTime();
+	static double lastSimulateTime = 0.0;
+	auto dt = time - lastSimulateTime;
 	
-	// if (m_window->wasResized() || time - lastSimulateTime < simulationFrameRate) {
-	// 	return;
-	// }
-	// lastSimulateTime = time;
+	if (m_window->wasResized() || time - lastSimulateTime < simulationFrameRate) {
+		return;
+	}
+	lastSimulateTime = time;
 
-	// render::input::InputCommand	command = m_window->getInputManager().buildCommand();
-
-	// if (render::input::hasAnyEvent(command.activeEvents, render::input::InputEvent::AnyMove))
-	// 	m_scene->getCamera().startMoving(command.moveForward, command.moveRight, command.moveUp);
-	// else
-	// 	m_scene->getCamera().stopMoving();
-
-	// m_scene->getCamera().move(dt);
-	// m_scene->getCamera().getTransform().rotate(command.lookUp * dt, command.lookRight * dt);
-	// m_scene->getCamera().updateView();
+	m_world->getSystemManager().onSimulate(static_cast<float>(dt));
 }
 
 void	Application::render() {

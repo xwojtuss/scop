@@ -13,7 +13,7 @@ void	ComponentManager<ComponentType>::addComponent(const Entity& entity, const C
 	if (m_componentCount >= maxComponents) {
 		throw std::runtime_error("Maximum number of components reached");
 	}
-
+	
 	size_t	componentIndex = m_componentCount;
 	m_components[componentIndex] = component;
 	m_entityToComponentIndex[entity] = componentIndex;

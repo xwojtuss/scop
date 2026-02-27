@@ -18,10 +18,11 @@ void	World::destroyEntity(const Entity& entity) {
 }
 
 IComponentManager*	World::getComponentManager(int componentId) {
-	if (componentId >= static_cast<int>(m_componentManagers.size())) {
+	auto it = m_componentManagers.find(componentId);
+	if (it == m_componentManagers.end()) {
 		return nullptr;
 	}
-	return m_componentManagers[componentId].get();
+	return it->second.get();
 }
 
 SystemManager&	World::getSystemManager() {

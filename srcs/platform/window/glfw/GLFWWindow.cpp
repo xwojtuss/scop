@@ -34,7 +34,6 @@ void	GLFWWindow::mouseButtonCallback(GLFWwindow* rawWindow, int button, int acti
 	(void)mods;
 	m_window->getInputManager().processMouseButton(button, platform::input::glfw::glfwToInputAction(action));
 }
-#include <iostream>
 
 void	GLFWWindow::keyCallback(GLFWwindow* rawWindow, int key, int scancode, int action, int mods) {
 	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));

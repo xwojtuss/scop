@@ -4,9 +4,9 @@
 
 namespace ecs {
 
-template <typename SystemType>
-SystemType& SystemManager::addSystem() {
-	auto system = std::make_unique<SystemType>();
+template <typename SystemType, typename... Args>
+SystemType& SystemManager::addSystem(Args&&... args) {
+	auto system = std::make_unique<SystemType>(std::forward<Args>(args)...);
 	SystemType* systemPtr = system.get();
 
 	m_systems[std::type_index(typeid(SystemType))] = std::move(system);

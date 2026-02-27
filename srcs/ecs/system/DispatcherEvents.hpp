@@ -20,7 +20,6 @@ struct RendererFrameEvent {
 };
 
 struct InputEvent {
-	render::input::InputCommand	command;
 };
 
 struct SimulateEvent {

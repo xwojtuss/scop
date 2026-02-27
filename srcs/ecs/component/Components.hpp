@@ -6,6 +6,7 @@
 #include "Component.hpp"
 #include "../../assets/Resources.hpp"
 #include "../../scene/WorldInfo.hpp"
+#include "../../render/input/InputTypes.hpp"
 
 namespace ecs::component {
 struct Transform : public Component<Transform> {
@@ -37,5 +38,9 @@ struct Camera : public Component<Camera> {
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
 	assets::TextureHandle	texture;
+};
+
+struct Input : public Component<Input> {
+	render::input::InputCommand	command;
 };
 }

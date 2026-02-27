@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <iostream>
 
 #include "../ASystem.hpp"
 #include "../DispatcherEvents.hpp"

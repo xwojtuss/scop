@@ -15,8 +15,8 @@ private:
 	Dispatcher														m_dispatcher;
 
 public:
-	template <typename SystemType>
-	SystemType&	addSystem();
+	template <typename SystemType, typename... Args>
+	SystemType&	addSystem(Args&&... args);
 	
 	template <typename SystemType>
 	SystemType*	getSystem();
@@ -24,6 +24,7 @@ public:
 	void		onRender(float aspectRatio);
 	void		onRendererDraw(render::IRenderer& renderer);
 	void		onRendererFrame(render::IRenderer& renderer);
+	void		onSimulate(float deltaTime);
 	Dispatcher&	getDispatcher();
 };
 }

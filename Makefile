@@ -1,12 +1,15 @@
 COMPILER := c++
 SHADER_COMPILER := glslc
-FLAGS := -Wall -Wextra -Werror -std=c++17 -O3
+FLAGS := -Wall -Wextra -Werror -std=c++17 -O3 -g
 LINKFLAGS := -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
 
 NAME := scop
 
 SRCS := srcs/main.cpp ${wildcard srcs/*/*.cpp} ${wildcard srcs/*/*/*.cpp} ${wildcard srcs/*/*/*/*.cpp}
-FRAG_SHADERS := $(wildcard shaders/*.frag)
+HEADER_SRCS := ${wildcard srcs/*/*.hpp} ${wildcard srcs/*/*/*.hpp} ${wildcard srcs/*/*/*/*.hpp} \
+			${wildcard srcs/*/*.tpp} ${wildcard srcs/*/*/*.tpp} ${wildcard srcs/*/*/*/*.tpp}
+
+RAG_SHADERS := $(wildcard shaders/*.frag)
 VERT_SHADERS := $(wildcard shaders/*.vert)
 
 OBJS := ${SRCS:.cpp=.o}
@@ -16,7 +19,7 @@ HEADERS := ${addprefix -I, ${wildcard srcs/*/}}
 
 all: ${NAME}
 
-${NAME}: ${OBJS} ${SHADER_OBJS}
+${NAME}: ${HEADER_SRCS} ${OBJS} ${SHADER_OBJS}
 	${COMPILER} ${FLAGS} ${HEADERS} ${OBJS} -o $@ ${LINKFLAGS}
 
 %.o: %.cpp

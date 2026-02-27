@@ -12,7 +12,7 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 	for (const Entity& entity : m_entities) {
 		component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(entity);
 		component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);
-
+		
 		if (!transform || !velocity)
 			continue;
 
@@ -29,20 +29,23 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 }
 
 void	MovementSystem::onInput(const InputEvent& event) {
+	(void)event;
+
 	for (const Entity& entity : m_entities) {
 		component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);
-		if (!velocity)
+		component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(entity);
+
+		if (!velocity || !transform)
 			continue;
 
-		velocity->desiredVelocity = glm::vec3(
-			event.command.moveForward * velocity->maxSpeed,
-			event.command.moveRight * velocity->maxSpeed,
-			event.command.moveUp * velocity->maxSpeed
-		);
+		component::Input* input = m_world->getComponentManager<component::Input>().getComponent(entity);
+		if (input) {
+			velocity->desiredVelocity = glm::vec3(input->command.moveRight, input->command.moveUp, -input->command.moveForward) * velocity->maxSpeed;
+		}
 	}
 }
 
 void	MovementSystem::bindEvents(Dispatcher& dispatcher) {
-	dispatcher.subscribe(this, &MovementSystem::onInput);
 	dispatcher.subscribe(this, &MovementSystem::onSimulate);
+	dispatcher.subscribe(this, &MovementSystem::onInput);
 }

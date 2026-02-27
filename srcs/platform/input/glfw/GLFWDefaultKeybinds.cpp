@@ -1,7 +1,5 @@
 #include "GLFWDefaultKeybinds.hpp"
 
-#include <iostream>
-
 using namespace platform::input::glfw;
 
 render::input::InputEventBindings GLFWDefaultKeybinds::getDefaultBindings() {

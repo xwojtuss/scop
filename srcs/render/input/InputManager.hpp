@@ -16,7 +16,7 @@ public:
 
 	InputCommand		buildCommand();
 	void				processMouseMove(double xpos, double ypos);
-	void				processMouseButton(int button, InputAction action);
+	void				processMouseButton(int button, InputAction action, InputMods modifiers);
 	void				processKey(int scancode, InputAction action, InputMods modifiers);
 	KeyInputProcessor&	getKeyInputProcessor();
 };

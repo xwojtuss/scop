@@ -32,7 +32,7 @@ void	GLFWWindow::mouseButtonCallback(GLFWwindow* rawWindow, int button, int acti
 	auto m_window = reinterpret_cast<GLFWWindow*>(glfwGetWindowUserPointer(rawWindow));
 
 	(void)mods;
-	m_window->getInputManager().processMouseButton(button, platform::input::glfw::glfwToInputAction(action));
+	m_window->getInputManager().processMouseButton(platform::input::glfw::glfwToMouseButton(button), platform::input::glfw::glfwToInputAction(action), platform::input::glfw::glfwToInputMods(mods));
 }
 
 void	GLFWWindow::keyCallback(GLFWwindow* rawWindow, int key, int scancode, int action, int mods) {
@@ -125,6 +125,10 @@ void	GLFWWindow::setMouseCursorPositionToCenter() {
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	setMouseCursorPosition(width / 2.0, height / 2.0);
+}
+
+bool	GLFWWindow::isMouseCursorVisible() const {
+	return glfwGetInputMode(m_window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL;
 }
 
 render::input::InputManager&	GLFWWindow::getInputManager() {

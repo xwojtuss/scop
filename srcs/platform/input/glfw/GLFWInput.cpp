@@ -29,4 +29,8 @@ render::input::InputMods	glfwToInputMods(int glfwMods) {
 
 	return mods;
 }
+
+render::input::MouseButton		glfwToMouseButton(int glfwButton) {
+	return static_cast<render::input::MouseButton>(1 << glfwButton);
+}
 }

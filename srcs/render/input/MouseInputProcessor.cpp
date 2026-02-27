@@ -22,10 +22,5 @@ void	MouseInputProcessor::getMouseDelta(double& deltaX, double& deltaY) {
 	m_accumulatedMouseY = 0.0;
 }
 
-void	MouseInputProcessor::processMouseButton(int button, InputAction action) {
-	(void)button;
-	(void)action;
-}
-
 MouseInputProcessor::~MouseInputProcessor() {
 }

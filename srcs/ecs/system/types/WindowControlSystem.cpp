@@ -16,7 +16,8 @@ void	WindowControlSystem::onInput(const InputEvent& event) {
 		if (!input)
 			continue;
 
-		if (render::input::hasEvent(input->command.startedEvents, render::input::InputEvent::EnableCursor)) {
+		if (!m_window.isMouseCursorVisible()
+			&& render::input::hasEvent(input->command.startedEvents, render::input::InputEvent::ToggleCursor)) {
 			m_window.setMouseCursorVisible(true);
 			m_window.setMouseCursorPositionToCenter();
 			
@@ -26,7 +27,8 @@ void	WindowControlSystem::onInput(const InputEvent& event) {
 			component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);
 			if (velocity) velocity->canMove = false;
 
-		} else if (render::input::hasEvent(input->command.startedEvents, render::input::InputEvent::DisableCursor)) {
+		} else if (m_window.isMouseCursorVisible()
+			&& render::input::hasAnyEvent(input->command.startedEvents, render::input::InputEvent::AnyMouseButton)) {
 			m_window.setMouseCursorVisible(false);
 			
 			component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);

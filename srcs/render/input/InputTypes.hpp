@@ -15,8 +15,23 @@ enum InputEvent {
 	Jump = 1 << 4,
 	Crouch = 1 << 5,
 	AnyMove = MoveForward | MoveBackward | MoveRight | MoveLeft | Jump | Crouch,
-	EnableCursor = 1 << 6,
-	DisableCursor = 1 << 7
+	ToggleCursor = 1 << 6,
+	ActionButton = 1 << 7,
+	SecondaryButton = 1 << 8,
+	AnyMouseButton = ActionButton | SecondaryButton,
+	All = 1 << (sizeof(InputEvents) * 8 - 1)
+};
+
+enum MouseButton {
+	LeftButton = 1 << 0,
+	RightButton = 1 << 1,
+	MiddleButton = 1 << 2,
+	Button4 = 1 << 3,
+	Button5 = 1 << 4,
+	Button6 = 1 << 5,
+	Button7 = 1 << 6,
+	Button8 = 1 << 7,
+	AnyButton = LeftButton | RightButton | MiddleButton | Button4 | Button5 | Button6 | Button7 | Button8
 };
 
 struct InputCommand {
@@ -27,8 +42,9 @@ struct InputCommand {
 	float		lookRight;
 	InputEvents	startedEvents;
 	InputEvents	repeatedEvents;
-	InputEvents	stoppedEvents;
+	InputEvents	releasedEvents;
 	InputEvents	activeEvents;
+
 	float		maxPitch = glm::radians(89.0f);
 };
 
@@ -62,14 +78,22 @@ constexpr bool	hasAllEvents(InputEvents events, InputEvents other) {
 	return (events & other) == other;
 }
 
-typedef int	Input;
+typedef long	Input;
 
 constexpr Input	createInput(int scancode, InputMods mods) {
 	return (scancode << 8) | mods;
 }
 
+constexpr Input	createMouseInput(MouseButton button, InputMods mods) {
+	return (button << 16) | mods;
+}
+
 constexpr int	getScancode(Input input) {
 	return input >> 8;
+}
+
+constexpr MouseButton	getMouseButton(Input input) {
+	return static_cast<MouseButton>(input >> 16);
 }
 
 typedef std::unordered_map<Input, InputEvent>	InputEventBindings;

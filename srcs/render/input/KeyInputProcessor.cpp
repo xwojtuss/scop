@@ -13,6 +13,31 @@ void	KeyInputProcessor::processKey(int scancode, InputAction action, InputMods m
 		return;
 	
 	InputEvent event = it->second;
+	switchEvent(event, action);
+}
+
+void	KeyInputProcessor::getKeyEvents(InputEvents& pressedEvents, InputEvents& repeatedEvents, InputEvents& releasedEvents, InputEvents& activeEvents) {
+	pressedEvents = m_pressedEvents;
+	repeatedEvents = m_repeatedEvents;
+	releasedEvents = m_releasedEvents;
+	activeEvents = m_activeEvents;
+	m_pressedEvents = 0;
+	m_repeatedEvents = 0;
+	m_releasedEvents = 0;
+}
+
+void	KeyInputProcessor::processMouseButton(MouseButton button, InputAction action, InputMods modifiers) {
+	Input input = createMouseInput(button, modifiers);
+
+	auto it = m_bindings.find(input);
+	if (it == m_bindings.end()) 
+		return;
+
+	InputEvent event = it->second;
+	switchEvent(event, action);
+}
+
+void	KeyInputProcessor::switchEvent(InputEvent event, InputAction action) {
 	switch (action) {
 		case InputAction::Press:
 			m_pressedEvents |= event;
@@ -28,16 +53,6 @@ void	KeyInputProcessor::processKey(int scancode, InputAction action, InputMods m
 		default:
 			break;
 	}
-}
-
-void	KeyInputProcessor::getKeyEvents(InputEvents& pressedEvents, InputEvents& repeatedEvents, InputEvents& releasedEvents, InputEvents& activeEvents) {
-	pressedEvents = m_pressedEvents;
-	repeatedEvents = m_repeatedEvents;
-	releasedEvents = m_releasedEvents;
-	activeEvents = m_activeEvents;
-	m_pressedEvents = 0;
-	m_repeatedEvents = 0;
-	m_releasedEvents = 0;
 }
 
 void	KeyInputProcessor::bindEvent(Input input, InputEvent event) {

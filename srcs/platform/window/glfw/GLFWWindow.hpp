@@ -23,7 +23,7 @@ private:
 	static void	framebufferResizeCallback(GLFWwindow* rawWindow, int width, int height);
 	static void	cursorPositionCallback(GLFWwindow* rawWindow, double xpos, double ypos);
 	static void	mouseButtonCallback(GLFWwindow* rawWindow, int button, int action, int mods);
-	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void	keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	GLFWWindow();
@@ -43,6 +43,7 @@ public:
 	void			setMouseCursorVisible(bool visible) override;
 	void			setMouseCursorPosition(double x, double y) override;
 	void			setMouseCursorPositionToCenter() override;
+	bool			isMouseCursorVisible() const override;
 
 	render::input::InputManager&	getInputManager() override;
 };

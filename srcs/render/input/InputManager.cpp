@@ -19,7 +19,7 @@ InputCommand	InputManager::buildCommand() {
 
 	command.startedEvents = pressedEvents;
 	command.repeatedEvents = repeatedEvents;
-	command.stoppedEvents = releasedEvents;
+	command.releasedEvents = releasedEvents;
 	command.activeEvents = activeEvents;
 
 	command.moveForward = hasEvent(activeEvents, InputEvent::MoveForward) * 1.0f;
@@ -36,8 +36,8 @@ void	InputManager::processMouseMove(double xpos, double ypos) {
 	m_mouseProcessor.processMouseMove(-xpos, -ypos);
 }
 
-void	InputManager::processMouseButton(int button, InputAction action) {
-	m_mouseProcessor.processMouseButton(button, action);
+void	InputManager::processMouseButton(int button, InputAction action, InputMods modifiers) {
+	m_keyInputProcessor.processMouseButton(static_cast<MouseButton>(button), action, modifiers);
 }
 
 void	InputManager::processKey(int scancode, InputAction action, InputMods modifiers) {

@@ -20,6 +20,7 @@ struct RendererFrameEvent {
 };
 
 struct InputEvent {
+	float	deltaTime;
 };
 
 struct SimulateEvent {

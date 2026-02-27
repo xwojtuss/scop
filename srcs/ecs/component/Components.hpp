@@ -27,6 +27,7 @@ struct Velocity : public Component<Velocity> {
 	glm::vec3	desiredVelocity;
 	float		maxSpeed;
 	float		acceleration;
+	float		decelleration;
 };
 
 struct Camera : public Component<Camera> {
@@ -42,5 +43,6 @@ struct Mesh : public Component<Mesh> {
 
 struct Input : public Component<Input> {
 	render::input::InputCommand	command;
+	float						mouseSensitivity;
 };
 }

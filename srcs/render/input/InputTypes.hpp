@@ -26,6 +26,7 @@ struct InputCommand {
 	InputEvents	repeatedEvents;
 	InputEvents	stoppedEvents;
 	InputEvents	activeEvents;
+	float		maxPitch;
 };
 
 enum InputAction {

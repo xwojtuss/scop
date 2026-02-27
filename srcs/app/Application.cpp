@@ -29,9 +29,13 @@ void	Application::init() {
 	transform.position = glm::vec3(0.0f, 0.0f, 3.0f);
 	transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	velocity.acceleration = 5.0f;
-	velocity.maxSpeed = 5.0f;
-	cameraComponent.fov = 45.0f;
+	velocity.acceleration = 4.5f;
+	velocity.decelleration = 10.0f;
+	velocity.maxSpeed = 100.0f;
+	velocity.velocity = glm::vec3(0.0f);
+	velocity.desiredVelocity = glm::vec3(0.0f);
+	cameraComponent.fov = 60.0f;
+	inputComponent.mouseSensitivity = 1.0f;
 	camera.addComponent(transform);
 	camera.addComponent(velocity);
 	camera.addComponent(cameraComponent);

@@ -19,8 +19,9 @@ void	PlayerInputSystem::onSimulate(const SimulateEvent& event) {
 			continue;
 
 		input->command = command;
+		input->command.maxPitch = glm::radians(89.0f);
 	}
-	
+	inputEvent.deltaTime = event.deltaTime;
 	m_dispatcher.emit<ecs::InputEvent>(inputEvent);
 }
 

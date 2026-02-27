@@ -13,6 +13,7 @@ struct Transform : public Component<Transform> {
 	glm::vec3	position;
 	glm::quat	rotation;
 	glm::vec3	scale;
+	bool		canRotate = true;
 
 	glm::vec3	forward() const;
 	glm::vec3	right() const;
@@ -28,6 +29,7 @@ struct Velocity : public Component<Velocity> {
 	float		maxSpeed;
 	float		acceleration;
 	float		decelleration;
+	bool		canMove = true;
 };
 
 struct Camera : public Component<Camera> {

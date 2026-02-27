@@ -3,7 +3,7 @@
 
 using namespace ecs;
 
-PlayerInputSystem::PlayerInputSystem(render::input::InputManager& inputManager, Dispatcher& dispatcher) : ASystem(Dependencies()), m_inputManager(inputManager), m_dispatcher(dispatcher) {
+PlayerInputSystem::PlayerInputSystem(render::input::InputManager& inputManager) : ASystem(Dependencies()), m_inputManager(inputManager), m_dispatcher(nullptr) {
 	m_dependencies.addDependency<component::Input>();
 }
 
@@ -19,12 +19,12 @@ void	PlayerInputSystem::onSimulate(const SimulateEvent& event) {
 			continue;
 
 		input->command = command;
-		input->command.maxPitch = glm::radians(89.0f);
 	}
 	inputEvent.deltaTime = event.deltaTime;
-	m_dispatcher.emit<ecs::InputEvent>(inputEvent);
+	m_dispatcher->emit<ecs::InputEvent>(inputEvent);
 }
 
 void	PlayerInputSystem::bindEvents(Dispatcher& dispatcher) {
 	dispatcher.subscribe<SimulateEvent>(this, &PlayerInputSystem::onSimulate);
+	m_dispatcher = &dispatcher;
 }

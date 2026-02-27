@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <unordered_map>
 #include <functional>
+#include <glm/glm.hpp>
 
 namespace render::input {
 typedef int	InputEvents;
@@ -13,7 +14,9 @@ enum InputEvent {
 	MoveLeft = 1 << 3,
 	Jump = 1 << 4,
 	Crouch = 1 << 5,
-	AnyMove = MoveForward | MoveBackward | MoveRight | MoveLeft | Jump | Crouch
+	AnyMove = MoveForward | MoveBackward | MoveRight | MoveLeft | Jump | Crouch,
+	EnableCursor = 1 << 6,
+	DisableCursor = 1 << 7
 };
 
 struct InputCommand {
@@ -26,7 +29,7 @@ struct InputCommand {
 	InputEvents	repeatedEvents;
 	InputEvents	stoppedEvents;
 	InputEvents	activeEvents;
-	float		maxPitch;
+	float		maxPitch = glm::radians(89.0f);
 };
 
 enum InputAction {

@@ -13,7 +13,7 @@ GLFWWindow::GLFWWindow() {
 	if (glfwRawMouseMotionSupported())
 		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	setMouseCursorVisible(false);
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_FALSE);
 
 	glfwSetCursorPosCallback(m_window, cursorPositionCallback);

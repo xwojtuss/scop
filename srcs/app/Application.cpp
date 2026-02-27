@@ -18,7 +18,8 @@ void	Application::init() {
 	m_world->createSystem<ecs::CameraSystem>();
 	m_world->createSystem<ecs::MovementSystem>();
 	m_world->createSystem<ecs::RenderSystem>();
-	m_world->createDispatchingSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
+	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
+	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
@@ -44,6 +45,7 @@ void	Application::init() {
 	camera.registerToSystem<ecs::MovementSystem>();
 	camera.registerToSystem<ecs::PlayerInputSystem>();
 	camera.registerToSystem<ecs::CameraSystem>();
+	camera.registerToSystem<ecs::WindowControlSystem>();
 
 	ecs::EntityHandle renderableEntity = m_world->createEntity();
 	ecs::component::Transform renderableTransform{};

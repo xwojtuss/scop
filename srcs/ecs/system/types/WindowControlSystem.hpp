@@ -1,22 +1,21 @@
 #pragma once
 
 #include "../ASystem.hpp"
-#include "../Dispatcher.hpp"
 #include "../DispatcherEvents.hpp"
 #include "../../component/Components.hpp"
 #include "../../../render/input/InputTypes.hpp"
 #include "../../../render/input/InputManager.hpp"
+#include "../../../platform/window/IWindow.hpp"
 
 namespace ecs {
-class PlayerInputSystem : public ASystem {
+class WindowControlSystem : public ASystem {
 private:
-	render::input::InputManager&	m_inputManager;
-	Dispatcher*						m_dispatcher;
+	platform::window::IWindow&	m_window;
 
 public:
-	PlayerInputSystem(render::input::InputManager& inputManager);
+	WindowControlSystem(platform::window::IWindow& window);
 
-	void			onSimulate(const SimulateEvent& event);
+	void			onInput(const InputEvent& event);
 	virtual void	bindEvents(Dispatcher& dispatcher) override;
 };
 }

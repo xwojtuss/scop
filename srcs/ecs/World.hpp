@@ -27,9 +27,6 @@ public:
 	template <typename SystemType, typename... Args>
 	void								createSystem(Args&&... args);
 
-	template <typename SystemType, typename... Args>
-	void								createDispatchingSystem(Args&&... args);
-
 	SystemManager&						getSystemManager();
 };
 }

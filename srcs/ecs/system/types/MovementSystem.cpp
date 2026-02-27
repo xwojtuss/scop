@@ -15,7 +15,7 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 		component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(entity);
 		component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);
 		
-		if (!transform || !velocity)
+		if (!transform || !velocity || !velocity->canMove)
 			continue;
 
 
@@ -45,7 +45,7 @@ void	MovementSystem::onInput(const InputEvent& event) {
 			continue;
 
 		component::Input* input = m_world->getComponentManager<component::Input>().getComponent(entity);
-		if (input) {
+		if (input && transform->canRotate) {
 			float angleX = input->command.lookUp * input->mouseSensitivity * event.deltaTime;
 			float angleY = input->command.lookRight * input->mouseSensitivity * event.deltaTime;
 

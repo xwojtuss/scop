@@ -21,10 +21,3 @@ void	World::createSystem(Args&&... args) {
 	system.registerWorld(this);
 	system.bindEvents(m_systemManager.getDispatcher());
 }
-
-template <typename SystemType, typename... Args>
-void	World::createDispatchingSystem(Args&&... args) {
-	SystemType& system = m_systemManager.addSystem<SystemType>(args..., m_systemManager.getDispatcher());
-	system.registerWorld(this);
-	system.bindEvents(m_systemManager.getDispatcher());
-}

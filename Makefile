@@ -9,7 +9,7 @@ SRCS := srcs/main.cpp ${wildcard srcs/*/*.cpp} ${wildcard srcs/*/*/*.cpp} ${wild
 HEADER_SRCS := ${wildcard srcs/*/*.hpp} ${wildcard srcs/*/*/*.hpp} ${wildcard srcs/*/*/*/*.hpp} \
 			${wildcard srcs/*/*.tpp} ${wildcard srcs/*/*/*.tpp} ${wildcard srcs/*/*/*/*.tpp}
 
-RAG_SHADERS := $(wildcard shaders/*.frag)
+FRAG_SHADERS := $(wildcard shaders/*.frag)
 VERT_SHADERS := $(wildcard shaders/*.vert)
 
 OBJS := ${SRCS:.cpp=.o}
@@ -24,6 +24,8 @@ ${NAME}: ${HEADER_SRCS} ${OBJS} ${SHADER_OBJS}
 
 %.o: %.cpp
 	${COMPILER} ${FLAGS} ${HEADERS} -c $^ -o $@
+
+shaders: ${SHADER_OBJS}
 
 %.frag.spv: %.frag
 	${SHADER_COMPILER} $< -o $@

@@ -18,6 +18,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::CameraSystem>();
 	m_world->createSystem<ecs::MovementSystem>();
 	m_world->createSystem<ecs::RenderSystem>();
+	m_world->createSystem<ecs::TextRenderSystem>();
 	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 
@@ -60,6 +61,18 @@ void	Application::init() {
 	renderableEntity.addComponent(renderableTransform);
 	renderableEntity.addComponent(meshComponent);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
+
+	ecs::EntityHandle textEntity = m_world->createEntity();
+	ecs::component::Transform2D textTransform{};
+	ecs::component::Text textComponent{};
+
+	textTransform.position = glm::vec2(0.0f, 0.0f);
+	textTransform.scale = glm::vec2(1.0f, 1.0f);
+	textComponent.text = "Hello, World!";
+	textComponent.font = m_renderer->createTexture(m_textureLoader->toTextureData("textures/monogram-bitmap.png"));
+	textEntity.addComponent(textTransform);
+	textEntity.addComponent(textComponent);
+	textEntity.registerToSystem<ecs::TextRenderSystem>();
 }
 
 void	Application::run() {
@@ -73,15 +86,6 @@ void	Application::run() {
 
 void	Application::update() {
 	m_world->getSystemManager().onRender(m_window->getAspectRatio());
-	// auto time = m_window->getTime();
-	// double temp = 0.5f * sin(time);
-	// double temp2 = 0.5f * cos(time);
-
-	// m_scene->getRenderable(0).transform.position.x = -temp;
-	// m_scene->getRenderable(0).transform.position.y = temp2;
-	
-	// m_scene->getRenderable(1).transform.scale = glm::vec3(1.0f + temp, 1.0f - temp, 1.0f + temp);
-	// m_scene->getRenderable(1).transform.rotation = glm::rotate(m_scene->getRenderable(1).transform.rotation, glm::radians(0.5f), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void	Application::simulate() {

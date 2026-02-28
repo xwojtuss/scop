@@ -21,6 +21,11 @@ constexpr const char*	vertShaderPath = "shaders/shader.vert.spv";
 constexpr const char*	textFragShaderPath = "shaders/fontShader.frag.spv";
 constexpr const char*	textVertShaderPath = "shaders/fontShader.vert.spv";
 
+const uint32_t	maxTextChars = 512;
+
+constexpr const int	fontBitMapWidth = 16;
+constexpr const int	fontBitMapHeight = 8;
+
 class VulkanRenderer : public render::IRenderer {
 private:
 	std::unique_ptr<VulkanContext>			m_context;
@@ -28,25 +33,29 @@ private:
 	std::unique_ptr<VulkanResourceManager>	m_resourceManager;
 	std::unique_ptr<VulkanFrameData>		m_frameData;
 	VkPipelineLayout						m_pipelineLayout;
+	VkPipelineLayout						m_textPipelineLayout;
 	VkPipeline								m_graphicsPipeline;
 	VkPipeline								m_textPipeline;
 	std::optional<uint32_t>					m_frameIndex;
 	std::array<VkClearValue, 2>				m_clearValues;
 	assets::MeshHandle						m_textMeshHandle;
+	VkBuffer								m_instanceBuffer;
+	VkDeviceMemory							m_instanceBufferMemory;
 
 	void					createPipeline();
 	void					createTextPipeline();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame);
 	void					cleanup();
+	void					createTextMesh();
+	void					copyTextToInstanceBuffer(const std::string& text);
 	
-	public:
+public:
 	VulkanRenderer(platform::window::IWindow&);
 	~VulkanRenderer() override;
 	
 	assets::MeshHandle			createMesh(const assets::MeshData&) override;
 	assets::TextureHandle		createTexture(const assets::TextureData&) override;
-	void						createTextMesh();
 	const assets::MeshHandle&	getTextMeshHandle() const;
 	void						beginFrame() override;
 	void						render(ecs::SystemManager& systemManager) override;

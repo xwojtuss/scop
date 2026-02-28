@@ -6,6 +6,10 @@ void	SystemManager::onRender(float aspectRatio) {
 	m_dispatcher.emit<RenderEvent>(RenderEvent{aspectRatio});
 }
 
+void	SystemManager::onTextDraw(render::IRenderer& renderer) {
+	m_dispatcher.emit<TextDrawEvent>(TextDrawEvent{&renderer});
+}
+
 void	SystemManager::onRendererDraw(render::IRenderer& renderer) {
 	m_dispatcher.emit<RendererDrawEvent>(RendererDrawEvent{&renderer});
 }

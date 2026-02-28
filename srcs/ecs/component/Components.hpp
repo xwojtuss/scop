@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -46,6 +47,11 @@ struct Camera : public Component<Camera> {
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
 	assets::TextureHandle	texture;
+};
+
+struct Text : public Component<Text> {
+	std::string				text;
+	assets::TextureHandle	font;
 };
 
 struct Input : public Component<Input> {

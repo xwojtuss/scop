@@ -11,6 +11,10 @@ struct RenderEvent {
 	float				aspectRatio;
 };
 
+struct TextDrawEvent {
+	render::IRenderer*	renderer;
+};
+
 struct RendererDrawEvent {
 	render::IRenderer*	renderer;
 };

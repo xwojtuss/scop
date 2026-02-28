@@ -44,6 +44,11 @@ struct Vertex2D {
 		return pos == other.pos && color == other.color && texCoord == other.texCoord;
 	}
 };
+
+struct InstanceData {
+	glm::vec2	texCoord;
+	int			charIndex;
+};
 }
 
 namespace std {

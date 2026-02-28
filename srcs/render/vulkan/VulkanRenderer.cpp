@@ -3,26 +3,23 @@
 using namespace render::vulkan;
 
 VulkanRenderer::VulkanRenderer(platform::window::IWindow& window) {
-	setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	setClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 	m_context = std::make_unique<VulkanContext>(window);
 	m_swapchain = std::make_unique<VulkanSwapchain>(*m_context);
 	m_resourceManager = std::make_unique<VulkanResourceManager>(*m_context);
 	m_frameData = std::make_unique<VulkanFrameData>(*m_context, *m_resourceManager);
 	createPipeline();
+
 	createTextPipeline();
 	createTextMesh();
-}
-
-void	VulkanRenderer::createTextMesh() {
-	m_textMeshHandle = createMesh({
-		.vertices = {
-			{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-			{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-			{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-			{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-		},
-		.indices = {2, 1, 3, 3, 2, 4}
-	});
+	m_resourceManager->createBuffer(
+		*m_context,
+		maxTextChars * sizeof(render::InstanceData),
+		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		m_instanceBuffer,
+		m_instanceBufferMemory
+	);
 }
 
 VkShaderModule	VulkanRenderer::createShaderModule(const std::vector<char>& code, VkDevice device) {
@@ -58,8 +55,6 @@ void VulkanRenderer::createPipeline() {
 	fragShaderStageInfo.pName = "main";
 
 	VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
-
-	(void)shaderStages;
 
 	// Dynamic state
 
@@ -248,8 +243,6 @@ void	VulkanRenderer::createTextPipeline() {
 
 	VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
-	(void)shaderStages;
-
 	// Dynamic state
 
 	std::vector<VkDynamicState> dynamicStates = {
@@ -269,11 +262,17 @@ void	VulkanRenderer::createTextPipeline() {
 
 	auto bindingDescription = getBindingDescription();
 	auto attributeDescriptions = getAttributeDescriptions();
+	auto perInstanceBindingDescription = getInstanceBindingDescription();
+	auto perInstanceAttributeDescriptions = getInstanceAttributeDescriptions();
+	auto bindingDescriptions = std::array<VkVertexInputBindingDescription, 2>{bindingDescription, perInstanceBindingDescription};
+	auto attributeDescriptionsCombined = std::vector<VkVertexInputAttributeDescription>{};
+	attributeDescriptionsCombined.insert(attributeDescriptionsCombined.end(), attributeDescriptions.begin(), attributeDescriptions.end());
+	attributeDescriptionsCombined.insert(attributeDescriptionsCombined.end(), perInstanceAttributeDescriptions.begin(), perInstanceAttributeDescriptions.end());
 
-	vertexInputInfo.vertexBindingDescriptionCount = 1;
-	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+	vertexInputInfo.vertexBindingDescriptionCount = 2;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptionsCombined.size());
+	vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptionsCombined.data();
 
 	// Input assembly
 
@@ -318,6 +317,17 @@ void	VulkanRenderer::createTextPipeline() {
 	rasterizer.cullMode = VK_CULL_MODE_NONE;
 	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
+	// Multisampling
+
+	VkPipelineMultisampleStateCreateInfo multisampling{};
+	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.sampleShadingEnable = VK_FALSE;
+	multisampling.rasterizationSamples = m_context->getMsaaSamples();
+	multisampling.minSampleShading = 1.0f;
+	multisampling.pSampleMask = nullptr;
+	multisampling.alphaToCoverageEnable = VK_FALSE;
+	multisampling.alphaToOneEnable = VK_FALSE;
+
 	// Color blending
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -351,7 +361,7 @@ void	VulkanRenderer::createTextPipeline() {
 	VkPushConstantRange pushConstantRange{};
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 	pushConstantRange.offset = 0;
-	pushConstantRange.size = sizeof(ObjectUBO);
+	pushConstantRange.size = sizeof(TextUBO);
 	
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -361,8 +371,8 @@ void	VulkanRenderer::createTextPipeline() {
 	pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 	
 
-	if (vkCreatePipelineLayout(m_context->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create pipeline layout!");
+	if (vkCreatePipelineLayout(m_context->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_textPipelineLayout) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create text pipeline layout!");
 	}
 
 	VkPipelineDepthStencilStateCreateInfo depthStencil{};
@@ -385,11 +395,11 @@ void	VulkanRenderer::createTextPipeline() {
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &rasterizer;
-	pipelineInfo.pMultisampleState = nullptr;
+	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = nullptr;
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.pDynamicState = &dynamicState;
-	pipelineInfo.layout = m_pipelineLayout;
+	pipelineInfo.layout = m_textPipelineLayout;
 	pipelineInfo.renderPass = m_swapchain->getRenderPass();
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -415,8 +425,50 @@ assets::MeshHandle	VulkanRenderer::createMesh(const assets::MeshData& meshData) 
 	return handle;
 }
 
+void	VulkanRenderer::createTextMesh() {
+	assets::MeshData textMeshData{};
+
+	std::vector<render::Vertex> quadVertices = {
+		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f / fontBitMapHeight}},
+		{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 1.0f / fontBitMapHeight}},
+		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 0.0f}},
+		{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	};
+
+	std::vector<uint32_t> quadIndices = {
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	textMeshData.vertices = quadVertices;
+	textMeshData.indices = quadIndices;
+
+	m_textMeshHandle = createMesh(textMeshData);
+}
+
 assets::TextureHandle	VulkanRenderer::createTexture(const assets::TextureData& textureData) {
 	return m_resourceManager->createTexture(textureData, *m_context, *m_frameData);
+}
+
+void	VulkanRenderer::copyTextToInstanceBuffer(const std::string& text) {
+	void* mappedData = nullptr;
+	
+	vkMapMemory(m_context->getLogicalDevice(), m_instanceBufferMemory, 0, maxTextChars * sizeof(render::InstanceData), 0, &mappedData);
+	
+	for (size_t i = 0; i < text.length(); ++i) {
+		short index = text[i] - ' ';
+
+		render::InstanceData instanceData{};
+		instanceData.texCoord = {
+			(index % fontBitMapWidth) / static_cast<float>(fontBitMapWidth),
+			(index / fontBitMapWidth) / static_cast<float>(fontBitMapHeight),
+		};
+		instanceData.charIndex = i;
+		
+		memcpy(static_cast<char*>(mappedData) + i * sizeof(render::InstanceData), &instanceData, sizeof(render::InstanceData));
+	}
+	
+	vkUnmapMemory(m_context->getLogicalDevice(), m_instanceBufferMemory);
 }
 
 void	VulkanRenderer::drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) {
@@ -436,22 +488,25 @@ void	VulkanRenderer::drawMesh(const assets::MeshHandle& mesh, const assets::Text
 	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(m_resourceManager->getMesh(mesh).indexCount), 1, 0, 0, 0);
 }
 
-void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, const ecs::component::Color* color = nullptr) {
+void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, const ecs::component::Color* color) {
 	VkBuffer vertexBuffer = m_resourceManager->getMesh(m_textMeshHandle).vertexBuffer;
+	
+	copyTextToInstanceBuffer(text);
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 0, 1, &vertexBuffer, &offset);
+	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 1, 1, &m_instanceBuffer, &offset);
 
 	vkCmdBindIndexBuffer(m_frameData->getCurrentCommandBuffer(), m_resourceManager->getMesh(m_textMeshHandle).indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 1, 1, &m_resourceManager->getTexture(font).descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_textPipelineLayout, 1, 1, &m_resourceManager->getTexture(font).descriptorSet, 0, nullptr);
 
 	TextUBO ubo{};
 	ubo.color = color ? color->color : glm::vec4(1.0f);
 	ubo.position = transform.position;
 	ubo.size = transform.scale;
-	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TextUBO), &ubo);
+	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), m_textPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TextUBO), &ubo);
 
-	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(m_resourceManager->getMesh(m_textMeshHandle).indexCount), 1, 0, 0, 0);
+	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), 6, text.length(), 0, 0, 0);
 }
 
 void	VulkanRenderer::updateCamera(const component::Camera& camera) {
@@ -513,14 +568,13 @@ void	VulkanRenderer::recordCurrentCommandBuffer(ecs::SystemManager& systemManage
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_textPipeline);
 	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, m_frameData->getDescriptorSet(currentFrame), 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_textPipelineLayout, 0, 1, m_frameData->getDescriptorSet(currentFrame), 0, nullptr);
 
 	systemManager.onTextDraw(*this);
 
 	vkCmdEndRenderPass(m_frameData->getCurrentCommandBuffer());
 	if (vkEndCommandBuffer(m_frameData->getCurrentCommandBuffer()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
-	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_
 	}
 }
 
@@ -537,6 +591,7 @@ void	VulkanRenderer::beginFrame() {
 		vkDestroyPipeline(m_context->getLogicalDevice(), m_graphicsPipeline, nullptr);
 		vkDestroyPipeline(m_context->getLogicalDevice(), m_textPipeline, nullptr);
 		vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_pipelineLayout, nullptr);
+		vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_textPipelineLayout, nullptr);
 		
 		m_swapchain->recreateSwapChain(*m_context);
 		createPipeline();
@@ -585,6 +640,7 @@ void	VulkanRenderer::endFrame() {
 		vkDestroyPipeline(m_context->getLogicalDevice(), m_graphicsPipeline, nullptr);
 		vkDestroyPipeline(m_context->getLogicalDevice(), m_textPipeline, nullptr);
 		vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_pipelineLayout, nullptr);
+		vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_textPipelineLayout, nullptr);
 		
 		m_swapchain->recreateSwapChain(*m_context);
 		createPipeline();
@@ -608,6 +664,9 @@ const assets::MeshHandle&	VulkanRenderer::getTextMeshHandle() const {
 void	VulkanRenderer::cleanup() {
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
+	vkDestroyBuffer(m_context->getLogicalDevice(), m_instanceBuffer, nullptr);
+	vkFreeMemory(m_context->getLogicalDevice(), m_instanceBufferMemory, nullptr);
+
 	m_resourceManager->cleanup(*m_context);
 	m_frameData->cleanup(*m_context);
 	m_swapchain->cleanup(*m_context);
@@ -615,6 +674,7 @@ void	VulkanRenderer::cleanup() {
 	vkDestroyPipeline(m_context->getLogicalDevice(), m_graphicsPipeline, nullptr);
 	vkDestroyPipeline(m_context->getLogicalDevice(), m_textPipeline, nullptr);
 	vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_pipelineLayout, nullptr);
+	vkDestroyPipelineLayout(m_context->getLogicalDevice(), m_textPipelineLayout, nullptr);
 }
 
 VulkanRenderer::~VulkanRenderer() {

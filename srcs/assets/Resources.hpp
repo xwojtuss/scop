@@ -18,6 +18,7 @@ struct TextureData {
 	uint32_t	height;
 	uint32_t	mipLevels;
 	void*		pixels;
+	bool		pixelPerfect = false;
 	std::function<void(void*)>	freePixels;
 };
 

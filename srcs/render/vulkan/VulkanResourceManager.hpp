@@ -57,5 +57,6 @@ private:
 	SwapChainImage			createTextureImage(const assets::TextureData& textureData, VulkanContext& context);
 	VkImageView				createTextureImageView(const assets::TextureData& textureData, const VulkanContext& context, VkImage textureImage);
 	VkSampler				createTextureSampler(const VulkanContext& context);
+	VkSampler				createPixelPerfectTextureSampler(const VulkanContext& context);
 };
 }

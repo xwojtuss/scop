@@ -67,9 +67,11 @@ void	Application::init() {
 	ecs::component::Text textComponent{};
 
 	textTransform.position = glm::vec2(0.0f, 0.0f);
-	textTransform.scale = glm::vec2(1.0f, 1.0f);
+	textTransform.scale = glm::vec2(0.8f, 1.6f);
 	textComponent.text = "Hello, World!";
-	textComponent.font = m_renderer->createTexture(m_textureLoader->toTextureData("textures/monogram-bitmap.png"));
+	assets::TextureData fontTextureData = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
+	fontTextureData.pixelPerfect = true;
+	textComponent.font = m_renderer->createTexture(fontTextureData);
 	textEntity.addComponent(textTransform);
 	textEntity.addComponent(textComponent);
 	textEntity.registerToSystem<ecs::TextRenderSystem>();

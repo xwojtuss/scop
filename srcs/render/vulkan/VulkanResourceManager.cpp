@@ -267,7 +267,37 @@ VkSampler	VulkanResourceManager::createTextureSampler(const VulkanContext& conte
 	samplerInfo.unnormalizedCoordinates = VK_FALSE;
 	samplerInfo.compareEnable = VK_FALSE;
 	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
+
+	if (vkCreateSampler(context.getLogicalDevice(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create texture sampler!");
+	}
+	return textureSampler;
+}
+
+VkSampler	VulkanResourceManager::createPixelPerfectTextureSampler(const VulkanContext& context) {
+	VkSampler textureSampler = VK_NULL_HANDLE;
+
+	VkSamplerCreateInfo samplerInfo{};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_NEAREST;
+	samplerInfo.minFilter = VK_FILTER_NEAREST;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.anisotropyEnable = VK_FALSE;
+
+	VkPhysicalDeviceProperties properties{};
+	vkGetPhysicalDeviceProperties(context.getPhysicalDevice(), &properties);
+	samplerInfo.maxAnisotropy = 1.0f;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
@@ -281,7 +311,7 @@ VkSampler	VulkanResourceManager::createTextureSampler(const VulkanContext& conte
 assets::TextureHandle	VulkanResourceManager::createTexture(const assets::TextureData& textureData, VulkanContext& context, VulkanFrameData& frameData) {
 	SwapChainImage textureImage = createTextureImage(textureData, context);
 	VkImageView textureImageView = createTextureImageView(textureData, context, textureImage.image);
-	VkSampler textureSampler = createTextureSampler(context);
+	VkSampler textureSampler = textureData.pixelPerfect ? createPixelPerfectTextureSampler(context) : createTextureSampler(context);
 	
 	VkDescriptorSet descriptorSet = frameData.createTextureDescriptorSet(context);
 

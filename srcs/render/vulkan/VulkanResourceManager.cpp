@@ -340,6 +340,10 @@ size_t	VulkanResourceManager::getTextureCount() const {
 	return m_textures.size();
 }
 
+assets::MeshHandle	VulkanResourceManager::getTextMesh() const {
+	if (m_)
+}
+
 void	VulkanResourceManager::cleanup(VulkanContext& context) {
 	for (const auto& [id, mesh] : m_meshes) {
 		vkDestroyBuffer(context.getLogicalDevice(), mesh.vertexBuffer, nullptr);

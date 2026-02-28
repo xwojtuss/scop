@@ -7,8 +7,8 @@
 namespace render {
 // One per frame
 struct alignas(16) FrameUBO {
-	glm::mat4 view;
-	glm::mat4 proj;
+	glm::mat4	view;
+	glm::mat4	proj;
 };
 
 /** One per draw/object
@@ -16,7 +16,13 @@ struct alignas(16) FrameUBO {
  * using 64 bytes of the 128 available
  */
 struct alignas(16) ObjectUBO {
-	glm::mat4 model;
+	glm::mat4	model;
+};
+
+struct alignas(16) TextUBO {
+	glm::vec2	position;
+	glm::vec2	size;
+	glm::vec4	color;
 };
 
 struct Vertex {
@@ -25,6 +31,16 @@ struct Vertex {
 	glm::vec2	texCoord;
 
 	bool	operator==(const Vertex& other) const {
+		return pos == other.pos && color == other.color && texCoord == other.texCoord;
+	}
+};
+
+struct Vertex2D {
+	glm::vec2	pos;
+	glm::vec3	color;
+	glm::vec2	texCoord;
+
+	bool	operator==(const Vertex2D& other) const {
 		return pos == other.pos && color == other.color && texCoord == other.texCoord;
 	}
 };

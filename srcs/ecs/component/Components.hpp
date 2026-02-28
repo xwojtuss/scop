@@ -23,6 +23,11 @@ struct Transform : public Component<Transform> {
 	glm::mat4	toModelMatrix() const;
 };
 
+struct Transform2D : public Component<Transform2D> {
+	glm::vec2	position;
+	glm::vec2	scale;
+};
+
 struct Velocity : public Component<Velocity> {
 	glm::vec3	velocity;
 	glm::vec3	desiredVelocity;
@@ -46,5 +51,9 @@ struct Mesh : public Component<Mesh> {
 struct Input : public Component<Input> {
 	render::input::InputCommand	command;
 	float						mouseSensitivity;
+};
+
+struct Color : public Component<Color> {
+	glm::vec4	color;
 };
 }

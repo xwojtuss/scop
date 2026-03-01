@@ -48,8 +48,8 @@ void	MovementSystem::onInput(const InputEvent& event) {
 
 		velocity->desiredVelocity = transform->forward() * input->command.moveForward + transform->right() * input->command.moveRight + glm::vec3(0,1,0) * input->command.moveUp;
 		if (input && transform->canRotate) {
-			float angleX = input->command.lookUp * input->mouseSensitivity * event.deltaTime;
-			float angleY = input->command.lookRight * input->mouseSensitivity * event.deltaTime;
+			float angleX = input->command.lookUp * input->mouseSensitivity;
+			float angleY = input->command.lookRight * input->mouseSensitivity;
 
 			float pitch = std::asin(glm::clamp(transform->forward().y, -1.0f, 1.0f));
 			float clampedDelta = glm::clamp(pitch + angleX, -input->command.maxPitch, input->command.maxPitch) - pitch;

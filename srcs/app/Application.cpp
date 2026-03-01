@@ -38,7 +38,7 @@ void	Application::init() {
 	velocity.velocity = glm::vec3(0.0f);
 	velocity.desiredVelocity = glm::vec3(0.0f);
 	cameraComponent.fov = 90.0f;
-	inputComponent.mouseSensitivity = 1.0f;
+	inputComponent.mouseSensitivity = 0.002f;
 	camera.addComponent(transform);
 	camera.addComponent(velocity);
 	camera.addComponent(cameraComponent);

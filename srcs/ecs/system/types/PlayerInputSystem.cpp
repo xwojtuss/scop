@@ -8,7 +8,7 @@ PlayerInputSystem::PlayerInputSystem(render::input::InputManager& inputManager) 
 }
 
 void	PlayerInputSystem::onSimulate(const SimulateEvent& event) {
-	render::input::InputCommand command = m_inputManager.buildCommand(event.deltaTime);
+	render::input::InputCommand command = m_inputManager.buildCommand();
 	ecs::InputEvent inputEvent{};
 
 	(void)event;

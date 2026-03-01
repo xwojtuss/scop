@@ -1,0 +1,51 @@
+#pragma once
+
+#include <fstream>
+#include <sstream>
+#include <random>
+#include <string>
+#include <functional>
+#include <stdexcept>
+#include <tiny_obj_loader.h>
+
+#include "IModelLoader.hpp"
+#include "Resources.hpp"
+#include "../render/GpuTypes.hpp"
+
+namespace assets {
+struct FaceIndex {
+	uint32_t vertexIndex;
+	uint32_t texCoordIndex;
+	uint32_t normalIndex;
+};
+class BasicObjLoader : public IModelLoader {
+private:
+	std::vector<glm::vec3>																	m_vertices;
+	std::vector<glm::vec3>																	m_normals;
+	std::vector<glm::vec2>																	m_textureCoordinates;
+	std::vector<uint32_t>																	m_indices;
+	std::vector<glm::vec<3, FaceIndex>>														m_faces;
+	std::unordered_map<std::string, std::function<void(std::stringstream&)>>	m_loaders;
+
+	void		loadVertex(std::stringstream& sstream);
+	void		loadFace(std::stringstream& sstream);
+	void		loadTextureCoordinates(std::stringstream& sstream);
+	void		loadVertexNormals(std::stringstream& sstream);
+	void		parseIndices(std::stringstream& sstream, FaceIndex& faceIndex);
+	void		createMeshData(MeshData& meshData);
+	
+	template <int N, typename T>
+	void		parse(std::stringstream& sstream, glm::vec<N, T>& vec, int requiredCount = N);
+	
+	static void	skip(std::stringstream& sstream);
+
+public:
+	BasicObjLoader();
+	virtual ~BasicObjLoader();
+
+	virtual MeshData	toMeshData(const char* path);
+	virtual MeshData	toMeshData(std::string path);
+};
+}
+
+#include "BasicObjLoader.tpp"

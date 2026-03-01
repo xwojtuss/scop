@@ -6,7 +6,8 @@ Application::Application() {
 	m_window = std::make_unique<platform::window::glfw::GLFWWindow>();
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer>(*m_window);
 	m_world = std::make_unique<ecs::World>();
-	m_modelLoader = std::make_unique<assets::TinyObjLoader>();
+	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
+	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();

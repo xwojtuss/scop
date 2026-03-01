@@ -9,6 +9,7 @@
 #include "../platform/window/glfw/GLFWWindow.hpp"
 #include "../render/vulkan/VulkanRenderer.hpp"
 #include "../assets/TinyObjLoader.hpp"
+#include "../assets/BasicObjLoader.hpp"
 #include "../assets/StbTextureLoader.hpp"
 #include "../ecs/entity/EntityHandle.hpp"
 #include "../ecs/system/types/CameraSystem.hpp"

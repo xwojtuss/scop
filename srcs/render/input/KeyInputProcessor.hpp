@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <unordered_map>
 
 #include "InputTypes.hpp"
 #include "../../platform/input/glfw/GLFWInput.hpp"

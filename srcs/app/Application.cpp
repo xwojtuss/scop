@@ -21,6 +21,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::TextRenderSystem>();
 	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
+	m_world->createSystem<ecs::FpsCounter>();
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
@@ -62,36 +63,21 @@ void	Application::init() {
 	renderableEntity.addComponent(meshComponent);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 
-	ecs::EntityHandle textEntity = m_world->createEntity();
-	ecs::component::Transform2D textTransform{};
-	ecs::component::Text textComponent{};
-
-	textTransform.position = glm::vec2(0.0f, 0.0f);
-	textTransform.scale = glm::vec2(0.08f, 0.16f);
-	textComponent.text = "Hehe centered text";
-	textComponent.horizontalAlignment = ecs::component::HAlignment::Center;
-	textComponent.verticalAlignment = ecs::component::VAlignment::Middle;
-	assets::TextureData fontTextureData = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
-	fontTextureData.pixelPerfect = true;
-	textComponent.font = m_renderer->createTexture(fontTextureData);
-	textEntity.addComponent(textTransform);
-	textEntity.addComponent(textComponent);
-	textEntity.registerToSystem<ecs::TextRenderSystem>();
-
-	ecs::EntityHandle textEntity2 = m_world->createEntity();
+	ecs::EntityHandle fpsCounter = m_world->createEntity();
 	ecs::component::Transform2D textTransform2{};
 	ecs::component::Text textComponent2{};
 	textTransform2.position = glm::vec2(-1.0f, -1.0f);
-	textTransform2.scale = glm::vec2(0.08f, 0.16f);
-	textComponent2.text = "Top left aligned text";
+	textTransform2.scale = glm::vec2(0.02f, 0.06f);
+	textComponent2.text = "";
 	textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
 	textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
 	assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
 	fontTextureData2.pixelPerfect = true;
 	textComponent2.font = m_renderer->createTexture(fontTextureData2);
-	textEntity2.addComponent(textTransform2);
-	textEntity2.addComponent(textComponent2);
-	textEntity2.registerToSystem<ecs::TextRenderSystem>();
+	fpsCounter.addComponent(textTransform2);
+	fpsCounter.addComponent(textComponent2);
+	fpsCounter.registerToSystem<ecs::TextRenderSystem>();
+	fpsCounter.registerToSystem<ecs::FpsCounter>();
 }
 
 void	Application::run() {
@@ -104,7 +90,7 @@ void	Application::run() {
 }
 
 void	Application::update() {
-	m_world->getSystemManager().onRender(m_window->getAspectRatio());
+	m_world->getSystemManager().onRender(m_window->getAspectRatio(), m_window->getTime());
 }
 
 void	Application::simulate() {

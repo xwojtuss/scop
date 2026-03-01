@@ -17,6 +17,7 @@
 #include "../ecs/system/types/RenderSystem.hpp"
 #include "../ecs/system/types/TextRenderSystem.hpp"
 #include "../ecs/system/types/WindowControlSystem.hpp"
+#include "../ecs/system/types/FpsCounter.hpp"
 #include "../ecs/component/Components.hpp"
 #include "../ecs/World.hpp"
 

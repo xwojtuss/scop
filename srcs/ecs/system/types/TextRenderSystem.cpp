@@ -20,7 +20,7 @@ void	TextRenderSystem::onTextDraw(const TextDrawEvent& event) {
 		component::Transform2D* transform = m_world->getComponentManager<component::Transform2D>().getComponent(entity);
 		component::Text* text = m_world->getComponentManager<component::Text>().getComponent(entity);
 
-		if (!transform || !text)
+		if (!transform || !text || text->text.empty())
 			continue;
 
 		const component::Color* color = m_world->getComponentManager<component::Color>().getComponent(entity);

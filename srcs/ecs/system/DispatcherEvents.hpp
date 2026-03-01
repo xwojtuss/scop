@@ -8,7 +8,8 @@ class IRenderer;
 
 namespace ecs {
 struct RenderEvent {
-	float				aspectRatio;
+	float	aspectRatio;
+	double	time;
 };
 
 struct TextDrawEvent {

@@ -75,7 +75,7 @@ VkPresentModeKHR	VulkanSwapchain::chooseSwapPresentMode(const std::vector<VkPres
 	for (std::vector<VkPresentModeKHR>::const_iterator it = availablePresentModes.begin();
 		it != availablePresentModes.end();
 		it++) {
-		if ((*it) == VK_PRESENT_MODE_MAILBOX_KHR) {
+		if ((*it) == (app::VSyncEnabled ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR)) {
 			return (*it);
 		}
 	}

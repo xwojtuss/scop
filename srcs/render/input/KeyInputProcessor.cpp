@@ -7,9 +7,10 @@ KeyInputProcessor::KeyInputProcessor() : m_bindings(), m_pressedEvents(0), m_rep
 
 void	KeyInputProcessor::processKey(int scancode, InputAction action, InputMods modifiers) {
 	Input input = createInput(scancode, modifiers);
-
+	Input singleInput = createInput(scancode, 0);
+	
 	auto it = m_bindings.find(input);
-	if (it == m_bindings.end()) 
+	if (it == m_bindings.end() && (it = m_bindings.find(singleInput)) == m_bindings.end())
 		return;
 	
 	InputEvent event = it->second;
@@ -28,9 +29,10 @@ void	KeyInputProcessor::getKeyEvents(InputEvents& pressedEvents, InputEvents& re
 
 void	KeyInputProcessor::processMouseButton(MouseButton button, InputAction action, InputMods modifiers) {
 	Input input = createMouseInput(button, modifiers);
+	Input singleInput = createMouseInput(button, 0);
 
 	auto it = m_bindings.find(input);
-	if (it == m_bindings.end()) 
+	if (it == m_bindings.end() && (it = m_bindings.find(singleInput)) == m_bindings.end())
 		return;
 
 	InputEvent event = it->second;

@@ -2,8 +2,12 @@
 
 using namespace ecs;
 
-void	SystemManager::onRender(float aspectRatio) {
-	m_dispatcher.emit<RenderEvent>(RenderEvent{aspectRatio});
+void	SystemManager::onRender(float aspectRatio, double time) {
+	m_dispatcher.emit<RenderEvent>(RenderEvent{aspectRatio, time});
+}
+
+void	SystemManager::onTextDraw(render::IRenderer& renderer) {
+	m_dispatcher.emit<TextDrawEvent>(TextDrawEvent{&renderer});
 }
 
 void	SystemManager::onRendererDraw(render::IRenderer& renderer) {

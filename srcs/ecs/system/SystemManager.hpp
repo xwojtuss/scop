@@ -21,7 +21,8 @@ public:
 	template <typename SystemType>
 	SystemType*	getSystem();
 	
-	void		onRender(float aspectRatio);
+	void		onRender(float aspectRatio, double time);
+	void		onTextDraw(render::IRenderer& renderer);
 	void		onRendererDraw(render::IRenderer& renderer);
 	void		onRendererFrame(render::IRenderer& renderer);
 	void		onSimulate(float deltaTime);

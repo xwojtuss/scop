@@ -2,7 +2,7 @@
 
 using namespace render::input;
 
-MouseInputProcessor::MouseInputProcessor(const float sensitivity) : m_sensitivity(sensitivity), m_lastMouseX(0.0), m_lastMouseY(0.0), m_accumulatedMouseX(0.0), m_accumulatedMouseY(0.0) {
+MouseInputProcessor::MouseInputProcessor() : m_lastMouseX(0.0), m_lastMouseY(0.0), m_accumulatedMouseX(0.0), m_accumulatedMouseY(0.0) {
 }
 
 void	MouseInputProcessor::processMouseMove(double xpos, double ypos) {
@@ -16,8 +16,8 @@ void	MouseInputProcessor::processMouseMove(double xpos, double ypos) {
 }
 
 void	MouseInputProcessor::getMouseDelta(double& deltaX, double& deltaY) {
-	deltaX = m_accumulatedMouseX * m_sensitivity;
-	deltaY = m_accumulatedMouseY * m_sensitivity;
+	deltaX = m_accumulatedMouseX;
+	deltaY = m_accumulatedMouseY;
 	m_accumulatedMouseX = 0.0;
 	m_accumulatedMouseY = 0.0;
 }

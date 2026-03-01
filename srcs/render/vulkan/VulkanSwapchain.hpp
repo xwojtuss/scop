@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.h>
 
 #include "../../platform/window/IWindow.hpp"
+#include "../../app/ApplicationInfo.hpp"
 
 namespace render::vulkan {
 

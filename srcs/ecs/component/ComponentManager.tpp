@@ -22,6 +22,19 @@ void	ComponentManager<ComponentType>::addComponent(const Entity& entity, const C
 }
 
 template <typename ComponentType>
+ComponentType*	ComponentManager<ComponentType>::getComponent(const Entity& entity) {
+	auto it = m_entityToComponentIndex.find(entity);
+	if (it == m_entityToComponentIndex.end())
+		return nullptr;
+	return &m_components[it->second];
+}
+
+template <typename ComponentType>
+bool	ComponentManager<ComponentType>::hasComponent(const Entity& entity) const {
+	return m_entityToComponentIndex.find(entity) != m_entityToComponentIndex.end();
+}
+
+template <typename ComponentType>
 void	ComponentManager<ComponentType>::removeComponent(const Entity& entity) {
 	auto it = m_entityToComponentIndex.find(entity);
 	if (it == m_entityToComponentIndex.end()) {

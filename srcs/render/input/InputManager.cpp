@@ -2,17 +2,17 @@
 
 using namespace render::input;
 
-InputManager::InputManager() : m_mouseProcessor(0.1f), m_keyInputProcessor() {
+InputManager::InputManager() : m_mouseProcessor(), m_keyInputProcessor() {
 }
 
-InputCommand	InputManager::buildCommand() {
+InputCommand	InputManager::buildCommand(float deltaTime) {
 	InputCommand command = {};
 
 	double deltaX, deltaY;
 	m_mouseProcessor.getMouseDelta(deltaX, deltaY);
 
-	command.lookRight += static_cast<float>(deltaX);
-	command.lookUp += static_cast<float>(deltaY);
+	command.lookRight += static_cast<float>(deltaX) * deltaTime;
+	command.lookUp += static_cast<float>(deltaY) * deltaTime;
 
 	InputEvents pressedEvents, repeatedEvents, releasedEvents, activeEvents;
 	m_keyInputProcessor.getKeyEvents(pressedEvents, repeatedEvents, releasedEvents, activeEvents);

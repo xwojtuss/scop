@@ -21,20 +21,12 @@ private:
 public:
 	ComponentManager();
 
-	void	addComponent(const Entity& entity, const ComponentType& component);
-	void	removeComponent(const Entity& entity);
-	ComponentType*	getComponent(const Entity& entity) {
-		auto it = m_entityToComponentIndex.find(entity);
-		if (it == m_entityToComponentIndex.end())
-			return nullptr;
-		return &m_components[it->second];
-	}
+	void				addComponent(const Entity& entity, const ComponentType& component);
+	void				removeComponent(const Entity& entity) override;
+	ComponentType*		getComponent(const Entity& entity);
+	bool				hasComponent(const Entity& entity) const override;
 
-	bool	hasComponent(const Entity& entity) const {
-		return m_entityToComponentIndex.find(entity) != m_entityToComponentIndex.end();
-	}
-
-	ComponentManager& operator=(const ComponentManager& other);
+	ComponentManager&	operator=(const ComponentManager& other);
 };
 }
 

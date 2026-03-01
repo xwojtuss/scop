@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -10,9 +11,9 @@
 
 namespace ecs::component {
 struct Transform : public Component<Transform> {
-	glm::vec3	position;
-	glm::quat	rotation;
-	glm::vec3	scale;
+	glm::vec3	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::quat	rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	glm::vec3	scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	bool		canRotate = true;
 
 	glm::vec3	forward() const;
@@ -21,6 +22,11 @@ struct Transform : public Component<Transform> {
 	glm::vec3	up() const;
 	glm::vec3	down() const;
 	glm::mat4	toModelMatrix() const;
+};
+
+struct Transform2D : public Component<Transform2D> {
+	glm::vec2	position;
+	glm::vec2	scale;
 };
 
 struct Velocity : public Component<Velocity> {
@@ -43,8 +49,32 @@ struct Mesh : public Component<Mesh> {
 	assets::TextureHandle	texture;
 };
 
+enum HAlignment {
+	Left,
+	Center,
+	Right
+};
+
+enum VAlignment {
+	Top = HAlignment::Left,
+	Middle = HAlignment::Center,
+	Bottom = HAlignment::Right
+};
+
+struct Text : public Component<Text> {
+	std::string				text;
+	assets::TextureHandle	font;
+	HAlignment				horizontalAlignment = HAlignment::Left;
+	VAlignment				verticalAlignment = VAlignment::Top;
+	bool					aligned = false;
+};
+
 struct Input : public Component<Input> {
 	render::input::InputCommand	command;
 	float						mouseSensitivity;
+};
+
+struct Color : public Component<Color> {
+	glm::vec4	color;
 };
 }

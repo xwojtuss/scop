@@ -5,14 +5,13 @@
 namespace render::input {
 class MouseInputProcessor {
 private:
-	float		m_sensitivity;
 	double		m_lastMouseX;
 	double		m_lastMouseY;
 	double		m_accumulatedMouseX;
 	double		m_accumulatedMouseY;
 
 public:
-	MouseInputProcessor(float sensitivity);
+	MouseInputProcessor();
 	~MouseInputProcessor();
 
 	void	processMouseMove(double xpos, double ypos);

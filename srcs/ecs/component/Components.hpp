@@ -49,9 +49,24 @@ struct Mesh : public Component<Mesh> {
 	assets::TextureHandle	texture;
 };
 
+enum HAlignment {
+	Left,
+	Center,
+	Right
+};
+
+enum VAlignment {
+	Top = HAlignment::Left,
+	Middle = HAlignment::Center,
+	Bottom = HAlignment::Right
+};
+
 struct Text : public Component<Text> {
 	std::string				text;
 	assets::TextureHandle	font;
+	HAlignment				horizontalAlignment = HAlignment::Left;
+	VAlignment				verticalAlignment = VAlignment::Top;
+	bool					aligned = false;
 };
 
 struct Input : public Component<Input> {

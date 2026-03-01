@@ -23,7 +23,7 @@ layout(location = 1) out vec2 fragTexCoord;
 void	main() {
 	vec2 quadPos = inPosition.xy * objectUbo.textScale + objectUbo.textPos + inCharIndex * vec2(objectUbo.textScale.x, 0.0);
 
-	gl_Position = ubo.proj * ubo.view * vec4(quadPos, 0.0, 1.0);
+	gl_Position = vec4(quadPos, 0.0, 1.0);
 	fragColor = inColor;
 	fragTexCoord = inInstanceTexCoord + inTexCoord;
 }

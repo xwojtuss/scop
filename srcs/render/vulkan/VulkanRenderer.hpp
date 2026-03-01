@@ -48,7 +48,7 @@ private:
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame);
 	void					cleanup();
 	void					createTextMesh();
-	void					copyTextToInstanceBuffer(const std::string& text);
+	void					copyTextToInstanceBuffer(const std::string& text, size_t offset);
 	
 public:
 	VulkanRenderer(platform::window::IWindow&);
@@ -62,7 +62,7 @@ public:
 	void						endFrame() override;
 	void						setClearColor(float r, float g, float b, float a) override;
 	void						drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) override;
-	void						drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, const ecs::component::Color* color = nullptr) override;
+	void						drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) override;
 	void						updateCamera(const component::Camera& camera) override;
 };
 }

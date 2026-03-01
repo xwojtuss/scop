@@ -429,10 +429,10 @@ void	VulkanRenderer::createTextMesh() {
 	assets::MeshData textMeshData{};
 
 	std::vector<render::Vertex> quadVertices = {
-		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f / fontBitMapHeight}},
-		{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 1.0f / fontBitMapHeight}},
-		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 0.0f}},
-		{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+		{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 0.0f}},
+		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f / fontBitMapWidth, 1.0f / fontBitMapHeight}},
+		{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f / fontBitMapHeight}},
 	};
 
 	std::vector<uint32_t> quadIndices = {
@@ -450,10 +450,13 @@ assets::TextureHandle	VulkanRenderer::createTexture(const assets::TextureData& t
 	return m_resourceManager->createTexture(textureData, *m_context, *m_frameData);
 }
 
-void	VulkanRenderer::copyTextToInstanceBuffer(const std::string& text) {
+void	VulkanRenderer::copyTextToInstanceBuffer(const std::string& text, size_t offset) {
 	void* mappedData = nullptr;
 	
-	vkMapMemory(m_context->getLogicalDevice(), m_instanceBufferMemory, 0, maxTextChars * sizeof(render::InstanceData), 0, &mappedData);
+	size_t bufferOffset = offset * sizeof(render::InstanceData);
+	size_t bufferSize = text.length() * sizeof(render::InstanceData);
+	
+	vkMapMemory(m_context->getLogicalDevice(), m_instanceBufferMemory, bufferOffset, bufferSize, 0, &mappedData);
 	
 	for (size_t i = 0; i < text.length(); ++i) {
 		short index = text[i] - ' ';
@@ -488,13 +491,17 @@ void	VulkanRenderer::drawMesh(const assets::MeshHandle& mesh, const assets::Text
 	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(m_resourceManager->getMesh(mesh).indexCount), 1, 0, 0, 0);
 }
 
-void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, const ecs::component::Color* color) {
+void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color) {
 	VkBuffer vertexBuffer = m_resourceManager->getMesh(m_textMeshHandle).vertexBuffer;
 	
-	copyTextToInstanceBuffer(text);
-	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 0, 1, &vertexBuffer, &offset);
-	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 1, 1, &m_instanceBuffer, &offset);
+	copyTextToInstanceBuffer(text, offset);
+
+	if (offset >= text.length()) return;
+
+	VkDeviceSize instanceBufferOffset = offset * sizeof(render::InstanceData);
+	VkDeviceSize vertexOffset = 0;
+	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 0, 1, &vertexBuffer, &vertexOffset);
+	vkCmdBindVertexBuffers(m_frameData->getCurrentCommandBuffer(), 1, 1, &m_instanceBuffer, &instanceBufferOffset);
 
 	vkCmdBindIndexBuffer(m_frameData->getCurrentCommandBuffer(), m_resourceManager->getMesh(m_textMeshHandle).indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 

@@ -7,6 +7,9 @@
 
 namespace ecs {
 class TextRenderSystem : public ASystem {
+private:
+	static void	alignText(component::Text& text, component::Transform2D& transform);
+
 public:
 	TextRenderSystem();
 

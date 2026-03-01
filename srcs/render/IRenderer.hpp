@@ -22,7 +22,7 @@ public:
 	virtual void					setClearColor(float r, float g, float b, float a) = 0;
 	virtual void					cleanup() = 0;
 	virtual void					drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) = 0;
-	virtual void					drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, const ecs::component::Color* color = nullptr) = 0;
+	virtual void					drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) = 0;
 	virtual void					updateCamera(const component::Camera& camera) = 0;
 };
 }

@@ -13,7 +13,5 @@ public:
 
 	TexturePipeline(VulkanContext& context, const VkExtent2D& extent, VkRenderPass renderPass, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = {});
 	~TexturePipeline() override;
-
-	inline void	onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) override;
 };
 }

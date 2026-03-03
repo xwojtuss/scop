@@ -44,7 +44,6 @@ public:
 	const VkViewport&		getViewport() const;
 	const VkRect2D&			getScissor() const;
 	void					cleanup(VkDevice device);
-	inline virtual void		onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) = 0;
 };
 }
 

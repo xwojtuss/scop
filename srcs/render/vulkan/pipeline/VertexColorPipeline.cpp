@@ -63,9 +63,5 @@ VertexColorPipeline::VertexColorPipeline(VulkanContext& context, const VkExtent2
 	APipeline::destroyShaderStages<shaderStageCount>(context.getLogicalDevice(), shaderStages);
 }
 
-void	VertexColorPipeline::onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) {
-	systemManager.onRendererDraw(renderer);
-}
-
 VertexColorPipeline::~VertexColorPipeline() {
 }

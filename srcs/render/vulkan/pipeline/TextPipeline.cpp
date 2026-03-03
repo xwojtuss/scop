@@ -72,9 +72,5 @@ TextPipeline::TextPipeline(VulkanContext& context, const VkExtent2D& extent, VkR
 	APipeline::destroyShaderStages<shaderStageCount>(context.getLogicalDevice(), shaderStages);
 }
 
-void	TextPipeline::onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) {
-	systemManager.onTextDraw(renderer);
-}
-
 TextPipeline::~TextPipeline() {
 }

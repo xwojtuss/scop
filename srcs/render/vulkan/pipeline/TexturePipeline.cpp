@@ -63,9 +63,5 @@ TexturePipeline::TexturePipeline(VulkanContext& context, const VkExtent2D& exten
 	APipeline::destroyShaderStages<shaderStageCount>(context.getLogicalDevice(), shaderStages);
 }
 
-void	TexturePipeline::onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) {
-	systemManager.onRendererDraw(renderer);
-}
-
 TexturePipeline::~TexturePipeline() {
 }

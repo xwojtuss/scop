@@ -23,7 +23,8 @@ struct TextureData {
 };
 
 enum class PipelineType {
-	Textured
+	Textured,
+	Text
 };
 
 struct MeshHandle {

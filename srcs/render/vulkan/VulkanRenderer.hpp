@@ -11,18 +11,13 @@
 #include "VulkanValidationLayers.hpp"
 #include "VulkanVertexUtils.hpp"
 #include "pipeline/TexturePipeline.hpp"
+#include "pipeline/TextPipeline.hpp"
 #include "../render/IRenderer.hpp"
 #include "../../platform/window/IWindow.hpp"
 #include "../../platform/filesystem/readFile.hpp"
 #include "../../ecs/system/SystemManager.hpp"
 
 namespace render::vulkan {
-
-constexpr const char*	fragShaderPath = "shaders/shader.frag.spv";
-constexpr const char*	vertShaderPath = "shaders/shader.vert.spv";
-constexpr const char*	textFragShaderPath = "shaders/fontShader.frag.spv";
-constexpr const char*	textVertShaderPath = "shaders/fontShader.vert.spv";
-
 const uint32_t	maxTextChars = 512;
 
 constexpr const int	fontBitMapWidth = 16;
@@ -34,8 +29,6 @@ private:
 	std::unique_ptr<VulkanSwapchain>										m_swapchain;
 	std::unique_ptr<VulkanResourceManager>									m_resourceManager;
 	std::unique_ptr<VulkanFrameData>										m_frameData;
-	VkPipelineLayout														m_textPipelineLayout;
-	VkPipeline																m_textPipeline;
 	std::optional<uint32_t>													m_frameIndex;
 	std::array<VkClearValue, 2>												m_clearValues;
 	assets::MeshHandle														m_textMeshHandle;
@@ -43,7 +36,6 @@ private:
 	VkBuffer																m_instanceBuffer;
 	VkDeviceMemory															m_instanceBufferMemory;
 
-	void					createTextPipeline();
 	void					createPipelines();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame);

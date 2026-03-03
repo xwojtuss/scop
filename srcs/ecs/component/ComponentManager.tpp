@@ -49,6 +49,27 @@ void	ComponentManager<ComponentType>::removeComponent(const Entity& entity) {
 }
 
 template <typename ComponentType>
+size_t	ComponentManager<ComponentType>::getComponentCount() const {
+	return m_componentCount;
+}
+
+template <typename ComponentType>
+Entity	ComponentManager<ComponentType>::getEntityAtIndex(size_t index) const {
+	if (index >= m_componentCount) {
+		throw std::runtime_error("Component index out of bounds");
+	}
+	return m_componentIndexToEntity[index];
+}
+
+template <typename ComponentType>
+ComponentType*	ComponentManager<ComponentType>::getComponentAtIndex(size_t index) {
+	if (index >= m_componentCount) {
+		throw std::runtime_error("Component index out of bounds");
+	}
+	return &m_components[index];
+}
+
+template <typename ComponentType>
 ComponentManager<ComponentType>&	ComponentManager<ComponentType>::operator=(const ComponentManager& other) {
 	if (this == &other)
 		return *this;

@@ -23,6 +23,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 	m_world->createSystem<ecs::FpsCounter>();
+	m_world->createSystem<ecs::ToggleShaderSystem>();
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
@@ -49,11 +50,12 @@ void	Application::init() {
 	camera.registerToSystem<ecs::PlayerInputSystem>();
 	camera.registerToSystem<ecs::CameraSystem>();
 	camera.registerToSystem<ecs::WindowControlSystem>();
+	camera.registerToSystem<ecs::ToggleShaderSystem>();
 
 	ecs::EntityHandle renderableEntity = m_world->createEntity();
 	ecs::component::Transform renderableTransform{};
 	ecs::component::Mesh meshComponent{};
-	// ecs::component::Texture meshTexture{};
+	ecs::component::Texture meshTexture{};
 
 	renderableTransform.position = scene::worldinfo::forward * 2.0f;
 	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -61,12 +63,12 @@ void	Application::init() {
 	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
-	// meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
-	meshComponent.pipelineType = assets::PipelineType::VertexColor;
+	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
+	meshComponent.pipelineType = assets::PipelineType::Textured;
 
 	renderableEntity.addComponent(renderableTransform);
 	renderableEntity.addComponent(meshComponent);
-	// renderableEntity.addComponent(meshTexture);
+	renderableEntity.addComponent(meshTexture);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 
 	ecs::EntityHandle fpsCounter = m_world->createEntity();

@@ -6,15 +6,15 @@ using namespace ecs;
 
 template <typename ComponentType>
 void	Dependencies::addDependency() {
-	mask.set(ComponentType::getId());
+	mask.set(Component<ComponentType>::getId());
 }
 
 template <typename ComponentType>
 void	Dependencies::removeDependency() {
-	mask.reset(ComponentType::getId());
+	mask.reset(Component<ComponentType>::getId());
 }
 
 template <typename ComponentType>
 bool	Dependencies::includes() const {
-	return mask.test(ComponentType::getId());
+	return mask.test(Component<ComponentType>::getId());
 }

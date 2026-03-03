@@ -34,29 +34,25 @@ void	APipeline::createShaderStages(VkDevice device, const char* vertPath, const 
 	fragShaderStageInfo.pName = "main";
 }
 
-VkRect2D	APipeline::createScissor(const VkExtent2D& extent) {
-	VkRect2D scissor{};
+void	APipeline::createScissor(const VkExtent2D& extent) {
+	m_scissor = {};
 
-	scissor.offset = {0, 0};
-	scissor.extent = extent;
-
-	return scissor;
+	m_scissor.offset = {0, 0};
+	m_scissor.extent = extent;
 }
 
-VkViewport	APipeline::createViewport(const VkExtent2D& extent) {
-	VkViewport viewport{};
+void	APipeline::createViewport(const VkExtent2D& extent) {
+	m_viewport = {};
 
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = (float) extent.width;
-	viewport.height = (float) extent.height;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-
-	return viewport;
+	m_viewport.x = 0.0f;
+	m_viewport.y = 0.0f;
+	m_viewport.width = (float) extent.width;
+	m_viewport.height = (float) extent.height;
+	m_viewport.minDepth = 0.0f;
+	m_viewport.maxDepth = 1.0f;
 }
 
-void	APipeline::createViewportState(VkPipelineViewportStateCreateInfo& viewportState, VkPipelineDynamicStateCreateInfo& dynamicState, VkViewport& viewport, const VkRect2D& scissor, const std::vector<VkDynamicState>& dynamicStates) {
+void	APipeline::createViewportState(VkPipelineViewportStateCreateInfo& viewportState, VkPipelineDynamicStateCreateInfo& dynamicState, const std::vector<VkDynamicState>& dynamicStates) {
 	dynamicState = {};
 	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
@@ -65,9 +61,9 @@ void	APipeline::createViewportState(VkPipelineViewportStateCreateInfo& viewportS
 	viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportState.viewportCount = 1;
-	viewportState.pViewports = &viewport;
+	viewportState.pViewports = &m_viewport;
 	viewportState.scissorCount = 1;
-	viewportState.pScissors = &scissor;
+	viewportState.pScissors = &m_scissor;
 	viewportState.pScissors = nullptr;
 }
 
@@ -178,6 +174,14 @@ const VkPipelineLayout&	APipeline::getPipelineLayout() const {
 
 const VkPipeline&	APipeline::getPipeline() const {
 	return m_pipeline;
+}
+
+const VkViewport&	APipeline::getViewport() const {
+	return m_viewport;
+}
+
+const VkRect2D&	APipeline::getScissor() const {
+	return m_scissor;
 }
 
 void	APipeline::cleanup(VkDevice device) {

@@ -62,12 +62,19 @@ enum VAlignment {
 	Bottom = HAlignment::Right
 };
 
-struct Text : public Component<Text> {
+struct Text : public Component<Text>, public Mesh {
 	std::string				text;
-	assets::TextureHandle	font;
 	HAlignment				horizontalAlignment = HAlignment::Left;
 	VAlignment				verticalAlignment = VAlignment::Top;
 	bool					aligned = false;
+
+	Text() = default;
+	Text(assets::MeshHandle textMeshHandle, const assets::TextureHandle& font) {
+		pipelineType = assets::PipelineType::Text;
+		mesh = textMeshHandle;
+		texture = font;
+		this->text = "";
+	}
 };
 
 struct Input : public Component<Input> {

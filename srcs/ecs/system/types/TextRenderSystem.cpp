@@ -28,7 +28,7 @@ void	TextRenderSystem::onTextDraw(const TextDrawEvent& event) {
 		if (!text->aligned)
 			alignText(*text, *transform);
 
-		event.renderer->drawText(text->text, text->font, *transform, offset, color);
+		event.renderer->drawText(*text, *transform, offset, color);
 		offset += text->text.length();
 	}
 }

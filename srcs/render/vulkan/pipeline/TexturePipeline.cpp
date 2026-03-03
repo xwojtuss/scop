@@ -9,13 +9,13 @@ TexturePipeline::TexturePipeline(VulkanContext& context, const VkExtent2D& exten
 	VkPipelineDynamicStateCreateInfo dynamicState;
 
 	APipeline::createShaderStages(context.getLogicalDevice(), vertShaderPath, fragShaderPath, shaderStages[0], shaderStages[1]);
-	VkViewport viewport = APipeline::createViewport(extent);
-	VkRect2D scissor = APipeline::createScissor(extent);
+	APipeline::createViewport(extent);
+	APipeline::createScissor(extent);
 	std::vector<VkDynamicState> dynamicStates = {
 		VK_DYNAMIC_STATE_VIEWPORT,
 		VK_DYNAMIC_STATE_SCISSOR
 	};
-	APipeline::createViewportState(viewportState, dynamicState, viewport, scissor, dynamicStates);
+	APipeline::createViewportState(viewportState, dynamicState, dynamicStates);
 
 	auto pipelineLayoutInfo = APipeline::createPipelineLayoutInfo(descriptorSetLayouts, createPushConstantRange<ObjectUBO>());
 
@@ -61,6 +61,10 @@ TexturePipeline::TexturePipeline(VulkanContext& context, const VkExtent2D& exten
 	}
 
 	APipeline::destroyShaderStages<shaderStageCount>(context.getLogicalDevice(), shaderStages);
+}
+
+void	TexturePipeline::onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) {
+	systemManager.onRendererDraw(renderer);
 }
 
 TexturePipeline::~TexturePipeline() {

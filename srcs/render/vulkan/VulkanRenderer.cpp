@@ -106,10 +106,7 @@ void	VulkanRenderer::drawMesh(const ecs::component::Mesh& mesh, const ecs::compo
 	const APipeline& pipeline = *m_pipelineHandles[mesh.pipelineType];
 	const GpuMesh& gpuMesh = m_resourceManager->getMesh(mesh.mesh);
 	const GpuTexture& texture = m_resourceManager->getTexture(mesh.texture);
-	VkPipeline graphicsPipeline = pipeline.getPipeline();
-	VkPipelineLayout pipelineLayout = pipeline.getPipelineLayout();
-	vkCmdBindPipeline(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, m_frameData->getDescriptorSet(m_frameData->getCurrentFrame()), 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipelineLayout(), 0, 1, m_frameData->getDescriptorSet(m_frameData->getCurrentFrame()), 0, nullptr);
 
 	VkBuffer vertexBuffer = gpuMesh.vertexBuffer;
 	VkDeviceSize offset = 0;
@@ -117,22 +114,24 @@ void	VulkanRenderer::drawMesh(const ecs::component::Mesh& mesh, const ecs::compo
 	
 	vkCmdBindIndexBuffer(m_frameData->getCurrentCommandBuffer(), gpuMesh.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &texture.descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipelineLayout(), 1, 1, &texture.descriptorSet, 0, nullptr);
 
 	// Push constants for object transform
 	ObjectUBO objectUbo{};
 	objectUbo.model = transform.toModelMatrix();
-	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
+	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), pipeline.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
 
 	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(gpuMesh.indexCount), 1, 0, 0, 0);
 }
 
-void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color) {
+void	VulkanRenderer::drawText(const ecs::component::Text& text, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color) {
+	const APipeline& pipeline = *m_pipelineHandles[text.pipelineType];
+	const GpuTexture& font = m_resourceManager->getTexture(text.texture);
 	VkBuffer vertexBuffer = m_resourceManager->getMesh(m_textMeshHandle).vertexBuffer;
 	
-	copyTextToInstanceBuffer(text, offset);
+	copyTextToInstanceBuffer(text.text, offset);
 
-	if (offset >= text.length()) return;
+	if (offset >= text.text.length()) return;
 
 	VkDeviceSize instanceBufferOffset = offset * sizeof(render::InstanceData);
 	VkDeviceSize vertexOffset = 0;
@@ -141,15 +140,15 @@ void	VulkanRenderer::drawText(const std::string& text, const assets::TextureHand
 
 	vkCmdBindIndexBuffer(m_frameData->getCurrentCommandBuffer(), m_resourceManager->getMesh(m_textMeshHandle).indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineHandles[assets::PipelineType::Text]->getPipelineLayout(), 1, 1, &m_resourceManager->getTexture(font).descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipelineLayout(), 1, 1, &font.descriptorSet, 0, nullptr);
 
 	TextUBO ubo{};
 	ubo.color = color ? color->color : glm::vec4(1.0f);
 	ubo.position = transform.position;
 	ubo.size = transform.scale;
-	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), m_pipelineHandles[assets::PipelineType::Text]->getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TextUBO), &ubo);
+	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), pipeline.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TextUBO), &ubo);
 
-	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), 6, text.length(), 0, 0, 0);
+	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), 6, text.text.length(), 0, 0, 0);
 }
 
 void	VulkanRenderer::updateCamera(const component::Camera& camera) {
@@ -188,31 +187,19 @@ void	VulkanRenderer::recordCurrentCommandBuffer(ecs::SystemManager& systemManage
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	VkViewport viewport{};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = static_cast<float>(m_swapchain->getExtent().width);
-	viewport.height = static_cast<float>(m_swapchain->getExtent().height);
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+	for (const auto& [_, pipeline] : m_pipelineHandles) {
+		vkCmdSetViewport(commandBuffer, 0, 1, &pipeline->getViewport());
+		vkCmdSetScissor(commandBuffer, 0, 1, &pipeline->getScissor());
 
-	VkRect2D scissor{};
-	scissor.offset = {0, 0};
-	scissor.extent = m_swapchain->getExtent();
-	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-	
-	systemManager.onRendererDraw(*this);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipeline());
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineHandles[assets::PipelineType::Text]->getPipeline());
-	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-	vkCmdBindDescriptorSets(m_frameData->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineHandles[assets::PipelineType::Text]->getPipelineLayout(), 0, 1, m_frameData->getDescriptorSet(currentFrame), 0, nullptr);
+		pipeline->onDraw(systemManager, *this);
 
-	systemManager.onTextDraw(*this);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getPipelineLayout(), 0, 1, m_frameData->getDescriptorSet(currentFrame), 0, nullptr);
+	}
 
-	vkCmdEndRenderPass(m_frameData->getCurrentCommandBuffer());
-	if (vkEndCommandBuffer(m_frameData->getCurrentCommandBuffer()) != VK_SUCCESS) {
+	vkCmdEndRenderPass(commandBuffer);
+	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }

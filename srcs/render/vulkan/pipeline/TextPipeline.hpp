@@ -13,5 +13,7 @@ public:
 
 	TextPipeline(VulkanContext& context, const VkExtent2D& extent, VkRenderPass renderPass, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts = {});
 	~TextPipeline() override;
+
+	inline void	onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) override;
 };
 }

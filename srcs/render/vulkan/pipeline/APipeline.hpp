@@ -5,21 +5,25 @@
 #include <stdexcept>
 
 #include "../VulkanVertexUtils.hpp"
+#include "../../IRenderer.hpp"
 #include "../../../platform/filesystem/readFile.hpp"
+#include "../../../ecs/system/SystemManager.hpp"
 
 namespace render::vulkan {
 class APipeline {
 protected:
 	VkPipelineLayout	m_pipelineLayout;
 	VkPipeline			m_pipeline;
+	VkViewport			m_viewport;
+	VkRect2D			m_scissor;
 
 	APipeline();
 	
 	static VkShaderModule							createShaderModule(const std::vector<char>& code, VkDevice device);
 	static void										createShaderStages(VkDevice device, const char* vertPath, const char* fragPath, VkPipelineShaderStageCreateInfo& vertShaderStageInfo, VkPipelineShaderStageCreateInfo& fragShaderStageInfo);
-	static VkRect2D									createScissor(const VkExtent2D& extent);
-	static VkViewport								createViewport(const VkExtent2D& extent);
-	static void										createViewportState(VkPipelineViewportStateCreateInfo& viewportState, VkPipelineDynamicStateCreateInfo& dynamicState, VkViewport& viewport, const VkRect2D& scissor, const std::vector<VkDynamicState>& dynamicStates);
+	void											createScissor(const VkExtent2D& extent);
+	void											createViewport(const VkExtent2D& extent);
+	void											createViewportState(VkPipelineViewportStateCreateInfo& viewportState, VkPipelineDynamicStateCreateInfo& dynamicState, const std::vector<VkDynamicState>& dynamicStates);
 	static VkPipelineInputAssemblyStateCreateInfo	createInputAssemblyState();
 	static VkPipelineRasterizationStateCreateInfo	createRasterizationState();
 	static VkPipelineMultisampleStateCreateInfo		createMultisampleState(VkSampleCountFlagBits msaaSamples);
@@ -37,7 +41,10 @@ public:
 
 	const VkPipelineLayout&	getPipelineLayout() const;
 	const VkPipeline&		getPipeline() const;
+	const VkViewport&		getViewport() const;
+	const VkRect2D&			getScissor() const;
 	void					cleanup(VkDevice device);
+	inline virtual void		onDraw(ecs::SystemManager& systemManager, render::IRenderer& renderer) = 0;
 };
 }
 

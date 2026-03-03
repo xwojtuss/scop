@@ -69,15 +69,14 @@ void	Application::init() {
 
 	ecs::EntityHandle fpsCounter = m_world->createEntity();
 	ecs::component::Transform2D textTransform2{};
-	ecs::component::Text textComponent2{};
+	assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
+	ecs::component::Text textComponent2(m_renderer->getTextMeshHandle(), m_renderer->createTexture(fontTextureData2));
+	textComponent2.text = "FPS: 0";
 	textTransform2.position = glm::vec2(-1.0f, -1.0f);
 	textTransform2.scale = glm::vec2(0.02f, 0.06f);
-	textComponent2.text = "";
 	textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
 	textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
-	assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
 	fontTextureData2.pixelPerfect = true;
-	textComponent2.font = m_renderer->createTexture(fontTextureData2);
 	fpsCounter.addComponent(textTransform2);
 	fpsCounter.addComponent(textComponent2);
 	fpsCounter.registerToSystem<ecs::TextRenderSystem>();

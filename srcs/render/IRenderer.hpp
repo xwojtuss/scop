@@ -22,8 +22,8 @@ public:
 	virtual void						endFrame() = 0;
 	virtual void						setClearColor(float r, float g, float b, float a) = 0;
 	virtual void						cleanup() = 0;
-	virtual void						drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Transform& transform) = 0;
-	virtual void						drawText(const ecs::component::Text& text, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) = 0;
+	virtual void						drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Texture* texture, const ecs::component::Transform& transform) = 0;
+	virtual void						drawText(const ecs::component::Text& text, const ecs::component::Texture* texture, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) = 0;
 	virtual void						updateCamera(const component::Camera& camera) = 0;
 };
 }

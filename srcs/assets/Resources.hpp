@@ -24,6 +24,7 @@ struct TextureData {
 
 enum class PipelineType {
 	Textured,
+	VertexColor,
 	Text
 };
 

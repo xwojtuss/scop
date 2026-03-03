@@ -46,8 +46,11 @@ struct Camera : public Component<Camera> {
 
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
-	assets::TextureHandle	texture;
 	assets::PipelineType	pipelineType;
+};
+
+struct Texture : public Component<Texture> {
+	assets::TextureHandle	texture;
 };
 
 enum HAlignment {
@@ -69,10 +72,9 @@ struct Text : public Component<Text>, public Mesh {
 	bool					aligned = false;
 
 	Text() = default;
-	Text(assets::MeshHandle textMeshHandle, const assets::TextureHandle& font) {
+	Text(assets::MeshHandle textMeshHandle) {
 		pipelineType = assets::PipelineType::Text;
 		mesh = textMeshHandle;
-		texture = font;
 		this->text = "";
 	}
 };

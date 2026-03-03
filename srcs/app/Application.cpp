@@ -53,6 +53,7 @@ void	Application::init() {
 	ecs::EntityHandle renderableEntity = m_world->createEntity();
 	ecs::component::Transform renderableTransform{};
 	ecs::component::Mesh meshComponent{};
+	// ecs::component::Texture meshTexture{};
 
 	renderableTransform.position = scene::worldinfo::forward * 2.0f;
 	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -60,17 +61,20 @@ void	Application::init() {
 	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
-	meshComponent.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
-	meshComponent.pipelineType = assets::PipelineType::Textured;
+	// meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
+	meshComponent.pipelineType = assets::PipelineType::VertexColor;
 
 	renderableEntity.addComponent(renderableTransform);
 	renderableEntity.addComponent(meshComponent);
+	// renderableEntity.addComponent(meshTexture);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 
 	ecs::EntityHandle fpsCounter = m_world->createEntity();
 	ecs::component::Transform2D textTransform2{};
 	assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
-	ecs::component::Text textComponent2(m_renderer->getTextMeshHandle(), m_renderer->createTexture(fontTextureData2));
+	ecs::component::Texture textTexture2{};
+	textTexture2.texture = m_renderer->createTexture(fontTextureData2);
+	ecs::component::Text textComponent2(m_renderer->getTextMeshHandle());
 	textComponent2.text = "FPS: 0";
 	textTransform2.position = glm::vec2(-1.0f, -1.0f);
 	textTransform2.scale = glm::vec2(0.02f, 0.06f);
@@ -79,12 +83,14 @@ void	Application::init() {
 	fontTextureData2.pixelPerfect = true;
 	fpsCounter.addComponent(textTransform2);
 	fpsCounter.addComponent(textComponent2);
+	fpsCounter.addComponent(textTexture2);
 	fpsCounter.registerToSystem<ecs::TextRenderSystem>();
 	fpsCounter.registerToSystem<ecs::FpsCounter>();
 
 	ecs::EntityHandle floor = m_world->createEntity();
 	ecs::component::Transform floorTransform{};
 	ecs::component::Mesh floorMesh{};
+	ecs::component::Texture floorTexture{};
 	float floorSize = 100.0f;
 	floorTransform.position = glm::vec3(-floorSize / 2.0f, -5.0f, floorSize / 2.0f);
 	floorTransform.scale = glm::vec3(floorSize, floorSize, 1.0f);
@@ -103,10 +109,11 @@ void	Application::init() {
 		2, 3, 0
 	};
 	floorMesh.mesh = m_renderer->createMesh(floorMeshData);
-	floorMesh.texture = m_renderer->createTexture(floorTextureData);
+	floorTexture.texture = m_renderer->createTexture(floorTextureData);
 	floorMesh.pipelineType = assets::PipelineType::Textured;
 	floor.addComponent(floorTransform);
 	floor.addComponent(floorMesh);
+	floor.addComponent(floorTexture);
 	floor.registerToSystem<ecs::RenderSystem>();
 }
 

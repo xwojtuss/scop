@@ -16,12 +16,13 @@ BasicObjLoader::BasicObjLoader() {
 	m_loaders["vp"] = skip;
 	m_loaders["mtllib"] = skip;
 	m_loaders["usemtl"] = skip;
+	m_loaders["\n"] = skip;
 }
 
 MeshData	BasicObjLoader::toMeshData(std::string path) {
 	return toMeshData(path.c_str());
 }
-
+#include <iostream>
 MeshData	BasicObjLoader::toMeshData(const char* path) {
 	std::ifstream file(path);
 	MeshData meshData;
@@ -38,7 +39,7 @@ MeshData	BasicObjLoader::toMeshData(const char* path) {
 		auto it = m_loaders.find(prefix);
 		if (it == m_loaders.end())
 			throw std::runtime_error("Unsupported line prefix: " + prefix);
-		if (sstream.get() != ' ')
+		if (!sstream.eof() && sstream.get() != ' ')
 			throw std::runtime_error("Expected space after line prefix: " + prefix);
 		it->second(sstream);
 	}
@@ -78,14 +79,24 @@ void	BasicObjLoader::loadVertex(std::stringstream& sstream) {
 }
 
 void	BasicObjLoader::loadFace(std::stringstream& sstream) {
-	glm::vec<3, FaceIndex> face;
+	glm::vec<4, FaceIndex> face;
+	int i = 0;
 
-	for (int i = 0; i < 3; i++) {
+	for (i = 0; i < 4; i++) {
+		if (sstream.eof() || sstream.peek() == '\n') {
+			if (i >= 3)
+				break;
+			else
+				throw std::runtime_error("Faces must have at least 3 vertices");
+		}
 		parseIndices(sstream, face[i]);
 		if (face[i].vertexIndex <= 0)
 			throw std::runtime_error("Vertex indices in faces must be greater than 0");
 	}
-	m_faces.push_back(face);
+	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[1], face[2]});
+	if (i == 3)
+		return;
+	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[2], face[3]});
 }
 
 void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceIndex) {
@@ -101,7 +112,7 @@ void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceInd
 
 	if (indicesStream.fail())
 		throw std::runtime_error("Failed to parse vertex index in face");
-	if (indicesStream.peek() == ' ')
+	if (indicesStream.peek() == ' ' || indicesStream.eof())
 		return;
 	if (indicesStream.peek() != '/')
 		throw std::runtime_error("Expected '/' after vertex index in face");
@@ -112,7 +123,7 @@ void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceInd
 		indicesStream >> faceIndex.texCoordIndex;
 		if (indicesStream.fail())
 			throw std::runtime_error("Failed to parse texture coordinate index in face");
-		if (indicesStream.peek() == ' ')
+		if (indicesStream.peek() == ' ' || indicesStream.eof())
 			return;
 		if (indicesStream.peek() != '/')
 			throw std::runtime_error("Expected '/' after texture coordinate index in face");

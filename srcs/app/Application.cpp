@@ -62,7 +62,8 @@ void	Application::init() {
 	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
 	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
+	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
+	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/teapot2.obj"));
 	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
 	meshComponent.pipelineType = assets::PipelineType::Textured;
 

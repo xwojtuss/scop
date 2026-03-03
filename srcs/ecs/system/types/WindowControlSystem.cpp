@@ -6,7 +6,7 @@ using namespace ecs;
 WindowControlSystem::WindowControlSystem(platform::window::IWindow& window) : ASystem(Dependencies()), m_window(window) {
 	m_dependencies.addDependency<component::Input>();
 }
-#include <iostream>
+
 void	WindowControlSystem::onInput(const InputEvent& event) {
 	(void)event;
 

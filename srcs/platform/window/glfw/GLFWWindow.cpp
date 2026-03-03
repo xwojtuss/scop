@@ -49,7 +49,6 @@ void	GLFWWindow::framebufferResizeCallback(GLFWwindow* rawWindow, int width, int
 
 	(void)width;
 	(void)height;
-	m_window->setMouseCursorPositionToCenter();
 }
 
 uint32_t	GLFWWindow::getWidth() const {

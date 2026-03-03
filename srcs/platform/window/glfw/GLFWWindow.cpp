@@ -14,6 +14,7 @@ GLFWWindow::GLFWWindow() {
 		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 	setMouseCursorVisible(false);
+	setMouseCursorPositionToCenter();
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_FALSE);
 
 	glfwSetCursorPosCallback(m_window, cursorPositionCallback);

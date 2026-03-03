@@ -123,19 +123,23 @@ void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceInd
 
 void	BasicObjLoader::createMeshData(MeshData& meshData) {
 	render::Vertex vertex;
+	glm::vec3 color(0.0f);
+	glm::vec3 colorJump = glm::vec3(0.1f);
 
 	try {
 		for (const auto& face : m_faces) {
+			color += colorJump;
 			for (int i = 0; i < 3; i++) {
 				vertex.pos = m_vertices[face[i].vertexIndex - 1];
 				if (face[i].texCoordIndex > 0 && face[i].texCoordIndex <= m_textureCoordinates.size())
 					vertex.texCoord = m_textureCoordinates[face[i].texCoordIndex - 1];
 				else
 					vertex.texCoord = glm::vec2(0.0f);
-				vertex.color = glm::vec3(std::rand() / static_cast<float>(RAND_MAX), std::rand() / static_cast<float>(RAND_MAX), std::rand() / static_cast<float>(RAND_MAX));
+				vertex.color = color;
 				meshData.vertices.push_back(vertex);
 				meshData.indices.push_back(static_cast<uint32_t>(meshData.vertices.size() - 1));
 			}
+			if (color.x >= 0.99f) color = glm::vec3(0.0f);
 		}
 	} catch(const std::exception& e) {
 		throw std::runtime_error("Error creating mesh data: " + std::string(e.what()));

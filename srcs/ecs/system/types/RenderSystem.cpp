@@ -16,7 +16,7 @@ void	RenderSystem::onRendererDraw(const RendererDrawEvent& event) {
 		if (!transform || !mesh)
 			continue;
 
-		event.renderer->drawMesh(mesh->mesh, mesh->texture, *transform);
+		event.renderer->drawMesh(*mesh, *transform);
 	}
 }
 

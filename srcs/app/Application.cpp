@@ -61,6 +61,7 @@ void	Application::init() {
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
 	meshComponent.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
+	meshComponent.pipelineType = assets::PipelineType::Textured;
 
 	renderableEntity.addComponent(renderableTransform);
 	renderableEntity.addComponent(meshComponent);
@@ -104,6 +105,7 @@ void	Application::init() {
 	};
 	floorMesh.mesh = m_renderer->createMesh(floorMeshData);
 	floorMesh.texture = m_renderer->createTexture(floorTextureData);
+	floorMesh.pipelineType = assets::PipelineType::Textured;
 	floor.addComponent(floorTransform);
 	floor.addComponent(floorMesh);
 	floor.registerToSystem<ecs::RenderSystem>();

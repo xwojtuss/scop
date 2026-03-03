@@ -47,6 +47,7 @@ struct Camera : public Component<Camera> {
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
 	assets::TextureHandle	texture;
+	assets::PipelineType	pipelineType;
 };
 
 enum HAlignment {

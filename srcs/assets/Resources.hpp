@@ -22,6 +22,10 @@ struct TextureData {
 	std::function<void(void*)>	freePixels;
 };
 
+enum class PipelineType {
+	Textured
+};
+
 struct MeshHandle {
 	static uint64_t	nextId;
 	uint64_t		id;

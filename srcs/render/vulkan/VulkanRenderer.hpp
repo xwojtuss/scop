@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <memory>
+#include <unordered_map>
 
 #include "VulkanContext.hpp"
 #include "VulkanSwapchain.hpp"
@@ -9,6 +10,7 @@
 #include "VulkanFrameData.hpp"
 #include "VulkanValidationLayers.hpp"
 #include "VulkanVertexUtils.hpp"
+#include "pipeline/TexturePipeline.hpp"
 #include "../render/IRenderer.hpp"
 #include "../../platform/window/IWindow.hpp"
 #include "../../platform/filesystem/readFile.hpp"
@@ -28,25 +30,25 @@ constexpr const int	fontBitMapHeight = 8;
 
 class VulkanRenderer : public render::IRenderer {
 private:
-	std::unique_ptr<VulkanContext>			m_context;
-	std::unique_ptr<VulkanSwapchain>		m_swapchain;
-	std::unique_ptr<VulkanResourceManager>	m_resourceManager;
-	std::unique_ptr<VulkanFrameData>		m_frameData;
-	VkPipelineLayout						m_pipelineLayout;
-	VkPipelineLayout						m_textPipelineLayout;
-	VkPipeline								m_graphicsPipeline;
-	VkPipeline								m_textPipeline;
-	std::optional<uint32_t>					m_frameIndex;
-	std::array<VkClearValue, 2>				m_clearValues;
-	assets::MeshHandle						m_textMeshHandle;
-	VkBuffer								m_instanceBuffer;
-	VkDeviceMemory							m_instanceBufferMemory;
+	std::unique_ptr<VulkanContext>											m_context;
+	std::unique_ptr<VulkanSwapchain>										m_swapchain;
+	std::unique_ptr<VulkanResourceManager>									m_resourceManager;
+	std::unique_ptr<VulkanFrameData>										m_frameData;
+	VkPipelineLayout														m_textPipelineLayout;
+	VkPipeline																m_textPipeline;
+	std::optional<uint32_t>													m_frameIndex;
+	std::array<VkClearValue, 2>												m_clearValues;
+	assets::MeshHandle														m_textMeshHandle;
+	std::unordered_map<assets::PipelineType, std::unique_ptr<APipeline>>	m_pipelineHandles;
+	VkBuffer																m_instanceBuffer;
+	VkDeviceMemory															m_instanceBufferMemory;
 
-	void					createPipeline();
 	void					createTextPipeline();
+	void					createPipelines();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager, uint32_t currentFrame);
 	void					cleanup();
+	void					cleanupPipelines();
 	void					createTextMesh();
 	void					copyTextToInstanceBuffer(const std::string& text, size_t offset);
 	
@@ -61,7 +63,7 @@ public:
 	void						render(ecs::SystemManager& systemManager) override;
 	void						endFrame() override;
 	void						setClearColor(float r, float g, float b, float a) override;
-	void						drawMesh(const assets::MeshHandle& mesh, const assets::TextureHandle& texture, const ecs::component::Transform& transform) override;
+	void						drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Transform& transform) override;
 	void						drawText(const std::string& text, const assets::TextureHandle& font, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) override;
 	void						updateCamera(const component::Camera& camera) override;
 };

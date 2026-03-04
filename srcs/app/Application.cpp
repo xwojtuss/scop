@@ -57,14 +57,14 @@ void	Application::init() {
 	ecs::component::Mesh meshComponent{};
 	ecs::component::Texture meshTexture{};
 
-	renderableTransform.position = scene::worldinfo::forward * 2.0f;
+	renderableTransform.position = scene::worldinfo::forward * 3.0f;
+	renderableTransform.position.x += 1.2f;
 	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
-	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
+	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::down);
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
-	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/teapot2.obj"));
-	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/room.png"));
+	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
+	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/medival.jpg"));
 	meshComponent.pipelineType = assets::PipelineType::Textured;
 
 	renderableEntity.addComponent(renderableTransform);
@@ -95,9 +95,10 @@ void	Application::init() {
 	ecs::component::Mesh floorMesh{};
 	ecs::component::Texture floorTexture{};
 	float floorSize = 100.0f;
-	floorTransform.position = glm::vec3(-floorSize / 2.0f, -5.0f, floorSize / 2.0f);
+	floorTransform.position = glm::vec3(floorSize / 2.0f, -5.0f, -floorSize / 2.0f);
 	floorTransform.scale = glm::vec3(floorSize, floorSize, 1.0f);
 	floorTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
 	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
 	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/flower.jpg");
 	assets::MeshData floorMeshData;

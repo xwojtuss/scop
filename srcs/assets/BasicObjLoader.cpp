@@ -39,6 +39,8 @@ glm::vec2	BasicObjLoader::mapUV(const glm::vec3& pos, const glm::vec3& normal, f
 		uv.y = -uv.y;
 	if (nz < 0.0f)
 		uv = -uv;
+	
+	uv.y *= -1.0f;
 
 	return uv;
 }

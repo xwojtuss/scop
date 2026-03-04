@@ -1,5 +1,5 @@
 COMPILER := c++
-SHADER_COMPILER := glslc
+SHADER_COMPILER := glslangValidator -V
 FLAGS := -Wall -Wextra -Werror -std=c++17 -O0 -g
 LINKFLAGS := -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
 

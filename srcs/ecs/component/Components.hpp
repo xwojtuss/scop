@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -46,6 +47,10 @@ struct Camera : public Component<Camera> {
 
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
+	assets::PipelineType	pipelineType;
+};
+
+struct Texture : public Component<Texture> {
 	assets::TextureHandle	texture;
 };
 
@@ -61,12 +66,18 @@ enum VAlignment {
 	Bottom = HAlignment::Right
 };
 
-struct Text : public Component<Text> {
+struct Text : public Component<Text>, public Mesh {
 	std::string				text;
-	assets::TextureHandle	font;
 	HAlignment				horizontalAlignment = HAlignment::Left;
 	VAlignment				verticalAlignment = VAlignment::Top;
 	bool					aligned = false;
+
+	Text() = default;
+	Text(assets::MeshHandle textMeshHandle) {
+		pipelineType = assets::PipelineType::Text;
+		mesh = textMeshHandle;
+		this->text = "";
+	}
 };
 
 struct Input : public Component<Input> {
@@ -76,5 +87,20 @@ struct Input : public Component<Input> {
 
 struct Color : public Component<Color> {
 	glm::vec4	color;
+};
+
+enum AnimationType {
+	Spin,
+	Bounce,
+	Jitter,
+	Random,
+	Circle,
+	Pulse
+};
+
+struct Animation : public Component<Animation> {
+	float			speed = 1.0f;
+	float			intensity = 1.0f;
+	AnimationType	type;
 };
 }

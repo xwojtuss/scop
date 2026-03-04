@@ -11,6 +11,8 @@ namespace assets {
 struct MeshData {
 	std::vector<render::Vertex>	vertices;
 	std::vector<uint32_t>		indices;
+
+	void	scaleTextureCoordinates(float scale);
 };
 
 struct TextureData {
@@ -20,6 +22,12 @@ struct TextureData {
 	void*		pixels;
 	bool		pixelPerfect = false;
 	std::function<void(void*)>	freePixels;
+};
+
+enum class PipelineType {
+	Textured,
+	VertexColor,
+	Text
 };
 
 struct MeshHandle {

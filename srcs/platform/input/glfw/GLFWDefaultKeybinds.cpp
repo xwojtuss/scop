@@ -12,6 +12,7 @@ render::input::InputEventBindings GLFWDefaultKeybinds::getDefaultBindings() {
 	bindings[render::input::createInput(glfwGetKeyScancode(GLFW_KEY_SPACE), 0)] = render::input::InputEvent::Jump;
 	bindings[render::input::createInput(glfwGetKeyScancode(GLFW_KEY_LEFT_CONTROL), 0)] = render::input::InputEvent::Crouch;
 	bindings[render::input::createInput(glfwGetKeyScancode(GLFW_KEY_ESCAPE), 0)] = render::input::InputEvent::ToggleCursor;
+	bindings[render::input::createInput(glfwGetKeyScancode(GLFW_KEY_F), 0)] = render::input::InputEvent::ToggleShader;
 
 	bindings[render::input::createMouseInput(render::input::MouseButton::LeftButton, 0)] = render::input::InputEvent::SecondaryButton;
 	bindings[render::input::createMouseInput(render::input::MouseButton::RightButton, 0)] = render::input::InputEvent::ActionButton;

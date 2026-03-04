@@ -2,10 +2,17 @@
 
 using namespace render::input;
 
-MouseInputProcessor::MouseInputProcessor() : m_lastMouseX(0.0), m_lastMouseY(0.0), m_accumulatedMouseX(0.0), m_accumulatedMouseY(0.0) {
+MouseInputProcessor::MouseInputProcessor() : m_hasLastMousePosition(false), m_lastMouseX(0.0), m_lastMouseY(0.0), m_accumulatedMouseX(0.0), m_accumulatedMouseY(0.0) {
 }
 
 void	MouseInputProcessor::processMouseMove(double xpos, double ypos) {
+	if (!m_hasLastMousePosition) {
+		m_lastMouseX = xpos;
+		m_lastMouseY = ypos;
+		m_hasLastMousePosition = true;
+		return;
+	}
+
 	const double deltaX = xpos - m_lastMouseX;
 	const double deltaY = ypos - m_lastMouseY;
 

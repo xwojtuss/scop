@@ -2,6 +2,8 @@
 
 #include <bitset>
 
+#include "../component/Component.hpp"
+
 namespace ecs {
 typedef std::bitset<32>	DependencyMask;
 

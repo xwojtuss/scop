@@ -5,6 +5,7 @@
 namespace render::input {
 class MouseInputProcessor {
 private:
+	bool		m_hasLastMousePosition;
 	double		m_lastMouseX;
 	double		m_lastMouseY;
 	double		m_accumulatedMouseX;

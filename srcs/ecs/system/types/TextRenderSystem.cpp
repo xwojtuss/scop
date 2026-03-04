@@ -24,11 +24,12 @@ void	TextRenderSystem::onTextDraw(const TextDrawEvent& event) {
 			continue;
 
 		const component::Color* color = m_world->getComponentManager<component::Color>().getComponent(entity);
+		const component::Texture* texture = m_world->getComponentManager<component::Texture>().getComponent(entity);
 
 		if (!text->aligned)
 			alignText(*text, *transform);
 
-		event.renderer->drawText(text->text, text->font, *transform, offset, color);
+		event.renderer->drawText(*text, texture, *transform, offset, color);
 		offset += text->text.length();
 	}
 }

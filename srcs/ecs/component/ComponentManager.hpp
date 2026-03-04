@@ -25,6 +25,9 @@ public:
 	void				removeComponent(const Entity& entity) override;
 	ComponentType*		getComponent(const Entity& entity);
 	bool				hasComponent(const Entity& entity) const override;
+	size_t				getComponentCount() const;
+	Entity				getEntityAtIndex(size_t index) const;
+	ComponentType*		getComponentAtIndex(size_t index);
 
 	ComponentManager&	operator=(const ComponentManager& other);
 };

@@ -5,6 +5,7 @@
 
 #include "component/IComponentManager.hpp"
 #include "component/ComponentManager.hpp"
+#include "component/Component.hpp"
 #include "entity/EntityManager.hpp"
 #include "system/SystemManager.hpp"
 

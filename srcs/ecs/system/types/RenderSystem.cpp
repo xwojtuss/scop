@@ -12,11 +12,12 @@ void	RenderSystem::onRendererDraw(const RendererDrawEvent& event) {
 	for (const Entity& entity : m_entities) {
 		const component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(entity);
 		const component::Mesh* mesh = m_world->getComponentManager<component::Mesh>().getComponent(entity);
+		const component::Texture* texture = m_world->getComponentManager<component::Texture>().getComponent(entity);
 
 		if (!transform || !mesh)
 			continue;
 
-		event.renderer->drawMesh(mesh->mesh, mesh->texture, *transform);
+		event.renderer->drawMesh(*mesh, texture, *transform);
 	}
 }
 

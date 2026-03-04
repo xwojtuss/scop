@@ -6,7 +6,7 @@ using namespace ecs;
 
 template <typename ComponentType>
 ComponentManager<ComponentType>&	World::getComponentManager() {
-	int componentId = ComponentType::getId();
+	int componentId = Component<ComponentType>::getId();
 	
 	if (m_componentManagers.find(componentId) == m_componentManagers.end()) {
 		m_componentManagers[componentId] = std::make_unique<ComponentManager<ComponentType>>();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 #include "../ASystem.hpp"
 #include "../DispatcherEvents.hpp"
 #include "../../component/Components.hpp"

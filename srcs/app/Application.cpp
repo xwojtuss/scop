@@ -77,6 +77,26 @@ void	Application::init() {
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 	renderableEntity.registerToSystem<ecs::SimpleAnimationSystem>();
 
+	ecs::EntityHandle jumpscare = m_world->createEntity();
+	ecs::component::Transform jumpscareTransform{};
+	ecs::component::Animation jumpscareAnimation{};
+	ecs::component::Texture jumpscareTexture{};
+	jumpscareTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/glass.ppm"));
+	jumpscareAnimation.type = component::AnimationType::Pulse;
+	jumpscareAnimation.intensity = 5.0f;
+	jumpscareAnimation.speed = 5.0f;
+	jumpscareTransform.position = scene::worldinfo::backward * 10.0f;
+	jumpscareTransform.position.y = 7.0f;
+	jumpscareTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	jumpscareTransform.rotation = glm::rotate(jumpscareTransform.rotation, glm::radians(90.0f), scene::worldinfo::up);
+	jumpscareTransform.scale = glm::vec3(10.0f, 10.0f, 10.0f);
+	jumpscare.addComponent(jumpscareTransform);
+	jumpscare.addComponent(meshComponent);
+	jumpscare.addComponent(jumpscareTexture);
+	jumpscare.addComponent(jumpscareAnimation);
+	jumpscare.registerToSystem<ecs::RenderSystem>();
+	jumpscare.registerToSystem<ecs::SimpleAnimationSystem>();
+
 	// ecs::EntityHandle fpsCounter = m_world->createEntity();
 	// ecs::component::Transform2D textTransform2{};
 	// assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");

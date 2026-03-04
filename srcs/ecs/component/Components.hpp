@@ -94,11 +94,13 @@ enum AnimationType {
 	Bounce,
 	Jitter,
 	Random,
-	Circle
+	Circle,
+	Pulse
 };
 
 struct Animation : public Component<Animation> {
 	float			speed = 1.0f;
+	float			intensity = 1.0f;
 	AnimationType	type;
 };
 }

@@ -21,6 +21,7 @@
 #include "../ecs/system/types/WindowControlSystem.hpp"
 #include "../ecs/system/types/ToggleShaderSystem.hpp"
 #include "../ecs/system/types/FpsCounter.hpp"
+#include "../ecs/system/types/SimpleAnimationSystem.hpp"
 #include "../ecs/component/Components.hpp"
 #include "../ecs/World.hpp"
 

@@ -25,6 +25,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 	m_world->createSystem<ecs::FpsCounter>();
 	m_world->createSystem<ecs::ToggleShaderSystem>();
+	m_world->createSystem<ecs::SimpleAnimationSystem>();
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
@@ -57,6 +58,7 @@ void	Application::init() {
 	ecs::component::Transform renderableTransform{};
 	ecs::component::Mesh meshComponent{};
 	ecs::component::Texture meshTexture{};
+	ecs::component::Animation animationComponent{};
 
 	renderableTransform.position = scene::worldinfo::forward * 3.0f;
 	renderableTransform.position.x += 1.2f;
@@ -67,11 +69,14 @@ void	Application::init() {
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
 	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.ppm"));
 	meshComponent.pipelineType = assets::PipelineType::Textured;
+	animationComponent.type = component::AnimationType::Spin;
 
 	renderableEntity.addComponent(renderableTransform);
 	renderableEntity.addComponent(meshComponent);
 	renderableEntity.addComponent(meshTexture);
+	renderableEntity.addComponent(animationComponent);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
+	renderableEntity.registerToSystem<ecs::SimpleAnimationSystem>();
 
 	// ecs::EntityHandle fpsCounter = m_world->createEntity();
 	// ecs::component::Transform2D textTransform2{};
@@ -148,7 +153,7 @@ void	Application::simulate() {
 	}
 	lastSimulateTime = time;
 
-	m_world->getSystemManager().onSimulate(static_cast<float>(dt));
+	m_world->getSystemManager().onSimulate(static_cast<float>(dt), static_cast<float>(time));
 }
 
 void	Application::render() {

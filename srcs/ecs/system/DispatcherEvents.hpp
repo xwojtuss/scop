@@ -30,5 +30,6 @@ struct InputEvent {
 
 struct SimulateEvent {
 	float	deltaTime;
+	float	time;
 };
 }

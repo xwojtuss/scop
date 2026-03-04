@@ -18,8 +18,8 @@ void	SystemManager::onRendererFrame(render::IRenderer& renderer) {
 	m_dispatcher.emit<RendererFrameEvent>(RendererFrameEvent{&renderer});
 }
 
-void	SystemManager::onSimulate(float deltaTime) {
-	m_dispatcher.emit<SimulateEvent>(SimulateEvent{deltaTime});
+void	SystemManager::onSimulate(float deltaTime, float time) {
+	m_dispatcher.emit<SimulateEvent>(SimulateEvent{deltaTime, time});
 }
 
 Dispatcher&	SystemManager::getDispatcher() {

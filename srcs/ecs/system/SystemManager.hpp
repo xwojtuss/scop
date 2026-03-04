@@ -25,7 +25,7 @@ public:
 	void		onTextDraw(render::IRenderer& renderer);
 	void		onRendererDraw(render::IRenderer& renderer);
 	void		onRendererFrame(render::IRenderer& renderer);
-	void		onSimulate(float deltaTime);
+	void		onSimulate(float deltaTime, float time);
 	Dispatcher&	getDispatcher();
 };
 }

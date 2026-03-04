@@ -88,4 +88,17 @@ struct Input : public Component<Input> {
 struct Color : public Component<Color> {
 	glm::vec4	color;
 };
+
+enum AnimationType {
+	Spin,
+	Bounce,
+	Jitter,
+	Random,
+	Circle
+};
+
+struct Animation : public Component<Animation> {
+	float			speed = 1.0f;
+	AnimationType	type;
+};
 }

@@ -14,7 +14,7 @@ public:
 	TinyObjLoader() = default;
 	virtual ~TinyObjLoader();
 
-	virtual MeshData	toMeshData(const char* path);
-	virtual MeshData	toMeshData(std::string path);
+	MeshData	toMeshData(const char* path) override;
+	MeshData	toMeshData(std::string path) override;
 };
 }

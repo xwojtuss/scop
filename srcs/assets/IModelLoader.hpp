@@ -11,5 +11,6 @@ public:
 
 	virtual MeshData	toMeshData(const char* path) = 0;
 	virtual MeshData	toMeshData(std::string path) = 0;
+
 };
 }

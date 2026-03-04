@@ -2,6 +2,47 @@
 
 using namespace assets;
 
+glm::vec2	BasicObjLoader::mapUV(const glm::vec3& pos, const glm::vec3& normal, float scale) {
+	glm::vec2 uv;
+
+	float ax, ay, az;
+	ax = std::abs(normal.x);
+	ay = std::abs(normal.y);
+	az = std::abs(normal.z);
+
+	glm::vec2 uvAxis;
+
+	if (ax >= ay && ax >= az) {
+		uvAxis = glm::vec2(pos.z, pos.y);
+	} else if (ay >= ax && ay >= az) {
+		uvAxis = glm::vec2(pos.x, pos.z);
+	} else {
+		uvAxis = glm::vec2(pos.x, pos.y);
+	}
+
+	float nx = normal.x / (ax + ay + az);
+	float ny = normal.y / (ax + ay + az);
+	float nz = normal.z / (ax + ay + az);
+
+	if (std::abs(nx) >= std::abs(ny) && std::abs(nx) >= std::abs(nz)) {
+		uv = glm::vec2(pos.z, pos.y);
+	} else if (std::abs(ny) >= std::abs(nx) && std::abs(ny) >= std::abs(nz)) {
+		uv = scale * glm::vec2(pos.x, pos.z);
+	} else {
+		uv = scale * glm::vec2(pos.x, pos.y);
+	}
+	uv *= scale;
+
+	if (nx < 0.0f)
+		uv.x = -uv.x;
+	if (ny < 0.0f)
+		uv.y = -uv.y;
+	if (nz < 0.0f)
+		uv = -uv;
+
+	return uv;
+}
+
 BasicObjLoader::BasicObjLoader() {
 	m_loaders["v"] = [this](std::stringstream& sstream) { loadVertex(sstream); };
 	m_loaders["f"] = [this](std::stringstream& sstream) { loadFace(sstream); };
@@ -140,12 +181,17 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 	try {
 		for (const auto& face : m_faces) {
 			color += colorJump;
+			glm::vec3 normal;
+
+			glm::vec3 a = m_vertices[face[1].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
+			glm::vec3 b = m_vertices[face[2].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
+			normal = glm::normalize(glm::cross(a, b));
 			for (int i = 0; i < 3; i++) {
 				vertex.pos = m_vertices[face[i].vertexIndex - 1];
 				if (face[i].texCoordIndex > 0 && face[i].texCoordIndex <= m_textureCoordinates.size())
 					vertex.texCoord = m_textureCoordinates[face[i].texCoordIndex - 1];
 				else
-					vertex.texCoord = glm::vec2(0.0f);
+					vertex.texCoord = mapUV(vertex.pos, normal, 1.0f);
 				vertex.color = color;
 				meshData.vertices.push_back(vertex);
 				meshData.indices.push_back(static_cast<uint32_t>(meshData.vertices.size() - 1));

@@ -11,6 +11,7 @@
 #include "IModelLoader.hpp"
 #include "Resources.hpp"
 #include "../render/GpuTypes.hpp"
+#include "../scene/WorldInfo.hpp"
 
 namespace assets {
 struct FaceIndex {
@@ -37,14 +38,15 @@ private:
 	template <int N, typename T>
 	void		parse(std::stringstream& sstream, glm::vec<N, T>& vec, int requiredCount = N);
 	
-	static void	skip(std::stringstream& sstream);
+	static void			skip(std::stringstream& sstream);
+	static glm::vec2	mapUV(const glm::vec3& pos, const glm::vec3& normal, float scale);
 
 public:
 	BasicObjLoader();
 	virtual ~BasicObjLoader();
 
-	virtual MeshData	toMeshData(const char* path);
-	virtual MeshData	toMeshData(std::string path);
+	MeshData	toMeshData(const char* path) override;
+	MeshData	toMeshData(std::string path) override;
 };
 }
 

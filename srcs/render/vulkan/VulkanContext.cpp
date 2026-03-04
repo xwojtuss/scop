@@ -15,9 +15,11 @@ VulkanContext::VulkanContext(platform::window::IWindow& window) : m_window(windo
 }
 
 void	VulkanContext::createInstance() {
+	#ifndef NDEBUG
 	if (VulkanValidationLayers::isEnabled && !VulkanValidationLayers().checkSupport()) {
 		throw std::runtime_error("validation layers requested, but not available!");
 	}
+	#endif
 
 	VkApplicationInfo		appInfo{};
 	VkInstanceCreateInfo	createInfo{};
@@ -39,12 +41,16 @@ void	VulkanContext::createInstance() {
 
 	createInfo.enabledExtensionCount = extensionCount;
 	createInfo.ppEnabledExtensionNames = extensions;
+	#ifndef NDEBUG
 	if (VulkanValidationLayers::isEnabled) {
 		createInfo.enabledLayerCount = static_cast<uint32_t>(VulkanValidationLayers::layers.size());
 		createInfo.ppEnabledLayerNames = VulkanValidationLayers::layers.data();
 	} else {
+		#endif
 		createInfo.enabledLayerCount = 0;
+	#ifndef NDEBUG
 	}
+	#endif
 
 	VkResult	result = vkCreateInstance(&createInfo, NULL, &m_instance);
 	if (result != VK_SUCCESS)

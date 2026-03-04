@@ -26,5 +26,6 @@ public:
 
 	Dependencies	getDependencies() const;
 	virtual bool	canRegister(const Entity& entity) const;
+	bool			hasEntity(const Entity& entity) const;
 };
 }

@@ -47,3 +47,11 @@ bool	ASystem::canRegister(const Entity& entity) const {
 	}
 	return true;
 }
+
+bool	ASystem::hasEntity(const Entity& entity) const {
+	for (const Entity& e : m_entities) {
+		if (e == entity)
+			return true;
+	}
+	return false;
+}

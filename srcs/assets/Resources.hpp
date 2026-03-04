@@ -11,6 +11,8 @@ namespace assets {
 struct MeshData {
 	std::vector<render::Vertex>	vertices;
 	std::vector<uint32_t>		indices;
+
+	void	scaleTextureCoordinates(float scale);
 };
 
 struct TextureData {

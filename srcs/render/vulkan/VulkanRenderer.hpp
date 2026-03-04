@@ -56,6 +56,7 @@ public:
 	void						render(ecs::SystemManager& systemManager) override;
 	void						endFrame() override;
 	void						setClearColor(float r, float g, float b, float a) override;
+	void						setClearColor(int hexColor) override;
 	void						drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Texture* texture, const ecs::component::Transform& transform) override;
 	void						drawText(const ecs::component::Text& text, const ecs::component::Texture* texture, const ecs::component::Transform2D& transform, size_t offset, const ecs::component::Color* color = nullptr) override;
 	void						updateCamera(const component::Camera& camera) override;

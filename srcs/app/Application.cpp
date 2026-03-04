@@ -8,7 +8,7 @@ Application::Application() {
 	m_world = std::make_unique<ecs::World>();
 	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
 	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
-	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
+	// m_textureLoader = std::make_unique<assets::StbTextureLoader>();
 	m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();
@@ -113,6 +113,7 @@ void	Application::init() {
 		0, 1, 2,
 		2, 3, 0
 	};
+	floorMeshData.scaleTextureCoordinates(floorSize / 10.0f);
 	floorMesh.mesh = m_renderer->createMesh(floorMeshData);
 	floorTexture.texture = m_renderer->createTexture(floorTextureData);
 	floorMesh.pipelineType = assets::PipelineType::Textured;
@@ -120,6 +121,8 @@ void	Application::init() {
 	floor.addComponent(floorMesh);
 	floor.addComponent(floorTexture);
 	floor.registerToSystem<ecs::RenderSystem>();
+
+	m_renderer->setClearColor(0x0a2882);
 }
 
 void	Application::run() {

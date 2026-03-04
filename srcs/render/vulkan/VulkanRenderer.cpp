@@ -3,7 +3,6 @@
 using namespace render::vulkan;
 
 VulkanRenderer::VulkanRenderer(platform::window::IWindow& window) {
-	setClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 	m_context = std::make_unique<VulkanContext>(window);
 	m_swapchain = std::make_unique<VulkanSwapchain>(*m_context);
 	m_resourceManager = std::make_unique<VulkanResourceManager>(*m_context);
@@ -274,6 +273,13 @@ void	VulkanRenderer::endFrame() {
 void	VulkanRenderer::setClearColor(float r, float g, float b, float a) {
 	m_clearValues[0].color = {{r, g, b, a}};
 	m_clearValues[1].depthStencil = {1.0f, 0};
+}
+
+void	VulkanRenderer::setClearColor(int hexColor) {
+	float r = ((hexColor >> 16) & 0xFF) / 255.0f;
+	float g = ((hexColor >> 8) & 0xFF) / 255.0f;
+	float b = (hexColor & 0xFF) / 255.0f;
+	setClearColor(r, g, b, 1.0f);
 }
 
 const assets::MeshHandle&	VulkanRenderer::getTextMeshHandle() const {

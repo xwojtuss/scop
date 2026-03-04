@@ -65,7 +65,7 @@ BasicObjLoader::BasicObjLoader() {
 MeshData	BasicObjLoader::toMeshData(std::string path) {
 	return toMeshData(path.c_str());
 }
-#include <iostream>
+
 MeshData	BasicObjLoader::toMeshData(const char* path) {
 	std::ifstream file(path);
 	MeshData meshData;

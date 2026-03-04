@@ -39,6 +39,7 @@ private:
 	
 	static void			skip(std::stringstream& sstream);
 	static glm::vec2	mapUV(const glm::vec3& pos, const glm::vec3& normal, float scale);
+	static void			changeOrigin(MeshData& meshData, glm::vec3 origin);
 
 public:
 	BasicObjLoader();

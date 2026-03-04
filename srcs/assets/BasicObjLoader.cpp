@@ -179,6 +179,8 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 	render::Vertex vertex;
 	glm::vec3 color(0.0f);
 	glm::vec3 colorJump = glm::vec3(0.1f);
+	glm::vec3 minBounds(std::numeric_limits<float>::max());
+	glm::vec3 maxBounds(std::numeric_limits<float>::lowest());
 
 	try {
 		for (const auto& face : m_faces) {
@@ -188,8 +190,13 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 			glm::vec3 a = m_vertices[face[1].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
 			glm::vec3 b = m_vertices[face[2].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
 			normal = glm::normalize(glm::cross(a, b));
+
 			for (int i = 0; i < 3; i++) {
 				vertex.pos = m_vertices[face[i].vertexIndex - 1];
+
+				minBounds = glm::min(minBounds, vertex.pos);
+				maxBounds = glm::max(maxBounds, vertex.pos);
+
 				if (face[i].texCoordIndex > 0 && face[i].texCoordIndex <= m_textureCoordinates.size())
 					vertex.texCoord = m_textureCoordinates[face[i].texCoordIndex - 1];
 				else
@@ -202,6 +209,13 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 		}
 	} catch(const std::exception& e) {
 		throw std::runtime_error("Error creating mesh data: " + std::string(e.what()));
+	}
+	changeOrigin(meshData, (minBounds + maxBounds) * 0.5f);
+}
+
+void	BasicObjLoader::changeOrigin(MeshData& meshData, glm::vec3 origin) {
+	for (auto& vertex : meshData.vertices) {
+		vertex.pos -= origin;
 	}
 }
 

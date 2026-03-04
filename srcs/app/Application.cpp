@@ -61,7 +61,6 @@ void	Application::init() {
 	ecs::component::Animation animationComponent{};
 
 	renderableTransform.position = scene::worldinfo::forward * 3.0f;
-	renderableTransform.position.x += 1.2f;
 	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::down);
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);

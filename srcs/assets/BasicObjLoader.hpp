@@ -6,7 +6,6 @@
 #include <string>
 #include <functional>
 #include <stdexcept>
-#include <tiny_obj_loader.h>
 
 #include "IModelLoader.hpp"
 #include "Resources.hpp"

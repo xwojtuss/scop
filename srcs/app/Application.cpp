@@ -9,6 +9,7 @@ Application::Application() {
 	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
 	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
+	m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();
 
@@ -64,7 +65,7 @@ void	Application::init() {
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
-	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/medival.jpg"));
+	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.ppm"));
 	meshComponent.pipelineType = assets::PipelineType::Textured;
 
 	renderableEntity.addComponent(renderableTransform);
@@ -72,23 +73,23 @@ void	Application::init() {
 	renderableEntity.addComponent(meshTexture);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 
-	ecs::EntityHandle fpsCounter = m_world->createEntity();
-	ecs::component::Transform2D textTransform2{};
-	assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
-	ecs::component::Texture textTexture2{};
-	textTexture2.texture = m_renderer->createTexture(fontTextureData2);
-	ecs::component::Text textComponent2(m_renderer->getTextMeshHandle());
-	textComponent2.text = "FPS: 0";
-	textTransform2.position = glm::vec2(-1.0f, -1.0f);
-	textTransform2.scale = glm::vec2(0.02f, 0.06f);
-	textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
-	textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
-	fontTextureData2.pixelPerfect = true;
-	fpsCounter.addComponent(textTransform2);
-	fpsCounter.addComponent(textComponent2);
-	fpsCounter.addComponent(textTexture2);
-	fpsCounter.registerToSystem<ecs::TextRenderSystem>();
-	fpsCounter.registerToSystem<ecs::FpsCounter>();
+	// ecs::EntityHandle fpsCounter = m_world->createEntity();
+	// ecs::component::Transform2D textTransform2{};
+	// assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
+	// ecs::component::Texture textTexture2{};
+	// textTexture2.texture = m_renderer->createTexture(fontTextureData2);
+	// ecs::component::Text textComponent2(m_renderer->getTextMeshHandle());
+	// textComponent2.text = "FPS: 0";
+	// textTransform2.position = glm::vec2(-1.0f, -1.0f);
+	// textTransform2.scale = glm::vec2(0.02f, 0.06f);
+	// textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
+	// textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
+	// fontTextureData2.pixelPerfect = true;
+	// fpsCounter.addComponent(textTransform2);
+	// fpsCounter.addComponent(textComponent2);
+	// fpsCounter.addComponent(textTexture2);
+	// fpsCounter.registerToSystem<ecs::TextRenderSystem>();
+	// fpsCounter.registerToSystem<ecs::FpsCounter>();
 
 	ecs::EntityHandle floor = m_world->createEntity();
 	ecs::component::Transform floorTransform{};
@@ -100,7 +101,7 @@ void	Application::init() {
 	floorTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
 	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
-	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/flower.jpg");
+	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/medival.ppm");
 	assets::MeshData floorMeshData;
 	floorMeshData.vertices = {
 		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},

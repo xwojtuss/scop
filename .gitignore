@@ -46,4 +46,6 @@ valgrind.log
 TODO.md
 
 # auto generated files
-docs/plantuml*
+docs/plantuml/plantuml*
+docs/doxygen/html
+docs/doxygen/latex

@@ -47,6 +47,11 @@ ${BUILD_DIR}/%.o: %.cpp
 
 shaders: ${SHADER_OBJS}
 
+docs: docs/doxygen/generateDoxygen.sh docs/plantuml/generatePlantuml.sh
+	@echo "Generating documentation"
+	@./docs/doxygen/generateDoxygen.sh
+	@./docs/plantuml/generatePlantuml.sh
+
 %.frag.spv: %.frag
 	@${SHADER_COMPILER} $< -o $@
 
@@ -61,4 +66,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re shaders
+.PHONY: all clean fclean re shaders docs

@@ -44,3 +44,6 @@ scop
 *.spv
 valgrind.log
 TODO.md
+
+# auto generated files
+docs/plantuml*

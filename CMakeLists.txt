@@ -22,13 +22,19 @@ else()
   message(STATUS "mold not found, using default linker")
 endif()
 
-add_compile_options(-Wall -Wextra -Werror -O0 -g)
-
 file(GLOB_RECURSE SCOP_SOURCES CONFIGURE_DEPENDS
   "${CMAKE_CURRENT_SOURCE_DIR}/srcs/*.cpp"
 )
 
 add_executable(scop ${SCOP_SOURCES})
+
+target_compile_definitions(scop PRIVATE GLM_FORCE_CTOR_INIT)
+
+target_compile_options(scop PRIVATE -Wall -Wextra -Werror -O0 -g)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(scop PRIVATE -Wno-error=maybe-uninitialized)
+endif()
 
 file(GLOB SRC_INCLUDE_DIR_CANDIDATES LIST_DIRECTORIES true "${CMAKE_CURRENT_SOURCE_DIR}/srcs/*")
 set(SRC_INCLUDE_DIRS)
@@ -43,13 +49,29 @@ target_include_directories(scop PRIVATE
   ${SRC_INCLUDE_DIRS}
 )
 
-target_link_libraries(scop PRIVATE
-  vulkan
+include(FetchContent)
+
+find_package(Vulkan REQUIRED)
+
+FetchContent_Declare(
   glfw
-  X11
-  Xxf86vm
-  Xrandr
-  Xi
+  GIT_REPOSITORY https://github.com/glfw/glfw.git
+  GIT_TAG   7b6aead9fb88b3623e3b3725ebb42670cbe4c579
+)
+
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG   0af55ccecd98d4e5a8d1fad7de25ba429d60e863
+)
+
+FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(glm)
+
+target_link_libraries(scop PRIVATE
+  Vulkan::Vulkan
+  glfw
+  glm::glm
 )
 
 find_program(GLSLANG_VALIDATOR glslangValidator)

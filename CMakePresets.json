@@ -7,20 +7,44 @@
   },
   "configurePresets": [
     {
-      "name": "dev",
-      "displayName": "Development",
-      "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build",
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "dev",
+      "displayName": "Development (GCC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "dev-clang",
+      "displayName": "Development (Clang)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
       }
     }
   ],
   "buildPresets": [
     {
       "name": "dev",
-      "displayName": "Build Debug",
+      "displayName": "Build Debug (GCC)",
       "configurePreset": "dev",
+      "jobs": 0
+    },
+    {
+      "name": "dev-clang",
+      "displayName": "Build Debug (Clang)",
+      "configurePreset": "dev-clang",
       "jobs": 0
     }
   ]

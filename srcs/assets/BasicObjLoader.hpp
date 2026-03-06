@@ -5,6 +5,7 @@
 #include <random>
 #include <string>
 #include <functional>
+#include <unordered_map>
 #include <stdexcept>
 
 #include "IModelLoader.hpp"
@@ -17,6 +18,8 @@ struct FaceIndex {
 	uint32_t vertexIndex;
 	uint32_t texCoordIndex;
 	uint32_t normalIndex;
+
+	constexpr FaceIndex(uint32_t vertexIndex) : vertexIndex(vertexIndex), texCoordIndex(0), normalIndex(0) {}
 };
 class BasicObjLoader : public IModelLoader {
 private:

@@ -1,5 +1,7 @@
 #include "TinyObjLoader.hpp"
 
+#include <unordered_map>
+
 using namespace assets;
 
 MeshData	TinyObjLoader::toMeshData(const char* path) {

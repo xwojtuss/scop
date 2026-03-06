@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -36,16 +35,24 @@
 *.exe
 *.out
 *.app
+scop
 
-# debug information files
+# Debug information files
 *.dwo
 
-scop
+# Compiled shader files
 *.spv
+
+# Logs
 valgrind.log
+
+# Per-user files
 TODO.md
 
-# auto generated files
+# CMake build directory
+build/
+
+# Auto generated files
 docs/plantuml/plantuml*
 docs/doxygen/html
 docs/doxygen/latex

@@ -1,15 +1,15 @@
 #include "Application.hpp"
 
 using namespace app;
-
+#include <iostream>
 Application::Application() {
 	m_window = std::make_unique<platform::window::glfw::GLFWWindow>();
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer>(*m_window);
 	m_world = std::make_unique<ecs::World>();
 	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
 	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
-	// m_textureLoader = std::make_unique<assets::StbTextureLoader>();
-	m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
+	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
+	// m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();
 
@@ -66,7 +66,7 @@ void	Application::init() {
 	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
-	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.ppm"));
+	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.jpg"));
 	meshComponent.pipelineType = assets::PipelineType::Textured;
 	animationComponent.type = component::AnimationType::Spin;
 
@@ -81,7 +81,7 @@ void	Application::init() {
 	ecs::component::Transform jumpscareTransform{};
 	ecs::component::Animation jumpscareAnimation{};
 	ecs::component::Texture jumpscareTexture{};
-	jumpscareTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/glass.ppm"));
+	jumpscareTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/glass.jpg"));
 	jumpscareAnimation.type = component::AnimationType::Pulse;
 	jumpscareAnimation.intensity = 5.0f;
 	jumpscareAnimation.speed = 5.0f;

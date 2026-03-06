@@ -7,6 +7,7 @@
 #include "stb_image.h"
 #include "Resources.hpp"
 #include "ITextureLoader.hpp"
+#include "../app/ApplicationInfo.hpp"
 
 namespace assets {
 class StbTextureLoader : public ITextureLoader {

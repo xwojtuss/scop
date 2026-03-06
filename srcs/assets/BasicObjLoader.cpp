@@ -70,8 +70,12 @@ MeshData	BasicObjLoader::toMeshData(const char* path) {
 	std::ifstream file(path);
 	MeshData meshData;
 
-	if (!file.is_open())
-		throw std::runtime_error("Failed to open file: " + std::string(path));
+	if (!file.is_open()) {
+		file.open(std::string(app::buildToRoot) + path);
+		if (!file.is_open()) {
+			throw std::runtime_error("Failed to open file: " + std::string(path));
+		}
+	}
 
 	std::string line;
 	while (std::getline(file, line)) {

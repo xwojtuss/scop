@@ -51,6 +51,7 @@ public:
 	VkRenderPass				getRenderPass() const;
 	VkSwapchainKHR				getSwapChain() const;
 	VkFramebuffer				getFramebuffer(uint32_t index) const;
+	size_t						getImageCount() const;
 	void						recreateSwapChain(VulkanContext& context);
 	void						cleanup(const VulkanContext& context);
 

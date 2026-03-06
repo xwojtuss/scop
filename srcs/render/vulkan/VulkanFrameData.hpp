@@ -19,7 +19,6 @@ class VulkanFrameData {
 private:
 	std::vector<VkCommandBuffer>	m_commandBuffers;
 	std::vector<VkSemaphore>		m_imageAvailableSemaphores;
-	std::vector<VkSemaphore>		m_renderFinishedSemaphores;
 	std::vector<VkFence>			m_inFlightFences;
 	std::vector<VkBuffer>			m_frameUBOs;
 	std::vector<VkDeviceMemory>		m_frameUBOsMemory;
@@ -51,12 +50,11 @@ private:
 	VkCommandBuffer			getCommandBuffer(uint32_t currentFrame) const;
 	VkCommandBuffer			getCurrentCommandBuffer() const;
 	void					incrementCurrentFrame();
-	VkSemaphore				submitCommandBuffer(VulkanContext& context);
+	void					submitCommandBuffer(VulkanContext& context, VkSemaphore renderFinishedSemaphore);
 	uint32_t				getCurrentFrame() const;
 	VkDescriptorSet*		getDescriptorSet(uint32_t frameIndex);
 	void*					getCurrentMappedFrameUBO();
 	VkSemaphore				getCurrentImageAvailableSemaphore() const;
-	VkSemaphore				getCurrentRenderFinishedSemaphore() const;
 	void					cleanup(VulkanContext& context);
 	
 	static VkCommandBuffer	beginSingleTimeCommands(VkCommandPool commandPool, VkDevice device);

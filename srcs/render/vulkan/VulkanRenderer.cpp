@@ -8,6 +8,7 @@ VulkanRenderer::VulkanRenderer(platform::window::IWindow& window) {
 	m_resourceManager = std::make_unique<VulkanResourceManager>(*m_context);
 	m_frameData = std::make_unique<VulkanFrameData>(*m_context, *m_resourceManager);
 	createPipelines();
+	createRenderFinishedSemaphores();
 
 	createTextMesh();
 	m_resourceManager->createBuffer(
@@ -100,6 +101,27 @@ void	VulkanRenderer::createPipelines() {
 	m_pipelineHandles[assets::PipelineType::Textured] = std::make_unique<TexturePipeline>(*m_context, m_swapchain->getExtent(), m_swapchain->getRenderPass(), descriptorSetLayouts);
 	m_pipelineHandles[assets::PipelineType::VertexColor] = std::make_unique<VertexColorPipeline>(*m_context, m_swapchain->getExtent(), m_swapchain->getRenderPass(), descriptorSetLayouts);
 	m_pipelineHandles[assets::PipelineType::Text] = std::make_unique<TextPipeline>(*m_context, m_swapchain->getExtent(), m_swapchain->getRenderPass(), descriptorSetLayouts);
+}
+
+void	VulkanRenderer::createRenderFinishedSemaphores() {
+	cleanupRenderFinishedSemaphores();
+	m_renderFinishedSemaphores.resize(m_swapchain->getImageCount());
+
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	for (VkSemaphore& semaphore : m_renderFinishedSemaphores) {
+		if (vkCreateSemaphore(m_context->getLogicalDevice(), &semaphoreInfo, nullptr, &semaphore) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create render finished semaphore");
+		}
+	}
+}
+
+void	VulkanRenderer::cleanupRenderFinishedSemaphores() {
+	for (VkSemaphore semaphore : m_renderFinishedSemaphores) {
+		vkDestroySemaphore(m_context->getLogicalDevice(), semaphore, nullptr);
+	}
+	m_renderFinishedSemaphores.clear();
 }
 
 void	VulkanRenderer::drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Texture* texture, const ecs::component::Transform& transform) {
@@ -218,6 +240,7 @@ void	VulkanRenderer::beginFrame() {
 
 		m_swapchain->recreateSwapChain(*m_context);
 		createPipelines();
+		createRenderFinishedSemaphores();
 		
 		m_frameIndex.reset();
 		return;
@@ -236,12 +259,13 @@ void	VulkanRenderer::render(ecs::SystemManager& systemManager) {
 	
 	vkResetCommandBuffer(m_frameData->getCurrentCommandBuffer(), 0);
 	recordCurrentCommandBuffer(systemManager);
+	m_frameData->submitCommandBuffer(*m_context, m_renderFinishedSemaphores[m_frameIndex.value()]);
 }
 
 void	VulkanRenderer::endFrame() {
 	if (!m_frameIndex.has_value()) return;
 
-	VkSemaphore signalSemaphore = m_frameData->submitCommandBuffer(*m_context);
+	VkSemaphore signalSemaphore = m_renderFinishedSemaphores[m_frameIndex.value()];
 
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -263,6 +287,7 @@ void	VulkanRenderer::endFrame() {
 
 		m_swapchain->recreateSwapChain(*m_context);
 		createPipelines();
+		createRenderFinishedSemaphores();
 	} else if (result != VK_SUCCESS) {
 		throw std::runtime_error("failed to present swap chain image!");
 	}
@@ -297,6 +322,7 @@ void	VulkanRenderer::cleanup() {
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	cleanupPipelines();
+	cleanupRenderFinishedSemaphores();
 
 	vkDestroyBuffer(m_context->getLogicalDevice(), m_instanceBuffer, nullptr);
 	vkFreeMemory(m_context->getLogicalDevice(), m_instanceBufferMemory, nullptr);

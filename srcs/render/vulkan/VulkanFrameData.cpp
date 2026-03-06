@@ -243,7 +243,6 @@ void	VulkanFrameData::createCommandBuffers(VulkanContext& context, VulkanResourc
 
 void	VulkanFrameData::createSyncObjects(const VulkanContext& context) {
 	m_imageAvailableSemaphores.resize(maxFramesInFlight);
-	m_renderFinishedSemaphores.resize(maxFramesInFlight);
 	m_inFlightFences.resize(maxFramesInFlight);
 
 	VkSemaphoreCreateInfo semaphoreInfo{};
@@ -255,7 +254,6 @@ void	VulkanFrameData::createSyncObjects(const VulkanContext& context) {
 
 	for (std::size_t i = 0; i < maxFramesInFlight; i++) {
 		if (vkCreateSemaphore(context.getLogicalDevice(), &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
-			vkCreateSemaphore(context.getLogicalDevice(), &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS ||
 			vkCreateFence(context.getLogicalDevice(), &fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS) {
 
 			throw std::runtime_error("failed to create synchronization objects for a frame!");
@@ -283,7 +281,7 @@ void	VulkanFrameData::incrementCurrentFrame() {
 	m_currentFrame = (m_currentFrame + 1) % maxFramesInFlight;
 }
 
-VkSemaphore	VulkanFrameData::submitCommandBuffer(VulkanContext& context) {
+void	VulkanFrameData::submitCommandBuffer(VulkanContext& context, VkSemaphore renderFinishedSemaphore) {
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -296,15 +294,13 @@ VkSemaphore	VulkanFrameData::submitCommandBuffer(VulkanContext& context) {
 	submitInfo.pCommandBuffers = &m_commandBuffers[m_currentFrame];
 
 
-	VkSemaphore signalSemaphores[] = {m_renderFinishedSemaphores[m_currentFrame]};
+	VkSemaphore signalSemaphores[] = {renderFinishedSemaphore};
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
 	if (vkQueueSubmit(context.getGraphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
-
-	return signalSemaphores[0];
 }
 
 VkDescriptorSet*	VulkanFrameData::getDescriptorSet(uint32_t frameIndex) {
@@ -313,10 +309,6 @@ VkDescriptorSet*	VulkanFrameData::getDescriptorSet(uint32_t frameIndex) {
 
 VkSemaphore	VulkanFrameData::getCurrentImageAvailableSemaphore() const {
 	return m_imageAvailableSemaphores[m_currentFrame];
-}
-
-VkSemaphore	VulkanFrameData::getCurrentRenderFinishedSemaphore() const {
-	return m_renderFinishedSemaphores[m_currentFrame];
 }
 
 uint32_t	VulkanFrameData::getCurrentFrame() const {
@@ -332,7 +324,6 @@ void	VulkanFrameData::cleanup(VulkanContext& context) {
 		vkDestroyBuffer(context.getLogicalDevice(), m_frameUBOs[i], nullptr);
 		vkFreeMemory(context.getLogicalDevice(), m_frameUBOsMemory[i], nullptr);
 		vkDestroySemaphore(context.getLogicalDevice(), m_imageAvailableSemaphores[i], nullptr);
-		vkDestroySemaphore(context.getLogicalDevice(), m_renderFinishedSemaphores[i], nullptr);
 		vkDestroyFence(context.getLogicalDevice(), m_inFlightFences[i], nullptr);
 	}
 

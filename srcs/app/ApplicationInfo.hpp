@@ -8,4 +8,6 @@ constexpr float			simulationFrameRate = 1.0f / 60.0f;
 
 constexpr bool			VSyncEnabled = true;
 
+constexpr const char*	buildToRoot = "../../";
+
 }

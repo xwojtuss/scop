@@ -305,6 +305,10 @@ VkFramebuffer	VulkanSwapchain::getFramebuffer(uint32_t index) const {
 	return m_swapChainFramebuffers[index];
 }
 
+size_t	VulkanSwapchain::getImageCount() const {
+	return m_swapChainImages.size();
+}
+
 void	VulkanSwapchain::cleanupSwapChain(const VulkanContext& context) {
 	vkDestroyImageView(context.getLogicalDevice(), m_depthImage.imageView, nullptr);
 	vkDestroyImage(context.getLogicalDevice(), m_depthImage.image, nullptr);

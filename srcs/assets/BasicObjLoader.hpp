@@ -12,6 +12,7 @@
 #include "Resources.hpp"
 #include "../render/GpuTypes.hpp"
 #include "../scene/WorldInfo.hpp"
+#include "../app/ApplicationInfo.hpp"
 
 namespace assets {
 struct FaceIndex {

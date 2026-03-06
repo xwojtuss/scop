@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include "VulkanContext.hpp"
 #include "VulkanSwapchain.hpp"
@@ -36,8 +37,11 @@ private:
 	std::unordered_map<assets::PipelineType, std::unique_ptr<APipeline>>	m_pipelineHandles;
 	VkBuffer																m_instanceBuffer;
 	VkDeviceMemory															m_instanceBufferMemory;
+	std::vector<VkSemaphore>									m_renderFinishedSemaphores;
 
 	void					createPipelines();
+	void					createRenderFinishedSemaphores();
+	void					cleanupRenderFinishedSemaphores();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager);
 	void					cleanup();

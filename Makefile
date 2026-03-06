@@ -1,7 +1,23 @@
-COMPILER := c++
-SHADER_COMPILER := glslangValidator -V
+CXX := c++
+CCACHE := ${shell command -v ccache 2>/dev/null}
+MOLD := ${shell command -v mold 2>/dev/null}
+
+ifeq (${CCACHE},)
+	COMPILER := ${CXX}
+else
+	COMPILER := ccache ${CXX}
+endif
+
+LINKER_FLAG :=
+ifneq (${MOLD},)
+	LINKER_FLAG := -fuse-ld=mold
+endif
+
+SHADER_COMPILER := glslangValidator -V -s
 FLAGS := -Wall -Wextra -Werror -std=c++17 -O0 -g
-LINKFLAGS := -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
+LINKFLAGS := ${LINKER_FLAG} -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi
+
+MAKEFLAGS += -j${shell nproc}
 
 NAME := scop
 
@@ -9,35 +25,39 @@ SRCS := srcs/main.cpp ${wildcard srcs/*/*.cpp} ${wildcard srcs/*/*/*.cpp} ${wild
 HEADER_SRCS := ${wildcard srcs/*/*.hpp} ${wildcard srcs/*/*/*.hpp} ${wildcard srcs/*/*/*/*.hpp} \
 			${wildcard srcs/*/*.tpp} ${wildcard srcs/*/*/*.tpp} ${wildcard srcs/*/*/*/*.tpp}
 
-FRAG_SHADERS := $(wildcard shaders/*.frag)
-VERT_SHADERS := $(wildcard shaders/*.vert)
+FRAG_SHADERS := ${wildcard shaders/*.frag}
+VERT_SHADERS := ${wildcard shaders/*.vert}
 
-OBJS := ${SRCS:.cpp=.o}
-SHADER_OBJS := $(FRAG_SHADERS:.frag=.frag.spv) $(VERT_SHADERS:.vert=.vert.spv)
+BUILD_DIR := build
+OBJS := ${addprefix ${BUILD_DIR}/, ${SRCS:.cpp=.o}}
+SHADER_OBJS := ${FRAG_SHADERS:.frag=.frag.spv} ${VERT_SHADERS:.vert=.vert.spv}
 
 HEADERS := ${addprefix -I, ${wildcard srcs/*/}}
 
 all: ${NAME}
 
 ${NAME}: ${HEADER_SRCS} ${OBJS} ${SHADER_OBJS}
-	${COMPILER} ${FLAGS} ${HEADERS} ${OBJS} -o $@ ${LINKFLAGS}
+	@echo "Linking ${NAME}"
+	@${COMPILER} ${FLAGS} ${HEADERS} ${OBJS} -o $@ ${LINKFLAGS}
 
-%.o: %.cpp
-	${COMPILER} ${FLAGS} ${HEADERS} -c $^ -o $@
+${BUILD_DIR}/%.o: %.cpp
+	@mkdir -p ${@D}
+	@echo "Compiling $<"
+	@${COMPILER} ${FLAGS} ${HEADERS} -c $< -o $@
 
 shaders: ${SHADER_OBJS}
 
 %.frag.spv: %.frag
-	${SHADER_COMPILER} $< -o $@
+	@${SHADER_COMPILER} $< -o $@
 
 %.vert.spv: %.vert
-	${SHADER_COMPILER} $< -o $@
+	@${SHADER_COMPILER} $< -o $@
 
 clean:
-	rm -f ${OBJS} ${SHADER_OBJS}
+	@rm -f ${OBJS} ${SHADER_OBJS}
 
 fclean: clean
-	rm -f ${NAME}
+	@rm -f ${NAME}
 
 re: fclean all
 

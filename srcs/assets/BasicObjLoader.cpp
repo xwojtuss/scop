@@ -126,7 +126,7 @@ void	BasicObjLoader::loadVertex(std::stringstream& sstream) {
 }
 
 void	BasicObjLoader::loadFace(std::stringstream& sstream) {
-	glm::vec<4, FaceIndex> face;
+	std::array<FaceIndex, 4> face;
 	int i = 0;
 
 	for (i = 0; i < 4; i++) {
@@ -140,10 +140,10 @@ void	BasicObjLoader::loadFace(std::stringstream& sstream) {
 		if (face[i].vertexIndex <= 0)
 			throw std::runtime_error("Vertex indices in faces must be greater than 0");
 	}
-	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[1], face[2]});
+	m_faces.push_back(std::array<FaceIndex, 3>{face[0], face[1], face[2]});
 	if (i == 3)
 		return;
-	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[2], face[3]});
+	m_faces.push_back(std::array<FaceIndex, 3>{face[0], face[2], face[3]});
 }
 
 void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceIndex) {

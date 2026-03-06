@@ -99,7 +99,7 @@ endforeach()
 add_custom_target(shaders ALL DEPENDS ${SHADER_OUTPUTS})
 add_dependencies(scop shaders)
 
-add_custom_target(docs
+add_custom_target(generate_docs
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen/generateDoxygen.sh"
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/docs/plantuml/generatePlantuml.sh"
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"

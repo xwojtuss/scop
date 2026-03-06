@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <fstream>
 #include <sstream>
 #include <random>
@@ -19,8 +20,6 @@ struct FaceIndex {
 	uint32_t vertexIndex;
 	uint32_t texCoordIndex;
 	uint32_t normalIndex;
-
-	constexpr FaceIndex(uint32_t vertexIndex) : vertexIndex(vertexIndex), texCoordIndex(0), normalIndex(0) {}
 };
 class BasicObjLoader : public IModelLoader {
 private:
@@ -28,8 +27,8 @@ private:
 	std::vector<glm::vec3>																	m_normals;
 	std::vector<glm::vec2>																	m_textureCoordinates;
 	std::vector<uint32_t>																	m_indices;
-	std::vector<glm::vec<3, FaceIndex>>														m_faces;
-	std::unordered_map<std::string, std::function<void(std::stringstream&)>>	m_loaders;
+	std::vector<std::array<FaceIndex, 3>>													m_faces;
+	std::unordered_map<std::string, std::function<void(std::stringstream&)>>				m_loaders;
 
 	void		loadVertex(std::stringstream& sstream);
 	void		loadFace(std::stringstream& sstream);

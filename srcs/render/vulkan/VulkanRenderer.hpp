@@ -44,7 +44,7 @@ private:
 	void					cleanupRenderFinishedSemaphores();
 	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
 	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager);
-	void					cleanup();
+	void					cleanup() override;
 	void					cleanupPipelines();
 	void					createTextMesh();
 	void					copyTextToInstanceBuffer(const std::string& text, size_t offset);
@@ -55,7 +55,7 @@ public:
 	
 	assets::MeshHandle			createMesh(const assets::MeshData&) override;
 	assets::TextureHandle		createTexture(const assets::TextureData&) override;
-	const assets::MeshHandle&	getTextMeshHandle() const;
+	const assets::MeshHandle&	getTextMeshHandle() const override;
 	void						beginFrame() override;
 	void						render(ecs::SystemManager& systemManager) override;
 	void						endFrame() override;

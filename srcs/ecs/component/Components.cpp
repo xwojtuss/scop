@@ -2,30 +2,30 @@
 
 using namespace ecs::component;
 
-glm::vec3	Transform::forward() const {
+ftm::vec3	Transform::forward() const {
 	return rotation * scene::worldinfo::forward;
 }
 
-glm::vec3	Transform::right() const {
+ftm::vec3	Transform::right() const {
 	return rotation * scene::worldinfo::right;
 }
 
-glm::vec3	Transform::left() const {
+ftm::vec3	Transform::left() const {
 	return rotation * scene::worldinfo::left;
 }
 
-glm::vec3	Transform::up() const {
+ftm::vec3	Transform::up() const {
 	return rotation * scene::worldinfo::up;
 }
 
-glm::vec3	Transform::down() const {
+ftm::vec3	Transform::down() const {
 	return rotation * scene::worldinfo::down;
 }
 
-glm::mat4	Transform::toModelMatrix() const {
-	glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-	glm::mat4 rotationMat = glm::toMat4(rotation);
-	glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), scale);
+ftm::mat4	Transform::toModelMatrix() const {
+	ftm::mat4 translation = ftm::translate(ftm::mat4(1.0f), position);
+	ftm::mat4 rotationMat = ftm::toMat4(rotation);
+	ftm::mat4 scaleMat = ftm::scale(ftm::mat4(1.0f), scale);
 
 	return translation * rotationMat * scaleMat;
 }

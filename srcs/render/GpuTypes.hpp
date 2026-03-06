@@ -1,14 +1,12 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
+#include "ftm/ftm.hpp"
 
 namespace render {
 // One per frame
 struct alignas(16) FrameUBO {
-	glm::mat4	view;
-	glm::mat4	proj;
+	ftm::mat4	view;
+	ftm::mat4	proj;
 };
 
 /** One per draw/object
@@ -16,19 +14,19 @@ struct alignas(16) FrameUBO {
  * using 64 bytes of the 128 available
  */
 struct alignas(16) ObjectUBO {
-	glm::mat4	model;
+	ftm::mat4	model;
 };
 
 struct alignas(16) TextUBO {
-	glm::vec2	position;
-	glm::vec2	size;
-	glm::vec4	color;
+	ftm::vec2	position;
+	ftm::vec2	size;
+	ftm::vec4	color;
 };
 
 struct Vertex {
-	glm::vec3	pos;
-	glm::vec3	color;
-	glm::vec2	texCoord;
+	ftm::vec3	pos;
+	ftm::vec3	color;
+	ftm::vec2	texCoord;
 
 	bool	operator==(const Vertex& other) const {
 		return pos == other.pos && color == other.color && texCoord == other.texCoord;
@@ -36,9 +34,9 @@ struct Vertex {
 };
 
 struct Vertex2D {
-	glm::vec2	pos;
-	glm::vec3	color;
-	glm::vec2	texCoord;
+	ftm::vec2	pos;
+	ftm::vec3	color;
+	ftm::vec2	texCoord;
 
 	bool	operator==(const Vertex2D& other) const {
 		return pos == other.pos && color == other.color && texCoord == other.texCoord;
@@ -46,7 +44,7 @@ struct Vertex2D {
 };
 
 struct InstanceData {
-	glm::vec2	texCoord;
+	ftm::vec2	texCoord;
 	int			charIndex;
 };
 }
@@ -54,9 +52,9 @@ struct InstanceData {
 namespace std {
 	template<> struct hash<render::Vertex> {
 		size_t operator()(render::Vertex const& vertex) const {
-			return ((hash<glm::vec3>()(vertex.pos) ^
-				(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
-				(hash<glm::vec2>()(vertex.texCoord) << 1);
+			return ((hash<ftm::vec3>()(vertex.pos) ^
+				(hash<ftm::vec3>()(vertex.color) << 1)) >> 1) ^
+				(hash<ftm::vec2>()(vertex.texCoord) << 1);
 		}
 	};
 }

@@ -20,10 +20,10 @@ void	Application::init() {
 	m_world->createSystem<ecs::CameraSystem>();
 	m_world->createSystem<ecs::MovementSystem>();
 	m_world->createSystem<ecs::RenderSystem>();
-	m_world->createSystem<ecs::TextRenderSystem>();
+	// m_world->createSystem<ecs::TextRenderSystem>();
 	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
-	m_world->createSystem<ecs::FpsCounter>();
+	// m_world->createSystem<ecs::FpsCounter>();
 	m_world->createSystem<ecs::ToggleShaderSystem>();
 	m_world->createSystem<ecs::SimpleAnimationSystem>();
 
@@ -33,14 +33,14 @@ void	Application::init() {
 	ecs::component::Camera cameraComponent{};
 	ecs::component::Input inputComponent{};
 
-	transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-	transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	transform.position = ftm::vec3(0.0f, 0.0f, 0.0f);
+	transform.rotation = ftm::quat();
+	transform.scale = ftm::vec3(1.0f, 1.0f, 1.0f);
 	velocity.acceleration = 4.5f;
 	velocity.decelleration = 10.0f;
 	velocity.maxSpeed = 10.0f;
-	velocity.velocity = glm::vec3(0.0f);
-	velocity.desiredVelocity = glm::vec3(0.0f);
+	velocity.velocity = ftm::vec3(0.0f);
+	velocity.desiredVelocity = ftm::vec3(0.0f);
 	cameraComponent.fov = 90.0f;
 	inputComponent.mouseSensitivity = 0.002f;
 	camera.addComponent(transform);
@@ -61,9 +61,9 @@ void	Application::init() {
 	ecs::component::Animation animationComponent{};
 
 	renderableTransform.position = scene::worldinfo::forward * 3.0f;
-	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::down);
-	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	renderableTransform.rotation = ftm::quat();
+	renderableTransform.rotation = ftm::rotate(renderableTransform.rotation, ftm::radians(90.0f), scene::worldinfo::down);
+	renderableTransform.scale = ftm::vec3(1.0f, 1.0f, 1.0f);
 	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
 	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
 	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.ppm"));
@@ -86,10 +86,10 @@ void	Application::init() {
 	jumpscareAnimation.intensity = 5.0f;
 	jumpscareAnimation.speed = 5.0f;
 	jumpscareTransform.position = scene::worldinfo::backward * 10.0f;
-	jumpscareTransform.position.y = 7.0f;
-	jumpscareTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	jumpscareTransform.rotation = glm::rotate(jumpscareTransform.rotation, glm::radians(90.0f), scene::worldinfo::up);
-	jumpscareTransform.scale = glm::vec3(10.0f, 10.0f, 10.0f);
+	jumpscareTransform.position[1] = 7.0f;
+	jumpscareTransform.rotation = ftm::quat();
+	jumpscareTransform.rotation = ftm::rotate(jumpscareTransform.rotation, ftm::radians(90.0f), scene::worldinfo::up);
+	jumpscareTransform.scale = ftm::vec3(10.0f, 10.0f, 10.0f);
 	jumpscare.addComponent(jumpscareTransform);
 	jumpscare.addComponent(meshComponent);
 	jumpscare.addComponent(jumpscareTexture);
@@ -99,13 +99,13 @@ void	Application::init() {
 
 	// ecs::EntityHandle fpsCounter = m_world->createEntity();
 	// ecs::component::Transform2D textTransform2{};
-	// assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
+	// assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.ppm");
 	// ecs::component::Texture textTexture2{};
 	// textTexture2.texture = m_renderer->createTexture(fontTextureData2);
 	// ecs::component::Text textComponent2(m_renderer->getTextMeshHandle());
 	// textComponent2.text = "FPS: 0";
-	// textTransform2.position = glm::vec2(-1.0f, -1.0f);
-	// textTransform2.scale = glm::vec2(0.02f, 0.06f);
+	// textTransform2.position = ftm::vec2(-1.0f, -1.0f);
+	// textTransform2.scale = ftm::vec2(0.02f, 0.06f);
 	// textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
 	// textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
 	// fontTextureData2.pixelPerfect = true;
@@ -120,22 +120,24 @@ void	Application::init() {
 	ecs::component::Mesh floorMesh{};
 	ecs::component::Texture floorTexture{};
 	float floorSize = 100.0f;
-	floorTransform.position = glm::vec3(floorSize / 2.0f, -5.0f, -floorSize / 2.0f);
-	floorTransform.scale = glm::vec3(floorSize, floorSize, 1.0f);
-	floorTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
-	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
+	floorTransform.position = ftm::vec3(floorSize / 2.0f, -5.0f, -floorSize / 2.0f);
+	floorTransform.scale = ftm::vec3(floorSize, floorSize, 1.0f);
+	floorTransform.rotation = ftm::quat();
+	floorTransform.rotation = ftm::rotate(floorTransform.rotation, ftm::radians(180.0f), scene::worldinfo::up);
+	floorTransform.rotation = ftm::rotate(floorTransform.rotation, ftm::radians(90.0f), scene::worldinfo::left);
 	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/medival.ppm");
 	assets::MeshData floorMeshData;
 	floorMeshData.vertices = {
-		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-		{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-		{{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-		{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+		{{0.0f, 0.0f, 0.0f}, {0.4f, 0.4f, 0.4f}, {0.0f, 0.0f}},
+		{{1.0f, 0.0f, 0.0f}, {0.4f, 0.4f, 0.4f}, {1.0f, 0.0f}},
+		{{1.0f, 1.0f, 0.0f}, {0.4f, 0.4f, 0.4f}, {1.0f, 1.0f}},
+		{{1.0f, 1.0f, 0.0f}, {0.6f, 0.6f, 0.6f}, {1.0f, 1.0f}},
+		{{0.0f, 1.0f, 0.0f}, {0.6f, 0.6f, 0.6f}, {0.0f, 1.0f}},
+		{{0.0f, 0.0f, 0.0f}, {0.6f, 0.6f, 0.6f}, {0.0f, 0.0f}},
 	};
 	floorMeshData.indices = {
 		0, 1, 2,
-		2, 3, 0
+		3, 4, 5
 	};
 	floorMeshData.scaleTextureCoordinates(floorSize / 10.0f);
 	floorMesh.mesh = m_renderer->createMesh(floorMeshData);

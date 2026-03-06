@@ -152,7 +152,7 @@ void	VulkanRenderer::drawText(const ecs::component::Text& text, const ecs::compo
 	}
 
 	TextUBO ubo{};
-	ubo.color = color ? color->color : glm::vec4(1.0f);
+	ubo.color = color ? color->color : ftm::vec4(1.0f);
 	ubo.position = transform.position;
 	ubo.size = transform.scale;
 	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), pipeline.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(TextUBO), &ubo);

@@ -1,9 +1,8 @@
 #pragma once
 
 #include <string>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#define ftm_ENABLE_EXPERIMENTAL
+#include "ftm/ftm.hpp"
 
 #include "Component.hpp"
 #include "../../assets/Resources.hpp"
@@ -12,27 +11,27 @@
 
 namespace ecs::component {
 struct Transform : public Component<Transform> {
-	glm::vec3	position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::quat	rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::vec3	scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	ftm::vec3	position = ftm::vec3(0.0f, 0.0f, 0.0f);
+	ftm::quat	rotation;
+	ftm::vec3	scale = ftm::vec3(1.0f, 1.0f, 1.0f);
 	bool		canRotate = true;
 
-	glm::vec3	forward() const;
-	glm::vec3	right() const;
-	glm::vec3	left() const;
-	glm::vec3	up() const;
-	glm::vec3	down() const;
-	glm::mat4	toModelMatrix() const;
+	ftm::vec3	forward() const;
+	ftm::vec3	right() const;
+	ftm::vec3	left() const;
+	ftm::vec3	up() const;
+	ftm::vec3	down() const;
+	ftm::mat4	toModelMatrix() const;
 };
 
 struct Transform2D : public Component<Transform2D> {
-	glm::vec2	position;
-	glm::vec2	scale;
+	ftm::vec2	position;
+	ftm::vec2	scale;
 };
 
 struct Velocity : public Component<Velocity> {
-	glm::vec3	velocity;
-	glm::vec3	desiredVelocity;
+	ftm::vec3	velocity;
+	ftm::vec3	desiredVelocity;
 	float		maxSpeed;
 	float		acceleration;
 	float		decelleration;
@@ -40,8 +39,8 @@ struct Velocity : public Component<Velocity> {
 };
 
 struct Camera : public Component<Camera> {
-	glm::mat4	view;
-	glm::mat4	projection;
+	ftm::mat4	view;
+	ftm::mat4	projection;
 	float		fov;
 };
 
@@ -86,7 +85,7 @@ struct Input : public Component<Input> {
 };
 
 struct Color : public Component<Color> {
-	glm::vec4	color;
+	ftm::vec4	color;
 };
 
 enum AnimationType {

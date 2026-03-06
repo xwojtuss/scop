@@ -19,16 +19,16 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 			continue;
 
 
-		if (std::abs(glm::length(velocity->desiredVelocity)) > 0.0f) {
-			glm::vec3 direction = glm::normalize(velocity->desiredVelocity);
+		if (std::abs(ftm::length(velocity->desiredVelocity)) > 0.0f) {
+			ftm::vec3 direction = ftm::normalize(velocity->desiredVelocity);
 
 			velocity->velocity += direction * velocity->acceleration * event.deltaTime;
 
-			if (glm::length(velocity->velocity) > velocity->maxSpeed)
-				velocity->velocity = glm::normalize(velocity->velocity) * velocity->maxSpeed;
-		} else if ((speed = glm::length(velocity->velocity)) > 0.0f) {
+			if (ftm::length(velocity->velocity) > velocity->maxSpeed)
+				velocity->velocity = ftm::normalize(velocity->velocity) * velocity->maxSpeed;
+		} else if ((speed = ftm::length(velocity->velocity)) > 0.0f) {
 			speed = std::max(0.0f, speed - velocity->decelleration * event.deltaTime);
-			velocity->velocity = (speed > 0.0f) ? glm::normalize(velocity->velocity) * speed : glm::vec3(0.0f);
+			velocity->velocity = (speed > 0.0f) ? ftm::normalize(velocity->velocity) * speed : ftm::vec3(0.0f);
 		}
 		transform->position += velocity->velocity * event.deltaTime;
 	}
@@ -46,20 +46,20 @@ void	MovementSystem::onInput(const InputEvent& event) {
 
 		component::Input* input = m_world->getComponentManager<component::Input>().getComponent(entity);
 
-		velocity->desiredVelocity = transform->forward() * input->command.moveForward + transform->right() * input->command.moveRight + glm::vec3(0,1,0) * input->command.moveUp;
+		velocity->desiredVelocity = transform->forward() * input->command.moveForward + transform->right() * input->command.moveRight + ftm::vec3(0,1,0) * input->command.moveUp;
 		if (input && transform->canRotate) {
 			float angleX = input->command.lookUp * input->mouseSensitivity;
 			float angleY = input->command.lookRight * input->mouseSensitivity;
 
-			float pitch = std::asin(glm::clamp(transform->forward().y, -1.0f, 1.0f));
-			float clampedDelta = glm::clamp(pitch + angleX, -input->command.maxPitch, input->command.maxPitch) - pitch;
+			float pitch = std::asin(ftm::clamp(transform->forward()[1], -1.0f, 1.0f));
+			float clampedDelta = ftm::clamp(pitch + angleX, -input->command.maxPitch, input->command.maxPitch) - pitch;
 			
 			if (clampedDelta > input->command.maxPitch) clampedDelta = input->command.maxPitch;
 			else if (clampedDelta < -input->command.maxPitch) clampedDelta = -input->command.maxPitch;
 			
-			glm::quat rotX = glm::angleAxis(clampedDelta, transform->right());
-			glm::quat rotY = glm::angleAxis(angleY, scene::worldinfo::up);
-			transform->rotation = glm::normalize(rotY * rotX * transform->rotation);
+			ftm::quat rotX = ftm::angleAxis(clampedDelta, transform->right());
+			ftm::quat rotY = ftm::angleAxis(angleY, scene::worldinfo::up);
+			transform->rotation = ftm::normalize(rotY * rotX * transform->rotation);
 		}
 	}
 }

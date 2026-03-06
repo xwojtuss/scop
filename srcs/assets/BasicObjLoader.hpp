@@ -20,11 +20,11 @@ struct FaceIndex {
 };
 class BasicObjLoader : public IModelLoader {
 private:
-	std::vector<glm::vec3>																	m_vertices;
-	std::vector<glm::vec3>																	m_normals;
-	std::vector<glm::vec2>																	m_textureCoordinates;
+	std::vector<ftm::vec3>																	m_vertices;
+	std::vector<ftm::vec3>																	m_normals;
+	std::vector<ftm::vec2>																	m_textureCoordinates;
 	std::vector<uint32_t>																	m_indices;
-	std::vector<glm::vec<3, FaceIndex>>														m_faces;
+	std::vector<ftm::vec<FaceIndex, 3>>														m_faces;
 	std::unordered_map<std::string, std::function<void(std::stringstream&)>>	m_loaders;
 
 	void		loadVertex(std::stringstream& sstream);
@@ -34,12 +34,12 @@ private:
 	void		parseIndices(std::stringstream& sstream, FaceIndex& faceIndex);
 	void		createMeshData(MeshData& meshData);
 	
-	template <int N, typename T>
-	void		parse(std::stringstream& sstream, glm::vec<N, T>& vec, int requiredCount = N);
+	template <typename T, std::size_t N>
+	void		parse(std::stringstream& sstream, ftm::vec<T, N>& vec, std::size_t requiredCount = N);
 	
 	static void			skip(std::stringstream& sstream);
-	static glm::vec2	mapUV(const glm::vec3& pos, const glm::vec3& normal, float scale);
-	static void			changeOrigin(MeshData& meshData, glm::vec3 origin);
+	static ftm::vec2	mapUV(const ftm::vec3& pos, const ftm::vec3& normal, float scale);
+	static void			changeOrigin(MeshData& meshData, ftm::vec3 origin);
 
 public:
 	BasicObjLoader();

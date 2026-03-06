@@ -18,31 +18,31 @@ void	SimpleAnimationSystem::onSimulate(const SimulateEvent& event) {
 
 		switch (animation->type) {
 		case component::AnimationType::Spin:
-			transform->rotation = glm::rotate(transform->rotation, glm::radians(90.0f) * animation->speed * event.deltaTime, scene::worldinfo::up);
+			transform->rotation = ftm::rotate(transform->rotation, ftm::radians(90.0f) * animation->speed * event.deltaTime, scene::worldinfo::up);
 			break;
 		case component::AnimationType::Bounce:
-			transform->position.y += std::sin(event.time * animation->speed * 2.0f) * event.deltaTime * 0.5f * animation->intensity;
+			transform->position[1] += std::sin(event.time * animation->speed * 2.0f) * event.deltaTime * 0.5f * animation->intensity;
 			break;
 		case component::AnimationType::Jitter:
-			transform->position.x += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
-			transform->position.y += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
-			transform->position.z += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
+			transform->position[0] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
+			transform->position[1] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
+			transform->position[2] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * animation->speed * animation->intensity;
 			break;
 		case component::AnimationType::Random:
-			transform->position.x += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
-			transform->position.y += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
-			transform->position.z += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
-			transform->rotation = glm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * glm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::up);
-			transform->rotation = glm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * glm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::right);
-			transform->rotation = glm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * glm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::forward);
+			transform->position[0] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
+			transform->position[1] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
+			transform->position[2] += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 2.0f * animation->intensity;
+			transform->rotation = ftm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ftm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::up);
+			transform->rotation = ftm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ftm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::right);
+			transform->rotation = ftm::rotate(transform->rotation, (static_cast<float>(rand()) / RAND_MAX - 0.5f) * ftm::radians(180.0f) * animation->intensity * event.deltaTime, scene::worldinfo::forward);
 			transform->scale += (static_cast<float>(rand()) / RAND_MAX - 0.5f) * event.deltaTime * 1.0f * animation->intensity;
 			break;
 		case component::AnimationType::Circle:
-			transform->position.x = std::cos(event.time * animation->speed) * 2.0f * animation->intensity;
-			transform->position.z = std::sin(event.time * animation->speed) * 2.0f * animation->intensity;
+			transform->position[0] = std::cos(event.time * animation->speed) * 2.0f * animation->intensity;
+			transform->position[2] = std::sin(event.time * animation->speed) * 2.0f * animation->intensity;
 			break;
 		case component::AnimationType::Pulse:
-			transform->scale = glm::vec3(std::sin(event.time * animation->speed) * animation->intensity + animation->intensity);
+			transform->scale = ftm::vec3(std::sin(event.time * animation->speed) * animation->intensity + animation->intensity);
 			break;
 		}
 	}

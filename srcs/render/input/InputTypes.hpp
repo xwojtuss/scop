@@ -3,7 +3,8 @@
 #include <cstdint>
 #include <unordered_map>
 #include <functional>
-#include <glm/glm.hpp>
+
+#include "ftm/ftm.hpp"
 
 namespace render::input {
 typedef int	InputEvents;
@@ -46,7 +47,7 @@ struct InputCommand {
 	InputEvents	releasedEvents;
 	InputEvents	activeEvents;
 
-	float		maxPitch = glm::radians(89.0f);
+	float		maxPitch = ftm::radians(89.0f);
 };
 
 enum InputAction {

@@ -9,7 +9,7 @@ TextRenderSystem::TextRenderSystem() : ASystem(Dependencies()) {
 }
 
 void	TextRenderSystem::alignText(component::Text& text, component::Transform2D& transform) {
-	transform.position -= glm::vec2(text.horizontalAlignment, text.verticalAlignment) * glm::vec2(text.text.length(), 1.0f) * 0.5f * transform.scale;
+	transform.position -= ftm::vec2(text.horizontalAlignment, text.verticalAlignment) * ftm::vec2(text.text.length(), 1.0f) * 0.5f * transform.scale;
 	text.aligned = true;
 }
 

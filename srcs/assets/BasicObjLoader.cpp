@@ -2,45 +2,45 @@
 
 using namespace assets;
 
-glm::vec2	BasicObjLoader::mapUV(const glm::vec3& pos, const glm::vec3& normal, float scale) {
-	glm::vec2 uv;
+ftm::vec2	BasicObjLoader::mapUV(const ftm::vec3& pos, const ftm::vec3& normal, float scale) {
+	ftm::vec2 uv;
 
 	float ax, ay, az;
-	ax = std::abs(normal.x);
-	ay = std::abs(normal.y);
-	az = std::abs(normal.z);
+	ax = std::abs(normal[0]);
+	ay = std::abs(normal[1]);
+	az = std::abs(normal[2]);
 
-	glm::vec2 uvAxis;
+	ftm::vec2 uvAxis;
 
 	if (ax >= ay && ax >= az) {
-		uvAxis = glm::vec2(pos.z, pos.y);
+		uvAxis = ftm::vec2(pos[2], pos[1]);
 	} else if (ay >= ax && ay >= az) {
-		uvAxis = glm::vec2(pos.x, pos.z);
+		uvAxis = ftm::vec2(pos[0], pos[2]);
 	} else {
-		uvAxis = glm::vec2(pos.x, pos.y);
+		uvAxis = ftm::vec2(pos[0], pos[1]);
 	}
 
-	float nx = normal.x / (ax + ay + az);
-	float ny = normal.y / (ax + ay + az);
-	float nz = normal.z / (ax + ay + az);
+	float nx = normal[0] / (ax + ay + az);
+	float ny = normal[1] / (ax + ay + az);
+	float nz = normal[2] / (ax + ay + az);
 
 	if (std::abs(nx) >= std::abs(ny) && std::abs(nx) >= std::abs(nz)) {
-		uv = glm::vec2(pos.z, pos.y);
+		uv = ftm::vec2(pos[2], pos[1]);
 	} else if (std::abs(ny) >= std::abs(nx) && std::abs(ny) >= std::abs(nz)) {
-		uv = scale * glm::vec2(pos.x, pos.z);
+		uv = ftm::vec2(pos[0], pos[2]) * scale;
 	} else {
-		uv = scale * glm::vec2(pos.x, pos.y);
+		uv = ftm::vec2(pos[0], pos[1]) * scale;
 	}
 	uv *= scale;
 
 	if (nx < 0.0f)
-		uv.x = -uv.x;
+		uv[0] = -uv[0];
 	if (ny < 0.0f)
-		uv.y = -uv.y;
+		uv[1] = -uv[1];
 	if (nz < 0.0f)
 		uv = -uv;
 	
-	uv.y *= -1.0f;
+	uv[1] *= -1.0f;
 
 	return uv;
 }
@@ -91,18 +91,18 @@ MeshData	BasicObjLoader::toMeshData(const char* path) {
 }
 
 void	BasicObjLoader::loadTextureCoordinates(std::stringstream& sstream) {
-	glm::vec3 texCoord(0.0f, 0.0f, 1.0f);
-	glm::vec2 pos;
+	ftm::vec3 texCoord(0.0f, 0.0f, 1.0f);
+	ftm::vec2 pos;
 
 	parse(sstream, texCoord, 2);
 	
-	pos = glm::vec2(texCoord.x / texCoord.z, texCoord.y / texCoord.z);
-	pos.y = 1.0f - pos.y;
+	pos = ftm::vec2(texCoord[0] / texCoord[2], texCoord[1] / texCoord[2]);
+	pos[1] = 1.0f - pos[1];
 	m_textureCoordinates.push_back(pos);
 }
 
 void	BasicObjLoader::loadVertexNormals(std::stringstream& sstream) {
-	glm::vec3 normal;
+	ftm::vec3 normal;
 
 	parse(sstream, normal, 3);
 
@@ -110,19 +110,19 @@ void	BasicObjLoader::loadVertexNormals(std::stringstream& sstream) {
 }
 
 void	BasicObjLoader::loadVertex(std::stringstream& sstream) {
-	glm::vec3 vertex;
-	glm::vec4 pos;
+	ftm::vec3 vertex;
+	ftm::vec4 pos;
 
 	pos[3] = 1.0f;
 
 	parse(sstream, pos, 3);
 
-	vertex = glm::vec3(pos[0] / pos[3], pos[1] / pos[3], pos[2] / pos[3]);
+	vertex = ftm::vec3(pos[0] / pos[3], pos[1] / pos[3], pos[2] / pos[3]);
 	m_vertices.push_back(vertex);
 }
 
 void	BasicObjLoader::loadFace(std::stringstream& sstream) {
-	glm::vec<4, FaceIndex> face;
+	ftm::vec<FaceIndex, 4> face;
 	int i = 0;
 
 	for (i = 0; i < 4; i++) {
@@ -136,10 +136,10 @@ void	BasicObjLoader::loadFace(std::stringstream& sstream) {
 		if (face[i].vertexIndex <= 0)
 			throw std::runtime_error("Vertex indices in faces must be greater than 0");
 	}
-	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[1], face[2]});
+	m_faces.push_back(ftm::vec<FaceIndex, 3>(face[0], face[1], face[2]));
 	if (i == 3)
 		return;
-	m_faces.push_back(glm::vec<3, FaceIndex>{face[0], face[2], face[3]});
+	m_faces.push_back(ftm::vec<FaceIndex, 3>(face[0], face[2], face[3]));
 }
 
 void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceIndex) {
@@ -177,25 +177,25 @@ void	BasicObjLoader::parseIndices(std::stringstream& sstream, FaceIndex& faceInd
 
 void	BasicObjLoader::createMeshData(MeshData& meshData) {
 	render::Vertex vertex;
-	glm::vec3 color(0.0f);
-	glm::vec3 colorJump = glm::vec3(0.1f);
-	glm::vec3 minBounds(std::numeric_limits<float>::max());
-	glm::vec3 maxBounds(std::numeric_limits<float>::lowest());
+	ftm::vec3 color(0.0f);
+	ftm::vec3 colorJump = ftm::vec3(0.1f);
+	ftm::vec3 minBounds(std::numeric_limits<float>::max());
+	ftm::vec3 maxBounds(std::numeric_limits<float>::lowest());
 
 	try {
 		for (const auto& face : m_faces) {
 			color += colorJump;
-			glm::vec3 normal;
+			ftm::vec3 normal;
 
-			glm::vec3 a = m_vertices[face[1].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
-			glm::vec3 b = m_vertices[face[2].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
-			normal = glm::normalize(glm::cross(a, b));
+			ftm::vec3 a = m_vertices[face[1].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
+			ftm::vec3 b = m_vertices[face[2].vertexIndex - 1] - m_vertices[face[0].vertexIndex - 1];
+			normal = ftm::normalize(ftm::cross(a, b));
 
 			for (int i = 0; i < 3; i++) {
 				vertex.pos = m_vertices[face[i].vertexIndex - 1];
 
-				minBounds = glm::min(minBounds, vertex.pos);
-				maxBounds = glm::max(maxBounds, vertex.pos);
+				minBounds = ftm::min(minBounds, vertex.pos);
+				maxBounds = ftm::max(maxBounds, vertex.pos);
 
 				if (face[i].texCoordIndex > 0 && face[i].texCoordIndex <= m_textureCoordinates.size())
 					vertex.texCoord = m_textureCoordinates[face[i].texCoordIndex - 1];
@@ -205,7 +205,7 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 				meshData.vertices.push_back(vertex);
 				meshData.indices.push_back(static_cast<uint32_t>(meshData.vertices.size() - 1));
 			}
-			if (color.x >= 0.99f) color = glm::vec3(0.0f);
+			if (color[0] >= 0.99f) color = ftm::vec3(0.0f);
 		}
 	} catch(const std::exception& e) {
 		throw std::runtime_error("Error creating mesh data: " + std::string(e.what()));
@@ -213,7 +213,7 @@ void	BasicObjLoader::createMeshData(MeshData& meshData) {
 	changeOrigin(meshData, (minBounds + maxBounds) * 0.5f);
 }
 
-void	BasicObjLoader::changeOrigin(MeshData& meshData, glm::vec3 origin) {
+void	BasicObjLoader::changeOrigin(MeshData& meshData, ftm::vec3 origin) {
 	for (auto& vertex : meshData.vertices) {
 		vertex.pos -= origin;
 	}

@@ -3,9 +3,9 @@
 #include "BasicObjLoader.hpp"
 
 namespace assets {
-template <int N, typename T>
-void	BasicObjLoader::parse(std::stringstream& sstream, glm::vec<N, T>& vec, int requiredCount) {
-	for (int i = 0; i < N; i++) {
+template <typename T, std::size_t N>
+void	BasicObjLoader::parse(std::stringstream& sstream, ftm::vec<T, N>& vec, std::size_t requiredCount) {
+	for (std::size_t i = 0; i < N; i++) {
 		if (sstream.eof()) {
 			if (i >= requiredCount)
 				return;

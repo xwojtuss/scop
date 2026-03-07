@@ -217,9 +217,9 @@ void	VulkanRenderer::recordCurrentCommandBuffer(ecs::SystemManager& systemManage
 	renderPassInfo.pClearValues = m_clearValues.data();
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	systemManager.onRendererFrame(*this);
 	systemManager.onRendererDraw(*this);
 	systemManager.onTextDraw(*this);
+	systemManager.onRendererFrame(*this);
 
 	vkCmdEndRenderPass(commandBuffer);
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

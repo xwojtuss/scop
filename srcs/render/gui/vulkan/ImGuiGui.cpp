@@ -78,12 +78,9 @@ void	ImGuiGui::endFrame() {
 	ImGui::Render();
 }
 
-bool	ImGuiGui::beginWindow(const std::string& name, const glm::vec2& size, bool* open) {
-	if (m_windowDepth == 0) {
-		ImGui::SetNextWindowSize(ImVec2(size.x, size.y), ImGuiCond_FirstUseEver);
-	}
+bool	ImGuiGui::beginWindow(const std::string& name, bool* open) {
 	++m_windowDepth;
-	return ImGui::Begin(name.c_str(), open);
+	return ImGui::Begin(name.c_str(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 }
 
 void	ImGuiGui::endWindow() {

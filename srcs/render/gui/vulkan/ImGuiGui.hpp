@@ -37,7 +37,7 @@ public:
 
 	void	beginFrame() override;
 	void	endFrame() override;
-	bool	beginWindow(const std::string& name, const glm::vec2& size, bool* open = nullptr) override;
+	bool	beginWindow(const std::string& name, bool* open = nullptr) override;
 	void	endWindow() override;
 	void	text(const std::string& value) override;
 	bool	button(const std::string& label) override;

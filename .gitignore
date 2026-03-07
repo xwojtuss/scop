@@ -56,3 +56,6 @@ build/
 docs/plantuml/plantuml*
 docs/doxygen/html
 docs/doxygen/latex
+
+# Config files
+*.ini

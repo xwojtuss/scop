@@ -11,7 +11,7 @@ public:
 
 	virtual void	beginFrame() = 0;
 	virtual void	endFrame() = 0;
-	virtual bool	beginWindow(const std::string& name, const glm::vec2& size, bool* open = nullptr) = 0;
+	virtual bool	beginWindow(const std::string& name, bool* open = nullptr) = 0;
 	virtual void	endWindow() = 0;
 	virtual bool	button(const std::string& label) = 0;
 	virtual void	text(const std::string& value) = 0;

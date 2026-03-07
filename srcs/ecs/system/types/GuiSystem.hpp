@@ -4,7 +4,6 @@
 #include "../DispatcherEvents.hpp"
 #include "../../../render/IRenderer.hpp"
 #include "../../../render/gui/IGui.hpp"
-#include "../../../render/gui/GuiTypes.hpp"
 #include "../../../render/gui/APanel.hpp"
 #include "../../../render/input/InputTypes.hpp"
 #include <memory>
@@ -15,7 +14,6 @@ namespace ecs {
 class GuiSystem : public ASystem {
 private:
 	render::gui::IGui&															m_gui;
-	render::gui::GuiState														m_state;
 	std::unordered_map<render::input::InputEvent, std::type_index>				m_eventToPanelType;
 	std::unordered_map<std::type_index, std::unique_ptr<render::gui::APanel>>	m_panels;
 

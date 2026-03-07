@@ -8,8 +8,6 @@ private:
 public:
 	DebugPanel(IGui& gui);
 
-	void	open() override;
 	void	display() override;
-	void	close() override;
 };
 }

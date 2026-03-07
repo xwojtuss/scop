@@ -15,9 +15,9 @@ protected:
 public:
 	virtual ~APanel() = default;
 
-	virtual void	open() = 0;
+	virtual void	open();
 	virtual void	display() = 0;
-	virtual void	close() = 0;
+	virtual void	close();
 	void			toggle();
 	bool			isOpen() const;
 };

@@ -4,7 +4,7 @@
 
 using namespace ecs;
 
-GuiSystem::GuiSystem(render::gui::IGui& gui) : ASystem(Dependencies()), m_gui(gui), m_state() {
+GuiSystem::GuiSystem(render::gui::IGui& gui) : ASystem(Dependencies()), m_gui(gui) {
 
 	registerPanel<render::gui::DebugPanel>(render::input::DebugMenuToggle);
 }

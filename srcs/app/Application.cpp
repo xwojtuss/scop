@@ -4,7 +4,9 @@ using namespace app;
 #include <iostream>
 Application::Application() {
 	m_window = std::make_unique<platform::window::glfw::GLFWWindow>();
-	m_renderer = std::make_unique<render::vulkan::VulkanRenderer>(*m_window);
+	m_renderer = std::make_unique<render::vulkan::VulkanRenderer >(*m_window);
+	auto* vulkanRenderer = static_cast<render::vulkan::VulkanRenderer*>(m_renderer.get());
+	m_gui = std::make_unique<render::gui::vulkan::ImGuiGui>(vulkanRenderer->getContext(), vulkanRenderer->getSwapchain(), *m_window);
 	m_world = std::make_unique<ecs::World>();
 	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
 	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
@@ -21,11 +23,12 @@ void	Application::init() {
 	m_world->createSystem<ecs::MovementSystem>();
 	m_world->createSystem<ecs::RenderSystem>();
 	m_world->createSystem<ecs::TextRenderSystem>();
-	m_world->createSystem<ecs::WindowControlSystem>(*m_window);
+	m_world->createSystem<ecs::WindowControlSystem>(*m_window, *m_gui);
 	m_world->createSystem<ecs::PlayerInputSystem>(m_window->getInputManager());
 	m_world->createSystem<ecs::FpsCounter>();
 	m_world->createSystem<ecs::ToggleShaderSystem>();
 	m_world->createSystem<ecs::SimpleAnimationSystem>();
+	m_world->createSystem<ecs::GuiSystem>(*m_gui);
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};

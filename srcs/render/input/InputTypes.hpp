@@ -19,7 +19,8 @@ enum InputEvent {
 	ActionButton = 1 << 7,
 	SecondaryButton = 1 << 8,
 	AnyMouseButton = ActionButton | SecondaryButton,
-	ToggleShader = 1 << 9,
+	ShaderToggle = 1 << 9,
+	DebugMenuToggle = 1 << 10,
 	All = 1 << (sizeof(InputEvents) * 8 - 1)
 };
 

@@ -17,7 +17,7 @@ void	ToggleShaderSystem::onInput(const InputEvent& event) {
 		if (!input)
 			continue;
 
-		if (render::input::hasEvent(input->command.startedEvents, render::input::InputEvent::ToggleShader)) {
+		if (render::input::hasEvent(input->command.startedEvents, render::input::InputEvent::ShaderToggle)) {
 			shouldToggle = true;
 			break;
 		}

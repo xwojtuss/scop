@@ -217,6 +217,7 @@ void	VulkanRenderer::recordCurrentCommandBuffer(ecs::SystemManager& systemManage
 	renderPassInfo.pClearValues = m_clearValues.data();
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	systemManager.onRendererFrame(*this);
 	systemManager.onRendererDraw(*this);
 	systemManager.onTextDraw(*this);
 
@@ -252,14 +253,16 @@ void	VulkanRenderer::beginFrame() {
 void	VulkanRenderer::render(ecs::SystemManager& systemManager) {
 	if (!m_frameIndex.has_value()) return;
 
-	systemManager.onRendererFrame(*this);
-
 	// Only reset the fence if we are submitting work
 	m_frameData->resetFences(*m_context, m_frameData->getCurrentFrame());
 	
 	vkResetCommandBuffer(m_frameData->getCurrentCommandBuffer(), 0);
 	recordCurrentCommandBuffer(systemManager);
 	m_frameData->submitCommandBuffer(*m_context, m_renderFinishedSemaphores[m_frameIndex.value()]);
+}
+
+void	VulkanRenderer::render(render::gui::IGui& gui) {
+	gui.render(m_frameData->getCurrentCommandBuffer());
 }
 
 void	VulkanRenderer::endFrame() {
@@ -334,4 +337,16 @@ void	VulkanRenderer::cleanup() {
 
 VulkanRenderer::~VulkanRenderer() {
 	cleanup();
+}
+
+VulkanContext&	VulkanRenderer::getContext() {
+	return *m_context;
+}
+
+VulkanSwapchain&	VulkanRenderer::getSwapchain() {
+	return *m_swapchain;
+}
+
+platform::window::IWindow&	VulkanRenderer::getWindow() {
+	return m_context->getWindow();
 }

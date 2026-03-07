@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gui/IGui.hpp"
 #include "../assets/Resources.hpp"
 #include "../ecs/component/Components.hpp"
 #include "../ecs/system/SystemManager.hpp"
@@ -19,6 +20,7 @@ public:
 	virtual const assets::MeshHandle&	getTextMeshHandle() const = 0;
 	virtual void						beginFrame() = 0;
 	virtual void						render(ecs::SystemManager& systemManager) = 0;
+	virtual void						render(render::gui::IGui& gui) = 0;
 	virtual void						endFrame() = 0;
 	virtual void						setClearColor(float r, float g, float b, float a) = 0;
 	virtual void						setClearColor(int hexColor) = 0;

@@ -1,0 +1,37 @@
+#pragma once
+
+#include "../ASystem.hpp"
+#include "../DispatcherEvents.hpp"
+#include "../../../render/IRenderer.hpp"
+#include "../../../render/gui/IGui.hpp"
+#include "../../../render/gui/GuiTypes.hpp"
+#include "../../../render/gui/APanel.hpp"
+#include "../../../render/input/InputTypes.hpp"
+#include <memory>
+#include <unordered_map>
+#include <typeindex>
+
+namespace ecs {
+class GuiSystem : public ASystem {
+private:
+	render::gui::IGui&															m_gui;
+	render::gui::GuiState														m_state;
+	std::unordered_map<render::input::InputEvent, std::type_index>				m_eventToPanelType;
+	std::unordered_map<std::type_index, std::unique_ptr<render::gui::APanel>>	m_panels;
+
+	template<typename PanelType>
+	void		registerPanel(render::input::InputEvent toggleEvent);
+
+	template<typename PanelType>
+	PanelType*	getPanel();
+
+public:
+	explicit GuiSystem(render::gui::IGui& gui);
+
+	void			onInput(const InputEvent& event);
+	void			onRendererFrame(const RendererFrameEvent& event);
+	virtual void	bindEvents(Dispatcher& dispatcher) override;
+};
+}
+
+#include "GuiSystem.tpp"

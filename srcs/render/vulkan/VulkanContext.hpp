@@ -62,6 +62,7 @@ public:
 	QueueFamilyIndices				findQueueFamilies(VkPhysicalDevice device);
 	SwapChainSupportDetails			querySwapChainSupport(VkPhysicalDevice device);
 	const QueueFamilyIndices&		getQueueFamilyIndices() const;
+	const VkInstance&				getInstance() const;
 	const VkSurfaceKHR&				getSurface() const;
 	const VkDevice&					getLogicalDevice() const;
 	const VkPhysicalDevice&			getPhysicalDevice() const;

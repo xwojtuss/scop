@@ -65,8 +65,31 @@ FetchContent_Declare(
   GIT_TAG   0af55ccecd98d4e5a8d1fad7de25ba429d60e863
 )
 
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  GIT_TAG   6ded5230d043aa32c755e65c910c2af5002fb9f9
+)
+
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(glm)
+FetchContent_MakeAvailable(imgui)
+
+# ImGui sources
+target_sources(scop PRIVATE
+  "${imgui_SOURCE_DIR}/imgui.cpp"
+  "${imgui_SOURCE_DIR}/imgui_demo.cpp"
+  "${imgui_SOURCE_DIR}/imgui_draw.cpp"
+  "${imgui_SOURCE_DIR}/imgui_tables.cpp"
+  "${imgui_SOURCE_DIR}/imgui_widgets.cpp"
+  "${imgui_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp"
+  "${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp"
+)
+
+target_include_directories(scop PRIVATE
+  "${imgui_SOURCE_DIR}"
+  "${imgui_SOURCE_DIR}/backends"
+)
 
 target_link_libraries(scop PRIVATE
   Vulkan::Vulkan

@@ -277,6 +277,10 @@ const QueueFamilyIndices&	VulkanContext::getQueueFamilyIndices() const {
 	return m_queueFamilyIndices;
 }
 
+const VkInstance&	VulkanContext::getInstance() const {
+	return m_instance;
+}
+
 uint32_t	VulkanContext::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 	VkPhysicalDeviceMemoryProperties memProperties;
 

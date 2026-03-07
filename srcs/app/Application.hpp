@@ -4,10 +4,12 @@
 
 #include "../platform/window/IWindow.hpp"
 #include "../render/IRenderer.hpp"
+#include "../render/gui/IGui.hpp"
 #include "../assets/IModelLoader.hpp"
 #include "../assets/ITextureLoader.hpp"
 #include "../platform/window/glfw/GLFWWindow.hpp"
 #include "../render/vulkan/VulkanRenderer.hpp"
+#include "../render/gui/vulkan/ImGuiGui.hpp"
 #include "../assets/TinyObjLoader.hpp"
 #include "../assets/BasicObjLoader.hpp"
 #include "../assets/StbTextureLoader.hpp"
@@ -22,6 +24,7 @@
 #include "../ecs/system/types/ToggleShaderSystem.hpp"
 #include "../ecs/system/types/FpsCounter.hpp"
 #include "../ecs/system/types/SimpleAnimationSystem.hpp"
+#include "../ecs/system/types/GuiSystem.hpp"
 #include "../ecs/component/Components.hpp"
 #include "../ecs/World.hpp"
 
@@ -30,6 +33,7 @@ class Application {
 private:
 	std::unique_ptr<platform::window::IWindow>		m_window;
 	std::unique_ptr<render::IRenderer>				m_renderer;
+	std::unique_ptr<render::gui::IGui>				m_gui;
 	std::unique_ptr<ecs::World>						m_world;
 	std::unique_ptr<assets::IModelLoader>			m_modelLoader;
 	std::unique_ptr<assets::ITextureLoader>			m_textureLoader;

@@ -3,7 +3,7 @@
 
 using namespace ecs;
 
-WindowControlSystem::WindowControlSystem(platform::window::IWindow& window) : ASystem(Dependencies()), m_window(window) {
+WindowControlSystem::WindowControlSystem(platform::window::IWindow& window, render::gui::IGui& gui) : ASystem(Dependencies()), m_window(window), m_gui(gui) {
 	m_dependencies.addDependency<component::Input>();
 }
 
@@ -28,6 +28,7 @@ void	WindowControlSystem::onInput(const InputEvent& event) {
 			if (velocity) velocity->canMove = false;
 
 		} else if (m_window.isMouseCursorVisible()
+			&& !m_gui.wantsMouseCapture()
 			&& render::input::hasAnyEvent(input->command.startedEvents, render::input::InputEvent::AnyMouseButton)) {
 			m_window.setMouseCursorVisible(false);
 			

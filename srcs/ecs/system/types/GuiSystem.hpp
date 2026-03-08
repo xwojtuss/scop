@@ -18,7 +18,7 @@ private:
 	std::unordered_map<std::type_index, std::unique_ptr<render::gui::APanel>>	m_panels;
 
 	template<typename PanelType>
-	void		registerPanel(render::input::InputEvent toggleEvent);
+	void		registerPanel(render::input::InputEvent toggleEvent, PanelType& panel);
 
 	template<typename PanelType>
 	PanelType*	getPanel();
@@ -26,6 +26,7 @@ private:
 public:
 	explicit GuiSystem(render::gui::IGui& gui);
 
+	void			onWorldReady(const WorldReadyEvent& event);
 	void			onInput(const InputEvent& event);
 	void			onRendererFrame(const RendererFrameEvent& event);
 	virtual void	bindEvents(Dispatcher& dispatcher) override;

@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
 using namespace app;
-#include <iostream>
+
 Application::Application() {
 	m_window = std::make_unique<platform::window::glfw::GLFWWindow>();
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer >(*m_window);
@@ -29,6 +29,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::ToggleShaderSystem>();
 	m_world->createSystem<ecs::SimpleAnimationSystem>();
 	m_world->createSystem<ecs::GuiSystem>(*m_gui);
+	m_world->getSystemManager().onWorldReady();
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};

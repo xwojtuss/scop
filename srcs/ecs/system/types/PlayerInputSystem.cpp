@@ -19,6 +19,9 @@ void	PlayerInputSystem::onSimulate(const SimulateEvent& event) {
 			continue;
 
 		input->command = command;
+		inputEvent.source = entity;
+		inputEvent.command = command;
+		break;
 	}
 	inputEvent.deltaTime = event.deltaTime;
 	m_dispatcher->emit<ecs::InputEvent>(inputEvent);

@@ -25,7 +25,12 @@ struct RendererFrameEvent {
 };
 
 struct InputEvent {
-	float	deltaTime;
+	float						deltaTime;
+	ecs::Entity					source;
+	render::input::InputCommand	command;
+};
+
+struct WorldReadyEvent {
 };
 
 struct SimulateEvent {

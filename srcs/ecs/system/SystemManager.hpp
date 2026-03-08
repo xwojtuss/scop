@@ -21,6 +21,7 @@ public:
 	template <typename SystemType>
 	SystemType*	getSystem();
 	
+	void		onWorldReady();
 	void		onRender(float aspectRatio, double time);
 	void		onTextDraw(render::IRenderer& renderer);
 	void		onRendererDraw(render::IRenderer& renderer);

@@ -4,10 +4,10 @@
 
 namespace ecs {
 template<typename PanelType>
-void	GuiSystem::registerPanel(render::input::InputEvent toggleEvent) {
+void	GuiSystem::registerPanel(render::input::InputEvent toggleEvent, PanelType& panel) {
 	std::type_index typeIdx = std::type_index(typeid(PanelType));
 	
-	m_panels.emplace(typeIdx, std::make_unique<PanelType>(m_gui));
+	m_panels.emplace(typeIdx, std::make_unique<PanelType>(panel));
 	
 	m_eventToPanelType.emplace(toggleEvent, typeIdx);
 }

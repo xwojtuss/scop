@@ -2,6 +2,10 @@
 
 using namespace ecs;
 
+void	SystemManager::onWorldReady() {
+	m_dispatcher.emit<WorldReadyEvent>(WorldReadyEvent{});
+}
+
 void	SystemManager::onRender(float aspectRatio, double time) {
 	m_dispatcher.emit<RenderEvent>(RenderEvent{aspectRatio, time});
 }

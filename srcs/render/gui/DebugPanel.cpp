@@ -4,15 +4,18 @@
 
 using namespace render::gui;
 
-DebugPanel::DebugPanel(IGui& gui) : APanel(gui) {
+DebugPanel::DebugPanel(IGui& gui, ecs::World& world) : APanel(gui), m_world(world) {
 }
 
 void	DebugPanel::display() {
-	bool isWindowVisible = m_gui.beginWindow("Debug", &m_isOpen);
-	if (isWindowVisible) {
-		m_gui.text("This is a debug panel where coords and fps will be displayed");
-		if (m_gui.button("Close"))
-			m_isOpen = false;
+	ecs::component::Transform* transform = m_world.getComponentManager<ecs::component::Transform>().getComponent(m_caller);
+
+	if (!transform)
+		return;
+
+	glm::vec3 pos = transform->position;
+	if (m_gui.beginWindow("Debug", &m_isOpen)) {
+		m_gui.text("Player Position: X:" + std::to_string(pos.x) + ", Y:" + std::to_string(pos.y) + ", Z:" + std::to_string(pos.z));
 	}
 	m_gui.endWindow();
 }

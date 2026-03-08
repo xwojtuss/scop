@@ -5,28 +5,25 @@
 using namespace ecs;
 
 GuiSystem::GuiSystem(render::gui::IGui& gui) : ASystem(Dependencies()), m_gui(gui) {
+}
 
-	registerPanel<render::gui::DebugPanel>(render::input::DebugMenuToggle);
+void	GuiSystem::onWorldReady(const WorldReadyEvent& event) {
+	(void)event;
+
+	render::gui::DebugPanel debugPanel(m_gui, *m_world);
+	registerPanel(render::input::DebugMenuToggle, debugPanel);
 }
 
 void	GuiSystem::onInput(const InputEvent& event) {
-	(void)event;
-
-	auto& inputManager = m_world->getComponentManager<component::Input>();
-	for (size_t i = 0; i < inputManager.getComponentCount(); ++i) {
-		component::Input* input = inputManager.getComponentAtIndex(i);
-
-		if (!input)
+	for (const auto& [inputEvent, panelType] : m_eventToPanelType) {
+		if (!render::input::hasEvent(event.command.startedEvents, inputEvent))
 			continue;
 
-		for (const auto& [inputEvent, panelType] : m_eventToPanelType) {
-			if (!render::input::hasEvent(input->command.startedEvents, inputEvent))
-				continue;
-
-			auto it = m_panels.find(panelType);
-			if (it != m_panels.end())
-				it->second->toggle();
-		}
+		auto it = m_panels.find(panelType);
+		if (it == m_panels.end())
+			continue;
+		it->second->setCaller(event.source);
+		it->second->toggle();
 	}
 }
 
@@ -45,4 +42,5 @@ void	GuiSystem::onRendererFrame(const RendererFrameEvent& event) {
 void	GuiSystem::bindEvents(Dispatcher& dispatcher) {
 	dispatcher.subscribe<InputEvent>(this, &GuiSystem::onInput);
 	dispatcher.subscribe<RendererFrameEvent>(this, &GuiSystem::onRendererFrame);
+	dispatcher.subscribe<WorldReadyEvent>(this, &GuiSystem::onWorldReady);
 }

@@ -20,3 +20,7 @@ void	APanel::close() {
 bool	APanel::isOpen() const {
 	return m_isOpen;
 }
+
+void	APanel::setCaller(ecs::Entity caller) {
+	m_caller = caller;
+}

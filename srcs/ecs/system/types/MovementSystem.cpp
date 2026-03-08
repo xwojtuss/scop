@@ -6,8 +6,9 @@ using namespace ecs;
 MovementSystem::MovementSystem() : ASystem(Dependencies()) {
 	m_dependencies.addDependency<component::Transform>();
 	m_dependencies.addDependency<component::Velocity>();
+	m_dependencies.addDependency<component::Input>();
 }
-#include <iostream>
+
 void	MovementSystem::onSimulate(const SimulateEvent& event) {
 	float speed = 0.0f;
 
@@ -37,30 +38,30 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 void	MovementSystem::onInput(const InputEvent& event) {
 	(void)event;
 
-	for (const Entity& entity : m_entities) {
-		component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(entity);
-		component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(entity);
+	if (!hasEntity(event.source))
+		return;
 
-		if (!velocity || !transform)
-			continue;
+	component::Velocity* velocity = m_world->getComponentManager<component::Velocity>().getComponent(event.source);
+	component::Transform* transform = m_world->getComponentManager<component::Transform>().getComponent(event.source);
+	component::Input* input = m_world->getComponentManager<component::Input>().getComponent(event.source);
 
-		component::Input* input = m_world->getComponentManager<component::Input>().getComponent(entity);
+	if (!velocity || !transform || !input)
+		return;
 
-		velocity->desiredVelocity = transform->forward() * input->command.moveForward + transform->right() * input->command.moveRight + glm::vec3(0,1,0) * input->command.moveUp;
-		if (input && transform->canRotate) {
-			float angleX = input->command.lookUp * input->mouseSensitivity;
-			float angleY = input->command.lookRight * input->mouseSensitivity;
+	velocity->desiredVelocity = transform->forward() * event.command.moveForward + transform->right() * event.command.moveRight + glm::vec3(0,1,0) * event.command.moveUp;
+	if (transform->canRotate) {
+		float angleX = event.command.lookUp * input->mouseSensitivity;
+		float angleY = event.command.lookRight * input->mouseSensitivity;
 
-			float pitch = std::asin(glm::clamp(transform->forward().y, -1.0f, 1.0f));
-			float clampedDelta = glm::clamp(pitch + angleX, -input->command.maxPitch, input->command.maxPitch) - pitch;
-			
-			if (clampedDelta > input->command.maxPitch) clampedDelta = input->command.maxPitch;
-			else if (clampedDelta < -input->command.maxPitch) clampedDelta = -input->command.maxPitch;
-			
-			glm::quat rotX = glm::angleAxis(clampedDelta, transform->right());
-			glm::quat rotY = glm::angleAxis(angleY, scene::worldinfo::up);
-			transform->rotation = glm::normalize(rotY * rotX * transform->rotation);
-		}
+		float pitch = std::asin(glm::clamp(transform->forward().y, -1.0f, 1.0f));
+		float clampedDelta = glm::clamp(pitch + angleX, -event.command.maxPitch, event.command.maxPitch) - pitch;
+		
+		if (clampedDelta > event.command.maxPitch) clampedDelta = event.command.maxPitch;
+		else if (clampedDelta < -event.command.maxPitch) clampedDelta = -event.command.maxPitch;
+		
+		glm::quat rotX = glm::angleAxis(clampedDelta, transform->right());
+		glm::quat rotY = glm::angleAxis(angleY, scene::worldinfo::up);
+		transform->rotation = glm::normalize(rotY * rotX * transform->rotation);
 	}
 }
 

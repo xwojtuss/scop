@@ -43,6 +43,7 @@ public:
 	void	endSection() override;
 	void	text(const std::string& value) override;
 	bool	button(const std::string& label) override;
+	void	separator() override;
 	void	render(VkCommandBuffer commandBuffer) override;
 	bool	wantsMouseCapture() const override;
 	bool	wantsKeyboardCapture() const override;

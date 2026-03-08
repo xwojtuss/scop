@@ -108,6 +108,10 @@ bool	ImGuiGui::button(const std::string& label) {
 	return ImGui::Button(label.c_str());
 }
 
+void	ImGuiGui::separator() {
+	ImGui::Separator();
+}
+
 bool	ImGuiGui::wantsMouseCapture() const {
 	return ImGui::GetIO().WantCaptureMouse;
 }

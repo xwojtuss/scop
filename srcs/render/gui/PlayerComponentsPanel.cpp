@@ -1,7 +1,5 @@
 #include "PlayerComponentsPanel.hpp"
 
-#include <imgui.h>
-
 using namespace render::gui;
 
 PlayerComponentsPanel::PlayerComponentsPanel(IGui& gui, ecs::World& world) : APanel(gui), m_world(world) {

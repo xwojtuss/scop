@@ -1,6 +1,7 @@
 #include "GuiSystem.hpp"
 #include "../../World.hpp"
 #include "../../../render/gui/PlayerComponentsPanel.hpp"
+#include "../../../render/gui/EventsRuntimePanel.hpp"
 
 using namespace ecs;
 
@@ -12,18 +13,22 @@ void	GuiSystem::onWorldReady(const WorldReadyEvent& event) {
 
 	render::gui::PlayerComponentsPanel playerComponentsPanel(m_gui, *m_world);
 	registerPanel(render::input::PlayerComponentsMenuToggle, playerComponentsPanel);
+	render::gui::EventsRuntimePanel eventsRuntimePanel(m_gui, m_world->getSystemManager().getDispatcher());
+	registerPanel(render::input::EventRuntimesMenuToggle, eventsRuntimePanel);
 }
 
 void	GuiSystem::onInput(const InputEvent& event) {
-	for (const auto& [inputEvent, panelType] : m_eventToPanelType) {
+	for (const auto& [inputEvent, panelTypes] : m_eventToPanelType) {
 		if (!render::input::hasEvent(event.command.startedEvents, inputEvent))
 			continue;
 
-		auto it = m_panels.find(panelType);
-		if (it == m_panels.end())
-			continue;
-		it->second->setCaller(event.source);
-		it->second->toggle();
+		for (const auto& panelType : panelTypes) {
+			auto it = m_panels.find(panelType);
+			if (it == m_panels.end())
+				continue;
+			it->second->setCaller(event.source);
+			it->second->toggle();
+		}
 	}
 }
 

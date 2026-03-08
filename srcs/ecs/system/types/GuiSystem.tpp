@@ -9,7 +9,14 @@ void	GuiSystem::registerPanel(render::input::InputEvent toggleEvent, PanelType& 
 	
 	m_panels.emplace(typeIdx, std::make_unique<PanelType>(panel));
 	
-	m_eventToPanelType.emplace(toggleEvent, typeIdx);
+	if (m_eventToPanelType.find(toggleEvent) != m_eventToPanelType.end()) {
+		m_eventToPanelType[toggleEvent].push_back(typeIdx);
+		return;
+	}
+	std::vector<std::type_index> panelTypes;
+
+	panelTypes.push_back(typeIdx);
+	m_eventToPanelType[toggleEvent] = panelTypes;
 }
 
 template<typename PanelType>

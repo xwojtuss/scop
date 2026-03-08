@@ -17,6 +17,7 @@ public:
 	virtual void	endSection() = 0;
 	virtual bool	button(const std::string& label) = 0;
 	virtual void	text(const std::string& value) = 0;
+	virtual void	separator() = 0;
 	virtual void	render(VkCommandBuffer commandBuffer) = 0;
 	virtual bool	wantsMouseCapture() const = 0;
 	virtual bool	wantsKeyboardCapture() const = 0;

@@ -21,6 +21,7 @@ enum InputEvent {
 	AnyMouseButton = ActionButton | SecondaryButton,
 	ShaderToggle = 1 << 9,
 	PlayerComponentsMenuToggle = 1 << 10,
+	EventRuntimesMenuToggle = 1 << 11,
 	All = 1 << (sizeof(InputEvents) * 8 - 1)
 };
 
@@ -98,6 +99,6 @@ constexpr MouseButton	getMouseButton(Input input) {
 	return static_cast<MouseButton>(input >> 16);
 }
 
-typedef std::unordered_map<Input, InputEvent>	InputEventBindings;
+typedef std::unordered_map<Input, std::vector<InputEvent>>	InputEventBindings;
 
 }

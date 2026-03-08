@@ -2,7 +2,7 @@
 
 using namespace render::input;
 
-KeyInputProcessor::KeyInputProcessor() : m_bindings(), m_pressedEvents(0), m_repeatedEvents(0), m_releasedEvents(0), m_activeEvents(0) {
+KeyInputProcessor::KeyInputProcessor() : m_defaultBindings(), m_bindings(), m_pressedEvents(0), m_repeatedEvents(0), m_releasedEvents(0), m_activeEvents(0) {
 }
 
 void	KeyInputProcessor::processKey(int scancode, InputAction action, InputMods modifiers) {
@@ -13,8 +13,9 @@ void	KeyInputProcessor::processKey(int scancode, InputAction action, InputMods m
 	if (it == m_bindings.end() && (it = m_bindings.find(singleInput)) == m_bindings.end())
 		return;
 	
-	InputEvent event = it->second;
-	switchEvent(event, action);
+	for (const auto& bindingInputEvent : it->second) {
+		switchEvent(bindingInputEvent, action);
+	}
 }
 
 void	KeyInputProcessor::getKeyEvents(InputEvents& pressedEvents, InputEvents& repeatedEvents, InputEvents& releasedEvents, InputEvents& activeEvents) {
@@ -35,8 +36,9 @@ void	KeyInputProcessor::processMouseButton(MouseButton button, InputAction actio
 	if (it == m_bindings.end() && (it = m_bindings.find(singleInput)) == m_bindings.end())
 		return;
 
-	InputEvent event = it->second;
-	switchEvent(event, action);
+	for (const auto& bindingInputEvent : it->second) {
+		switchEvent(bindingInputEvent, action);
+	}
 }
 
 void	KeyInputProcessor::switchEvent(InputEvent event, InputAction action) {
@@ -58,11 +60,11 @@ void	KeyInputProcessor::switchEvent(InputEvent event, InputAction action) {
 }
 
 void	KeyInputProcessor::bindEvent(Input input, InputEvent event) {
-	m_bindings[input] = event;
+	m_bindings[input].push_back(event);
 }
 
 void	KeyInputProcessor::resetBindings() {
-	m_bindings = platform::input::glfw::GLFWDefaultKeybinds::getDefaultBindings();
+	m_bindings = m_defaultBindings.getDefaultBindings();
 
 	if (m_bindings.empty()) {
 		throw std::runtime_error("Attempted to initialize bindings before glfw was initialized");

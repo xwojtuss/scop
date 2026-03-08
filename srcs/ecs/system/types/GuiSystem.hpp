@@ -9,12 +9,13 @@
 #include <memory>
 #include <unordered_map>
 #include <typeindex>
+#include <vector>
 
 namespace ecs {
 class GuiSystem : public ASystem {
 private:
 	render::gui::IGui&															m_gui;
-	std::unordered_map<render::input::InputEvent, std::type_index>				m_eventToPanelType;
+	std::unordered_map<render::input::InputEvent, std::vector<std::type_index>>	m_eventToPanelType;
 	std::unordered_map<std::type_index, std::unique_ptr<render::gui::APanel>>	m_panels;
 
 	template<typename PanelType>

@@ -13,11 +13,12 @@ public:
 	constexpr static size_t	maxEventActions = 64;
 	
 private:
-	InputEventBindings	m_bindings;
-	InputEvents			m_pressedEvents;
-	InputEvents			m_repeatedEvents;
-	InputEvents			m_releasedEvents;
-	InputEvents			m_activeEvents;
+	platform::input::glfw::GLFWDefaultKeybinds	m_defaultBindings;
+	InputEventBindings							m_bindings;
+	InputEvents									m_pressedEvents;
+	InputEvents									m_repeatedEvents;
+	InputEvents									m_releasedEvents;
+	InputEvents									m_activeEvents;
 
 	void	switchEvent(InputEvent event, InputAction action);
 

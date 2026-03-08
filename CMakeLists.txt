@@ -82,7 +82,6 @@ FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(imgui)
 FetchContent_MakeAvailable(magic_enum)
 
-# ImGui sources
 target_sources(scop PRIVATE
   "${imgui_SOURCE_DIR}/imgui.cpp"
   "${imgui_SOURCE_DIR}/imgui_demo.cpp"

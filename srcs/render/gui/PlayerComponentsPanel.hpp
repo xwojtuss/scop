@@ -7,12 +7,12 @@
 #include "../../ecs/component/Components.hpp"
 
 namespace render::gui {
-class DebugPanel : public APanel {
+class PlayerComponentsPanel : public APanel {
 private:
 	ecs::World&	m_world;
 
 public:
-	DebugPanel(IGui& gui, ecs::World& world);
+	PlayerComponentsPanel(IGui& gui, ecs::World& world);
 
 	void	display() override;
 };

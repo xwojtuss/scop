@@ -1,6 +1,6 @@
 #include "GuiSystem.hpp"
 #include "../../World.hpp"
-#include "../../../render/gui/DebugPanel.hpp"
+#include "../../../render/gui/PlayerComponentsPanel.hpp"
 
 using namespace ecs;
 
@@ -10,8 +10,8 @@ GuiSystem::GuiSystem(render::gui::IGui& gui) : ASystem(Dependencies()), m_gui(gu
 void	GuiSystem::onWorldReady(const WorldReadyEvent& event) {
 	(void)event;
 
-	render::gui::DebugPanel debugPanel(m_gui, *m_world);
-	registerPanel(render::input::DebugMenuToggle, debugPanel);
+	render::gui::PlayerComponentsPanel playerComponentsPanel(m_gui, *m_world);
+	registerPanel(render::input::PlayerComponentsMenuToggle, playerComponentsPanel);
 }
 
 void	GuiSystem::onInput(const InputEvent& event) {

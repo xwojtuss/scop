@@ -1,13 +1,13 @@
-#include "DebugPanel.hpp"
+#include "PlayerComponentsPanel.hpp"
 
 #include <imgui.h>
 
 using namespace render::gui;
 
-DebugPanel::DebugPanel(IGui& gui, ecs::World& world) : APanel(gui), m_world(world) {
+PlayerComponentsPanel::PlayerComponentsPanel(IGui& gui, ecs::World& world) : APanel(gui), m_world(world) {
 }
 
-void	DebugPanel::display() {
+void	PlayerComponentsPanel::display() {
 	if (!m_isOpen)
 		return;
 
@@ -18,7 +18,7 @@ void	DebugPanel::display() {
 
 	std::stringstream ss;
 	std::vector<ecs::IComponent*> components = m_world.getAllComponents(m_caller);
-	if (m_gui.beginWindow("Debug", &m_isOpen)) {
+	if (m_gui.beginWindow("Player Components", &m_isOpen)) {
 		for (const auto& component : components) {
 			if (m_gui.beginSection(component->getName().c_str())) {
 				ss << *component;

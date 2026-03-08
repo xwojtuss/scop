@@ -71,9 +71,16 @@ FetchContent_Declare(
   GIT_TAG   6ded5230d043aa32c755e65c910c2af5002fb9f9
 )
 
+FetchContent_Declare(
+  magic_enum
+  GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+  GIT_TAG   e046b69a3736d314fad813e159b1c192eaef92cd
+)
+
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(imgui)
+FetchContent_MakeAvailable(magic_enum)
 
 # ImGui sources
 target_sources(scop PRIVATE
@@ -89,12 +96,14 @@ target_sources(scop PRIVATE
 target_include_directories(scop PRIVATE
   "${imgui_SOURCE_DIR}"
   "${imgui_SOURCE_DIR}/backends"
+  "${magic_enum_SOURCE_DIR}/include"
 )
 
 target_link_libraries(scop PRIVATE
   Vulkan::Vulkan
   glfw
   glm::glm
+  magic_enum::magic_enum
 )
 
 find_program(GLSLANG_VALIDATOR glslangValidator)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 #include "APanel.hpp"
 #include "../../ecs/World.hpp"
 #include "../../ecs/component/Components.hpp"

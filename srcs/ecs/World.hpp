@@ -25,6 +25,9 @@ public:
 	EntityHandle						createEntity();
 	void								destroyEntity(const Entity& entity);
 
+	// This is expensive, only call for debug
+	std::vector<IComponent*>			getAllComponents(const Entity& entity);
+
 	template <typename SystemType, typename... Args>
 	void								createSystem(Args&&... args);
 

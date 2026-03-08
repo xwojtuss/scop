@@ -39,6 +39,8 @@ public:
 	void	endFrame() override;
 	bool	beginWindow(const std::string& name, bool* open = nullptr) override;
 	void	endWindow() override;
+	bool	beginSection(const std::string& name, bool* open = nullptr) override;
+	void	endSection() override;
 	void	text(const std::string& value) override;
 	bool	button(const std::string& label) override;
 	void	render(VkCommandBuffer commandBuffer) override;

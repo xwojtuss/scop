@@ -25,6 +25,20 @@ IComponentManager*	World::getComponentManager(int componentId) {
 	return it->second.get();
 }
 
+std::vector<IComponent*>	World::getAllComponents(const Entity& entity) {
+	std::vector<IComponent*> components;
+	IComponent* component = nullptr;
+
+	for (const auto& [id, manager] : m_componentManagers) {
+		if (manager->hasComponent(entity)) {
+			manager->getComponent(entity, component);
+			components.push_back(component);
+		}
+	}
+
+	return components;
+}
+
 SystemManager&	World::getSystemManager() {
 	return m_systemManager;
 }

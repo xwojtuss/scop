@@ -5,7 +5,7 @@
 using namespace ecs;
 
 template <typename ComponentType>
-ComponentManager<ComponentType>::ComponentManager() : m_components(), m_entityToComponentIndex(), m_componentIndexToEntity(), m_componentCount(0) {
+ComponentManager<ComponentType>::ComponentManager() : m_components(), m_entityToComponentIndex(), m_componentCount(0) {
 }
 
 template <typename ComponentType>
@@ -17,7 +17,6 @@ void	ComponentManager<ComponentType>::addComponent(const Entity& entity, const C
 	size_t	componentIndex = m_componentCount;
 	m_components[componentIndex] = component;
 	m_entityToComponentIndex[entity] = componentIndex;
-	m_componentIndexToEntity[componentIndex] = entity;
 	m_componentCount++;
 }
 
@@ -27,6 +26,16 @@ ComponentType*	ComponentManager<ComponentType>::getComponent(const Entity& entit
 	if (it == m_entityToComponentIndex.end())
 		return nullptr;
 	return &m_components[it->second];
+}
+
+template <typename ComponentType>
+void	ComponentManager<ComponentType>::getComponent(const Entity& entity, IComponent*& component) {
+	auto it = m_entityToComponentIndex.find(entity);
+	if (it == m_entityToComponentIndex.end()) {
+		component = nullptr;
+		return;
+	}
+	component = static_cast<IComponent*>(static_cast<Component<ComponentType>*>(&m_components[it->second]));
 }
 
 template <typename ComponentType>
@@ -44,21 +53,12 @@ void	ComponentManager<ComponentType>::removeComponent(const Entity& entity) {
 	size_t componentIndex = it->second;
 	m_components[componentIndex] = m_components[m_componentCount - 1];
 	m_entityToComponentIndex.erase(it);
-	m_componentIndexToEntity[componentIndex] = m_componentIndexToEntity[m_componentCount - 1];
 	m_componentCount--;
 }
 
 template <typename ComponentType>
 size_t	ComponentManager<ComponentType>::getComponentCount() const {
 	return m_componentCount;
-}
-
-template <typename ComponentType>
-Entity	ComponentManager<ComponentType>::getEntityAtIndex(size_t index) const {
-	if (index >= m_componentCount) {
-		throw std::runtime_error("Component index out of bounds");
-	}
-	return m_componentIndexToEntity[index];
 }
 
 template <typename ComponentType>
@@ -75,7 +75,6 @@ ComponentManager<ComponentType>&	ComponentManager<ComponentType>::operator=(cons
 		return *this;
 	m_components = other.m_components;
 	m_entityToComponentIndex = other.m_entityToComponentIndex;
-	m_componentIndexToEntity = other.m_componentIndexToEntity;
 	m_componentCount = other.m_componentCount;
 	return *this;
 }

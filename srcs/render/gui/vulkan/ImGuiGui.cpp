@@ -89,6 +89,17 @@ void	ImGuiGui::endWindow() {
 	ImGui::End();
 }
 
+bool	ImGuiGui::beginSection(const std::string& name, bool* open) {
+	ImGui::PushID(name.c_str());
+	(void)open;
+
+	return ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_CollapsingHeader);
+}
+
+void	ImGuiGui::endSection() {
+	ImGui::PopID();
+}
+
 void	ImGuiGui::text(const std::string& value) {
 	ImGui::Text("%s", value.c_str());
 }

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <iomanip>
+#include <ostream>
+#include <magic_enum/magic_enum.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -17,17 +20,25 @@ struct Transform : public Component<Transform> {
 	glm::vec3	scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	bool		canRotate = true;
 
+	Transform() : Component<Transform>("Transform") {}
+
 	glm::vec3	forward() const;
 	glm::vec3	right() const;
 	glm::vec3	left() const;
 	glm::vec3	up() const;
 	glm::vec3	down() const;
 	glm::mat4	toModelMatrix() const;
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Transform2D : public Component<Transform2D> {
 	glm::vec2	position;
 	glm::vec2	scale;
+
+	Transform2D() : Component<Transform2D>("Transform2D") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Velocity : public Component<Velocity> {
@@ -37,21 +48,37 @@ struct Velocity : public Component<Velocity> {
 	float		acceleration;
 	float		decelleration;
 	bool		canMove = true;
+
+	Velocity() : Component<Velocity>("Velocity") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Camera : public Component<Camera> {
 	glm::mat4	view;
 	glm::mat4	projection;
 	float		fov;
+
+	Camera() : Component<Camera>("Camera") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Mesh : public Component<Mesh> {
 	assets::MeshHandle		mesh;
 	assets::PipelineType	pipelineType;
+
+	Mesh() : Component<Mesh>("Mesh") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Texture : public Component<Texture> {
 	assets::TextureHandle	texture;
+
+	Texture() : Component<Texture>("Texture") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 enum HAlignment {
@@ -72,21 +99,31 @@ struct Text : public Component<Text>, public Mesh {
 	VAlignment				verticalAlignment = VAlignment::Top;
 	bool					aligned = false;
 
-	Text() = default;
-	Text(assets::MeshHandle textMeshHandle) {
+	Text() : Component<Text>("Text"), Mesh() {}
+	Text(assets::MeshHandle textMeshHandle) : Component<Text>("Text"), Mesh() {
 		pipelineType = assets::PipelineType::Text;
 		mesh = textMeshHandle;
 		this->text = "";
 	}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Input : public Component<Input> {
 	render::input::InputCommand	command;
 	float						mouseSensitivity;
+
+	Input() : Component<Input>("Input") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 struct Color : public Component<Color> {
 	glm::vec4	color;
+
+	Color() : Component<Color>("Color") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 
 enum AnimationType {
@@ -102,5 +139,9 @@ struct Animation : public Component<Animation> {
 	float			speed = 1.0f;
 	float			intensity = 1.0f;
 	AnimationType	type;
+
+	Animation() : Component<Animation>("Animation") {}
+
+	virtual std::ostream&	print(std::ostream& os) const override;
 };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../entity/Entity.hpp"
+#include "Component.hpp"
 
 namespace ecs {
 class IComponentManager {
@@ -9,5 +10,6 @@ public:
 
 	virtual void			removeComponent(const Entity& entity) = 0;
 	virtual bool			hasComponent(const Entity& entity) const = 0;
+	virtual void			getComponent(const Entity& entity, IComponent*& component) = 0;
 };
 }

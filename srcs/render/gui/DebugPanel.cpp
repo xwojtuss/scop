@@ -8,14 +8,25 @@ DebugPanel::DebugPanel(IGui& gui, ecs::World& world) : APanel(gui), m_world(worl
 }
 
 void	DebugPanel::display() {
+	if (!m_isOpen)
+		return;
+
 	ecs::component::Transform* transform = m_world.getComponentManager<ecs::component::Transform>().getComponent(m_caller);
 
 	if (!transform)
 		return;
 
-	glm::vec3 pos = transform->position;
+	std::stringstream ss;
+	std::vector<ecs::IComponent*> components = m_world.getAllComponents(m_caller);
 	if (m_gui.beginWindow("Debug", &m_isOpen)) {
-		m_gui.text("Player Position: X:" + std::to_string(pos.x) + ", Y:" + std::to_string(pos.y) + ", Z:" + std::to_string(pos.z));
+		for (const auto& component : components) {
+			if (m_gui.beginSection(component->getName().c_str())) {
+				ss << *component;
+				m_gui.text(ss.str());
+				ss.str("");
+			}
+			m_gui.endSection();
+		}
 	}
 	m_gui.endWindow();
 }

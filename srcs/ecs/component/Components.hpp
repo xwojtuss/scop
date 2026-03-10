@@ -51,6 +51,10 @@ struct Mesh : public Component<Mesh> {
 
 struct Texture : public Component<Texture> {
 	assets::TextureHandle	texture;
+
+	// [0, 1] where 0 is the original texture and 1 is the color
+	float					blendFactor = 0.0f;
+	float					nextBlendOffset = 0.0f;
 };
 
 enum HAlignment {

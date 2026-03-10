@@ -7,6 +7,29 @@ ToggleShaderSystem::ToggleShaderSystem() : ASystem(Dependencies()) {
 	m_dependencies.addDependency<component::Input>();
 }
 
+void	ToggleShaderSystem::onSimulate(const SimulateEvent& event) {
+	auto& textureManager = m_world->getComponentManager<component::Texture>();
+	for (size_t i = 0; i < textureManager.getComponentCount(); ++i) {
+		component::Texture* texture = m_world->getComponentManager<component::Texture>().getComponentAtIndex(i);
+
+		if (!texture)
+			continue;
+
+		if (texture->nextBlendOffset == 0.0f)
+			continue;
+		
+		texture->blendFactor += texture->nextBlendOffset * event.deltaTime;
+
+		if (texture->blendFactor < 0.0f) {
+			texture->blendFactor = 0.0f;
+			texture->nextBlendOffset = 0.0f;
+		} else if (texture->blendFactor > 1.0f) {
+			texture->blendFactor = 1.0f;
+			texture->nextBlendOffset = 0.0f;
+		}
+	}
+}
+
 void	ToggleShaderSystem::onInput(const InputEvent& event) {
 	(void)event;
 
@@ -26,14 +49,18 @@ void	ToggleShaderSystem::onInput(const InputEvent& event) {
 	if (!shouldToggle)
 		return;
 
-	auto& meshManager = m_world->getComponentManager<component::Mesh>();
-	for (size_t i = 0; i < meshManager.getComponentCount(); ++i) {
-		component::Mesh* mesh = meshManager.getComponentAtIndex(i);
-		
-		mesh->pipelineType = (mesh->pipelineType == assets::PipelineType::Textured) ? assets::PipelineType::VertexColor : assets::PipelineType::Textured;
+	auto& textureManager = m_world->getComponentManager<component::Texture>();
+	for (size_t i = 0; i < textureManager.getComponentCount(); ++i) {
+		component::Texture* texture = textureManager.getComponentAtIndex(i);
+
+		if (!texture)
+			continue;
+
+		texture->nextBlendOffset = (texture->blendFactor == 0.0f) ? 1.0f : -1.0f;
 	}
 }
 
 void	ToggleShaderSystem::bindEvents(Dispatcher& dispatcher) {
 	dispatcher.subscribe<InputEvent>(this, &ToggleShaderSystem::onInput);
+	dispatcher.subscribe<SimulateEvent>(this, &ToggleShaderSystem::onSimulate);
 }

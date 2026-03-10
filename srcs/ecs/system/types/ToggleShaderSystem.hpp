@@ -9,6 +9,7 @@ class ToggleShaderSystem : public ASystem {
 public:
 	ToggleShaderSystem();
 
+	void			onSimulate(const SimulateEvent& event);
 	void			onInput(const InputEvent& event);
 	virtual void	bindEvents(Dispatcher& dispatcher) override;
 };

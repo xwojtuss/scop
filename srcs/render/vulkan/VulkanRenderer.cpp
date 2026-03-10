@@ -123,6 +123,7 @@ void	VulkanRenderer::drawMesh(const ecs::component::Mesh& mesh, const ecs::compo
 
 	ObjectUBO objectUbo{};
 	objectUbo.model = transform.toModelMatrix();
+	objectUbo.textureBlend = texture ? texture->blendFactor : 0.0f;
 	vkCmdPushConstants(m_frameData->getCurrentCommandBuffer(), pipeline.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ObjectUBO), &objectUbo);
 
 	vkCmdDrawIndexed(m_frameData->getCurrentCommandBuffer(), static_cast<uint32_t>(gpuMesh.indexCount), 1, 0, 0, 0);

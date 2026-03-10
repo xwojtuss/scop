@@ -15,6 +15,9 @@ struct alignas(16) FrameUBO {
  */
 struct alignas(16) ObjectUBO {
 	ftm::mat4	model;
+
+	// [0, 1] where 0 is the original texture and 1 is the color
+	float		textureBlend;
 };
 
 struct alignas(16) TextUBO {

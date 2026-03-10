@@ -1,6 +1,6 @@
 COMPILER := c++
 SHADER_COMPILER := glslangValidator -V
-FLAGS := -Wall -Wextra -Werror -std=c++17 -O3 -g
+FLAGS := -Wall -Wextra -Werror -std=c++17 -O3 -g -DNDEBUG
 LINKFLAGS := -Lftm -lvulkan -lglfw -lX11 -lXxf86vm -lXrandr -lXi -lftmath
 
 NAME := scop

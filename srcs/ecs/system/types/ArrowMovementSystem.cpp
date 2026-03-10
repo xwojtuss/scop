@@ -1,14 +1,14 @@
-#include "MovementSystem.hpp"
+#include "ArrowMovementSystem.hpp"
 #include "../../World.hpp"
 
 using namespace ecs;
 
-MovementSystem::MovementSystem() : ASystem(Dependencies()) {
+ArrowMovementSystem::ArrowMovementSystem() : ASystem(Dependencies()) {
 	m_dependencies.addDependency<component::Transform>();
 	m_dependencies.addDependency<component::Velocity>();
 }
 
-void	MovementSystem::onSimulate(const SimulateEvent& event) {
+void	ArrowMovementSystem::onSimulate(const SimulateEvent& event) {
 	float speed = 0.0f;
 
 	for (const Entity& entity : m_entities) {
@@ -17,7 +17,6 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 		
 		if (!transform || !velocity || !velocity->canMove)
 			continue;
-
 
 		if (std::abs(ftm::length(velocity->desiredVelocity)) > 0.0f) {
 			ftm::vec3 direction = ftm::normalize(velocity->desiredVelocity);
@@ -34,7 +33,7 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 	}
 }
 
-void	MovementSystem::onInput(const InputEvent& event) {
+void	ArrowMovementSystem::onInput(const InputEvent& event) {
 	(void)event;
 
 	for (const Entity& entity : m_entities) {
@@ -44,25 +43,24 @@ void	MovementSystem::onInput(const InputEvent& event) {
 		if (!velocity || !transform)
 			continue;
 
-		velocity->desiredVelocity = transform->forward() * event.command.moveForward + transform->right() * event.command.moveRight + ftm::vec3(0,1,0) * event.command.moveUp;
-		if (transform->canRotate) {
-			float angleX = event.command.lookUp * event.mouseSensitivity;
-			float angleY = event.command.lookRight * event.mouseSensitivity;
+		velocity->desiredVelocity = ftm::vec3(0.0f);
 
-			float pitch = std::asin(ftm::clamp(transform->forward()[1], -1.0f, 1.0f));
-			float clampedDelta = ftm::clamp(pitch + angleX, -event.command.maxPitch, event.command.maxPitch) - pitch;
-			
-			if (clampedDelta > event.command.maxPitch) clampedDelta = event.command.maxPitch;
-			else if (clampedDelta < -event.command.maxPitch) clampedDelta = -event.command.maxPitch;
-			
-			ftm::quat rotX = ftm::angleAxis(clampedDelta, transform->right());
-			ftm::quat rotY = ftm::angleAxis(angleY, scene::worldinfo::up);
-			transform->rotation = ftm::normalize(rotY * rotX * transform->rotation);
-		}
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveForward))
+			velocity->desiredVelocity += scene::worldinfo::forward;
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveBackward))
+			velocity->desiredVelocity += scene::worldinfo::backward;
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveRight))
+			velocity->desiredVelocity += scene::worldinfo::right;
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveLeft))
+			velocity->desiredVelocity += scene::worldinfo::left;
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveUp))
+			velocity->desiredVelocity += scene::worldinfo::up;
+		if (render::input::hasEvent(event.command.activeEvents, render::input::InputEvent::ArrowMoveDown))
+			velocity->desiredVelocity += scene::worldinfo::down;
 	}
 }
 
-void	MovementSystem::bindEvents(Dispatcher& dispatcher) {
-	dispatcher.subscribe(this, &MovementSystem::onSimulate);
-	dispatcher.subscribe(this, &MovementSystem::onInput);
+void	ArrowMovementSystem::bindEvents(Dispatcher& dispatcher) {
+	dispatcher.subscribe(this, &ArrowMovementSystem::onSimulate);
+	dispatcher.subscribe(this, &ArrowMovementSystem::onInput);
 }

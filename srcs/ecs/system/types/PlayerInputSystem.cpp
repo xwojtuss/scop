@@ -19,8 +19,10 @@ void	PlayerInputSystem::onSimulate(const SimulateEvent& event) {
 			continue;
 
 		input->command = command;
+		inputEvent.mouseSensitivity = input->mouseSensitivity;
 	}
 	inputEvent.deltaTime = event.deltaTime;
+	inputEvent.command = command;
 	m_dispatcher->emit<ecs::InputEvent>(inputEvent);
 }
 

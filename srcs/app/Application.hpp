@@ -15,6 +15,7 @@
 #include "../ecs/entity/EntityHandle.hpp"
 #include "../ecs/system/types/CameraSystem.hpp"
 #include "../ecs/system/types/MovementSystem.hpp"
+#include "../ecs/system/types/ArrowMovementSystem.hpp"
 #include "../ecs/system/types/PlayerInputSystem.hpp"
 #include "../ecs/system/types/RenderSystem.hpp"
 #include "../ecs/system/types/TextRenderSystem.hpp"

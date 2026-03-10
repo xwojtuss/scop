@@ -30,8 +30,8 @@ struct Transform2D : public Component<Transform2D> {
 };
 
 struct Velocity : public Component<Velocity> {
-	ftm::vec3	velocity;
-	ftm::vec3	desiredVelocity;
+	ftm::vec3	velocity = ftm::vec3(0.0f);
+	ftm::vec3	desiredVelocity = ftm::vec3(0.0f);
 	float		maxSpeed;
 	float		acceleration;
 	float		decelleration;

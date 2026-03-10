@@ -26,6 +26,7 @@ void	Application::init() {
 	// m_world->createSystem<ecs::FpsCounter>();
 	m_world->createSystem<ecs::ToggleShaderSystem>();
 	m_world->createSystem<ecs::SimpleAnimationSystem>();
+	m_world->createSystem<ecs::ArrowMovementSystem>();
 
 	ecs::EntityHandle camera = m_world->createEntity();
 	ecs::component::Transform transform{};
@@ -59,7 +60,11 @@ void	Application::init() {
 	ecs::component::Mesh meshComponent{};
 	ecs::component::Texture meshTexture{};
 	ecs::component::Animation animationComponent{};
+	ecs::component::Velocity renderableVelocity{};
 
+	renderableVelocity.acceleration = 4.5f;
+	renderableVelocity.decelleration = 10.0f;
+	renderableVelocity.maxSpeed = 10.0f;
 	renderableTransform.position = scene::worldinfo::forward * 3.0f;
 	renderableTransform.rotation = ftm::quat();
 	renderableTransform.rotation = ftm::rotate(renderableTransform.rotation, ftm::radians(90.0f), scene::worldinfo::down);
@@ -74,8 +79,10 @@ void	Application::init() {
 	renderableEntity.addComponent(meshComponent);
 	renderableEntity.addComponent(meshTexture);
 	renderableEntity.addComponent(animationComponent);
+	renderableEntity.addComponent(renderableVelocity);
 	renderableEntity.registerToSystem<ecs::RenderSystem>();
 	renderableEntity.registerToSystem<ecs::SimpleAnimationSystem>();
+	renderableEntity.registerToSystem<ecs::ArrowMovementSystem>();
 
 	ecs::EntityHandle jumpscare = m_world->createEntity();
 	ecs::component::Transform jumpscareTransform{};

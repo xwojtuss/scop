@@ -25,7 +25,9 @@ struct RendererFrameEvent {
 };
 
 struct InputEvent {
-	float	deltaTime;
+	render::input::InputCommand	command;
+	float						mouseSensitivity;
+	float						deltaTime;
 };
 
 struct SimulateEvent {

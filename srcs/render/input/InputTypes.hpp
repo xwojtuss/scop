@@ -21,6 +21,12 @@ enum InputEvent {
 	SecondaryButton = 1 << 8,
 	AnyMouseButton = ActionButton | SecondaryButton,
 	ToggleShader = 1 << 9,
+	ArrowMoveForward = 1 << 10,
+	ArrowMoveBackward = 1 << 11,
+	ArrowMoveRight = 1 << 12,
+	ArrowMoveLeft = 1 << 13,
+	ArrowMoveUp = 1 << 14,
+	ArrowMoveDown = 1 << 15,
 	All = 1 << (sizeof(InputEvents) * 8 - 1)
 };
 

@@ -8,14 +8,14 @@ The foundation for ft_vox and ft_minecraft, designed with scalability as the pri
 ## Prerequisites
 
 - C++17 compatible compiler
-- CMake 3.16 or later
+- CMake 3.25 or later
 - Vulkan SDK
 - GLFW (auto-fetched)
 - GLM (auto-fetched)
 - ImGui (auto-fetched)
 
 ## Getting Started
-After cloning the repository you can build the project using make or cmake:
+After cloning the repository you can build the project using cmake:
 
 ```bash
 cmake --preset dev-clang

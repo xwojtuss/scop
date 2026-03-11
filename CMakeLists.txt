@@ -28,12 +28,14 @@ file(GLOB_RECURSE SCOP_SOURCES CONFIGURE_DEPENDS
 
 add_executable(scop ${SCOP_SOURCES})
 
-target_compile_definitions(scop PRIVATE GLM_FORCE_CTOR_INIT)
+target_compile_definitions(scop PRIVATE GLM_FORCE_CTOR_INIT NDEBUG)
 
 target_compile_options(scop PRIVATE -Wall -Wextra -Werror -O0 -g)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(scop PRIVATE -Wno-error=maybe-uninitialized)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  target_compile_options(scop PRIVATE -Wno-unknown-warning-option)
 endif()
 
 file(GLOB SRC_INCLUDE_DIR_CANDIDATES LIST_DIRECTORIES true "${CMAKE_CURRENT_SOURCE_DIR}/srcs/*")

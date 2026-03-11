@@ -16,6 +16,16 @@
       }
     },
     {
+      "name": "dev42",
+      "displayName": "Development (GCC) - 42 Workstations",
+      "inherits": "base",
+      "generator": "Unix Makefiles",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
       "name": "dev",
       "displayName": "Development (GCC)",
       "inherits": "base",

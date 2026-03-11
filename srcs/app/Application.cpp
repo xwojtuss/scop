@@ -129,7 +129,7 @@ void	Application::init() {
 	floorTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(180.0f), scene::worldinfo::up);
 	floorTransform.rotation = glm::rotate(floorTransform.rotation, glm::radians(90.0f), scene::worldinfo::left);
-	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/medival.ppm");
+	assets::TextureData floorTextureData = m_textureLoader->toTextureData("textures/medival.jpg");
 	assets::MeshData floorMeshData;
 	floorMeshData.vertices = {
 		{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
@@ -180,7 +180,5 @@ void	Application::simulate() {
 }
 
 void	Application::render() {
-	m_renderer->beginFrame();
 	m_renderer->render(m_world->getSystemManager());
-	m_renderer->endFrame();
 }

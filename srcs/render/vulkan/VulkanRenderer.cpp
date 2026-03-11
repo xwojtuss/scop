@@ -251,7 +251,11 @@ void	VulkanRenderer::beginFrame() {
 }
 
 void	VulkanRenderer::render(ecs::SystemManager& systemManager) {
-	if (!m_frameIndex.has_value()) return;
+	beginFrame();
+	if (!m_frameIndex.has_value()) {
+		endFrame();
+		return;
+	}
 
 	// Only reset the fence if we are submitting work
 	m_frameData->resetFences(*m_context, m_frameData->getCurrentFrame());
@@ -259,6 +263,8 @@ void	VulkanRenderer::render(ecs::SystemManager& systemManager) {
 	vkResetCommandBuffer(m_frameData->getCurrentCommandBuffer(), 0);
 	recordCurrentCommandBuffer(systemManager);
 	m_frameData->submitCommandBuffer(*m_context, m_renderFinishedSemaphores[m_frameIndex.value()]);
+
+	endFrame();
 }
 
 void	VulkanRenderer::render(render::gui::IGui& gui) {

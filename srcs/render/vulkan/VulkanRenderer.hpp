@@ -37,18 +37,20 @@ private:
 	std::unordered_map<assets::PipelineType, std::unique_ptr<APipeline>>	m_pipelineHandles;
 	VkBuffer																m_instanceBuffer;
 	VkDeviceMemory															m_instanceBufferMemory;
-	std::vector<VkSemaphore>									m_renderFinishedSemaphores;
+	std::vector<VkSemaphore>												m_renderFinishedSemaphores;
 
-	void					createPipelines();
-	void					createRenderFinishedSemaphores();
-	void					cleanupRenderFinishedSemaphores();
-	VkShaderModule			createShaderModule(const std::vector<char>& code, VkDevice device);
-	void					recordCurrentCommandBuffer(ecs::SystemManager& systemManager);
-	void					cleanup() override;
-	void					cleanupPipelines();
-	void					createTextMesh();
-	void					copyTextToInstanceBuffer(const std::string& text, size_t offset);
-	
+	void			createPipelines();
+	void			createRenderFinishedSemaphores();
+	void			cleanupRenderFinishedSemaphores();
+	VkShaderModule	createShaderModule(const std::vector<char>& code, VkDevice device);
+	void			recordCurrentCommandBuffer(ecs::SystemManager& systemManager);
+	void			cleanup() override;
+	void			cleanupPipelines();
+	void			createTextMesh();
+	void			copyTextToInstanceBuffer(const std::string& text, size_t offset);
+	void			beginFrame();
+	void			endFrame();
+
 public:
 	VulkanRenderer(platform::window::IWindow&);
 	~VulkanRenderer() override;
@@ -56,10 +58,8 @@ public:
 	assets::MeshHandle			createMesh(const assets::MeshData&) override;
 	assets::TextureHandle		createTexture(const assets::TextureData&) override;
 	const assets::MeshHandle&	getTextMeshHandle() const override;
-	void						beginFrame() override;
 	void						render(ecs::SystemManager& systemManager) override;
 	void						render(render::gui::IGui& gui) override;
-	void						endFrame() override;
 	void						setClearColor(float r, float g, float b, float a) override;
 	void						setClearColor(int hexColor) override;
 	void						drawMesh(const ecs::component::Mesh& mesh, const ecs::component::Texture* texture, const ecs::component::Transform& transform) override;

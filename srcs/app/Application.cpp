@@ -1,5 +1,7 @@
 #include "Application.hpp"
 
+#include "../game/block/BlockData.hpp"
+
 using namespace app;
 
 Application::Application() {
@@ -149,6 +151,24 @@ void	Application::init() {
 	floor.addComponent(floorMesh);
 	floor.addComponent(floorTexture);
 	floor.registerToSystem<ecs::RenderSystem>();
+
+	game::block::BlockDatas blockDatas;
+
+	auto testCube = m_world->createEntity();
+	ecs::component::Transform testCubeTransform{};
+	ecs::component::Mesh testCubeMesh{};
+	ecs::component::Texture testCubeTexture{};
+
+	testCubeTransform.position = glm::vec3(2.0f, 0.0f, 0.0f);
+	testCubeTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	testCubeTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	testCubeMesh.mesh = m_renderer->createMesh(blockDatas.getBlockData(1).meshData);
+	testCubeTexture.texture = m_renderer->createTexture(blockDatas.getBlockData(1).textureData);
+	testCubeMesh.pipelineType = assets::PipelineType::VertexColor;
+	testCube.addComponent(testCubeTransform);
+	testCube.addComponent(testCubeMesh);
+	testCube.addComponent(testCubeTexture);
+	testCube.registerToSystem<ecs::RenderSystem>();
 
 	m_renderer->setClearColor(0x0a2882);
 }

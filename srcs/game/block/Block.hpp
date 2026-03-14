@@ -7,10 +7,11 @@ namespace game {
 typedef unsigned int	BlockId;
 
 struct Block {
-	BlockId		type;
+	BlockId		id;
 	ecs::Entity	entity = -1;
 
 	Block();
+	Block(BlockId id);
 
 	bool	hasEntity() const;
 };

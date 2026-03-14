@@ -10,6 +10,10 @@ game::Block&	Chunk::getBlock(unsigned short x, unsigned short y, unsigned short 
 	return m_blocks[x][y][z];
 }
 
+const game::Block&	Chunk::getBlock(unsigned short x, unsigned short y, unsigned short z) const {
+	return m_blocks[x][y][z];
+}
+
 glm::ivec3	Chunk::getBlockPosition(unsigned short x, unsigned short y, unsigned short z) const {
 	return m_chunkPosition * glm::ivec3(chunkXSize, chunkYSize, chunkZSize) + glm::ivec3(x, y, z);
 }

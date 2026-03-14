@@ -20,9 +20,11 @@ public:
 
 private:
 	std::array<BlockData, maxBlockTypes>	m_blockDatas;
+	assets::MeshData						m_defaultMeshData;
+	assets::TextureData						m_defaultTextureData;
 
 public:
-	BlockDatas();
+	BlockDatas(assets::MeshData defaultMeshData, assets::TextureData defaultTextureData);
 
 	BlockData&	getBlockData(BlockId id);
 };

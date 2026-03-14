@@ -1,6 +1,9 @@
 #include "Application.hpp"
 
+// TEMPORARY
 #include "../game/block/BlockData.hpp"
+#include "../game/world/Chunk.hpp"
+#include "../game/world/ChunkMesher.hpp"
 
 using namespace app;
 
@@ -10,8 +13,8 @@ Application::Application() {
 	auto* vulkanRenderer = static_cast<render::vulkan::VulkanRenderer*>(m_renderer.get());
 	m_gui = std::make_unique<render::gui::vulkan::ImGuiGui>(vulkanRenderer->getContext(), vulkanRenderer->getSwapchain(), *m_window);
 	m_world = std::make_unique<ecs::World>();
-	m_modelLoader = std::make_unique<assets::BasicObjLoader>();
-	// m_modelLoader = std::make_unique<assets::TinyObjLoader>();
+	// m_modelLoader = std::make_unique<assets::BasicObjLoader>();
+	m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
 	// m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
 
@@ -60,67 +63,6 @@ void	Application::init() {
 	camera.registerToSystem<ecs::WindowControlSystem>();
 	camera.registerToSystem<ecs::ToggleShaderSystem>();
 
-	ecs::EntityHandle renderableEntity = m_world->createEntity();
-	ecs::component::Transform renderableTransform{};
-	ecs::component::Mesh meshComponent{};
-	ecs::component::Texture meshTexture{};
-	ecs::component::Animation animationComponent{};
-
-	renderableTransform.position = scene::worldinfo::forward * 3.0f;
-	renderableTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	renderableTransform.rotation = glm::rotate(renderableTransform.rotation, glm::radians(90.0f), scene::worldinfo::down);
-	renderableTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	// meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/room.obj"));
-	meshComponent.mesh = m_renderer->createMesh(m_modelLoader->toMeshData("models/42.obj"));
-	meshTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/colorful.jpg"));
-	meshComponent.pipelineType = assets::PipelineType::Textured;
-	animationComponent.type = component::AnimationType::Spin;
-
-	renderableEntity.addComponent(renderableTransform);
-	renderableEntity.addComponent(meshComponent);
-	renderableEntity.addComponent(meshTexture);
-	renderableEntity.addComponent(animationComponent);
-	renderableEntity.registerToSystem<ecs::RenderSystem>();
-	renderableEntity.registerToSystem<ecs::SimpleAnimationSystem>();
-
-	ecs::EntityHandle jumpscare = m_world->createEntity();
-	ecs::component::Transform jumpscareTransform{};
-	ecs::component::Animation jumpscareAnimation{};
-	ecs::component::Texture jumpscareTexture{};
-	jumpscareTexture.texture = m_renderer->createTexture(m_textureLoader->toTextureData("textures/glass.jpg"));
-	jumpscareAnimation.type = component::AnimationType::Pulse;
-	jumpscareAnimation.intensity = 5.0f;
-	jumpscareAnimation.speed = 5.0f;
-	jumpscareTransform.position = scene::worldinfo::backward * 10.0f;
-	jumpscareTransform.position.y = 7.0f;
-	jumpscareTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	jumpscareTransform.rotation = glm::rotate(jumpscareTransform.rotation, glm::radians(90.0f), scene::worldinfo::up);
-	jumpscareTransform.scale = glm::vec3(10.0f, 10.0f, 10.0f);
-	jumpscare.addComponent(jumpscareTransform);
-	jumpscare.addComponent(meshComponent);
-	jumpscare.addComponent(jumpscareTexture);
-	jumpscare.addComponent(jumpscareAnimation);
-	jumpscare.registerToSystem<ecs::RenderSystem>();
-	jumpscare.registerToSystem<ecs::SimpleAnimationSystem>();
-
-	// ecs::EntityHandle fpsCounter = m_world->createEntity();
-	// ecs::component::Transform2D textTransform2{};
-	// assets::TextureData fontTextureData2 = m_textureLoader->toTextureData("textures/monogram-bitmap.png");
-	// ecs::component::Texture textTexture2{};
-	// textTexture2.texture = m_renderer->createTexture(fontTextureData2);
-	// ecs::component::Text textComponent2(m_renderer->getTextMeshHandle());
-	// textComponent2.text = "FPS: 0";
-	// textTransform2.position = glm::vec2(-1.0f, -1.0f);
-	// textTransform2.scale = glm::vec2(0.02f, 0.06f);
-	// textComponent2.horizontalAlignment = ecs::component::HAlignment::Left;
-	// textComponent2.verticalAlignment = ecs::component::VAlignment::Top;
-	// fontTextureData2.pixelPerfect = true;
-	// fpsCounter.addComponent(textTransform2);
-	// fpsCounter.addComponent(textComponent2);
-	// fpsCounter.addComponent(textTexture2);
-	// fpsCounter.registerToSystem<ecs::TextRenderSystem>();
-	// fpsCounter.registerToSystem<ecs::FpsCounter>();
-
 	ecs::EntityHandle floor = m_world->createEntity();
 	ecs::component::Transform floorTransform{};
 	ecs::component::Mesh floorMesh{};
@@ -152,7 +94,37 @@ void	Application::init() {
 	floor.addComponent(floorTexture);
 	floor.registerToSystem<ecs::RenderSystem>();
 
-	game::block::BlockDatas blockDatas;
+	auto defaultTextureData = m_textureLoader->toTextureData("textures/default.png");
+	defaultTextureData.pixelPerfect = true;
+	game::block::BlockDatas blockDatas(m_modelLoader->toMeshData("models/cube.obj"), defaultTextureData);
+
+	auto testChunk = m_world->createEntity();
+	ecs::component::Transform testChunkTransform{};
+	ecs::component::Mesh testChunkMesh{};
+	ecs::component::Texture testChunkTexture{};
+
+	testChunkTransform.position = glm::vec3(4.0f, 0.0f, 0.0f);
+	testChunkTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	testChunkTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	game::world::Chunk chunk;
+	chunk.setBlock(0, 1, 0, game::Block(1));
+	chunk.setBlock(0, 3, 0, game::Block(1));
+	chunk.setBlock(0, 5, 0, game::Block(1));
+	chunk.setBlock(1, 1, 0, game::Block(1));
+	chunk.setBlock(1, 3, 0, game::Block(1));
+	chunk.setBlock(1, 5, 0, game::Block(1));
+	chunk.setBlock(3, 5, 0, game::Block(1));
+	chunk.setBlock(3, 6, 0, game::Block(1));
+	chunk.setBlock(3, 5, 1, game::Block(1));
+	chunk.setBlock(3, 6, 1, game::Block(1));
+	game::world::ChunkMesher mesher(blockDatas);
+	testChunk.addComponent(testChunkTransform);
+	testChunkMesh.mesh = m_renderer->createMesh(mesher.toMeshData(chunk));
+	testChunkTexture.texture = m_renderer->createTexture(blockDatas.getBlockData(1).textureData);
+	testChunkMesh.pipelineType = assets::PipelineType::Textured;
+	testChunk.addComponent(testChunkMesh);
+	testChunk.addComponent(testChunkTexture);
+	testChunk.registerToSystem<ecs::RenderSystem>();
 
 	auto testCube = m_world->createEntity();
 	ecs::component::Transform testCubeTransform{};
@@ -163,8 +135,8 @@ void	Application::init() {
 	testCubeTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
 	testCubeTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	testCubeMesh.mesh = m_renderer->createMesh(blockDatas.getBlockData(1).meshData);
-	testCubeTexture.texture = m_renderer->createTexture(blockDatas.getBlockData(1).textureData);
-	testCubeMesh.pipelineType = assets::PipelineType::VertexColor;
+	testCubeTexture.texture = testChunkTexture.texture;
+	testCubeMesh.pipelineType = assets::PipelineType::Textured;
 	testCube.addComponent(testCubeTransform);
 	testCube.addComponent(testCubeMesh);
 	testCube.addComponent(testCubeTexture);

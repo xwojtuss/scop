@@ -24,6 +24,7 @@ public:
 	Chunk();
 
 	game::Block&		getBlock(unsigned short x, unsigned short y, unsigned short z);
+	const game::Block&	getBlock(unsigned short x, unsigned short y, unsigned short z) const;
 	glm::ivec3			getBlockPosition(unsigned short x, unsigned short y, unsigned short z) const;
 	glm::ivec3			getChunkPosition() const;
 	void				setBlock(unsigned short x, unsigned short y, unsigned short z, const game::Block& block);

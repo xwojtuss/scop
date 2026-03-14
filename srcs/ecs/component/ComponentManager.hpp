@@ -8,7 +8,7 @@
 #include "../entity/Entity.hpp"
 
 namespace ecs {
-constexpr int	maxComponents = 512;
+constexpr int	maxComponents = 2048;
 
 template <typename ComponentType>
 class ComponentManager : public IComponentManager {

@@ -9,6 +9,8 @@ class ChunkMesher {
 private:
 	game::block::BlockDatas&	m_blockDatas;
 
+	static game::BlockId	getVoxelCheckBounds(const Chunk& chunk, int x, int y, int z);
+
 public:
 	ChunkMesher(game::block::BlockDatas& blockDatas);
 

@@ -3,19 +3,19 @@
 using namespace game::world;
 
 Chunk::Chunk(unsigned short x, unsigned short y, unsigned short z) : m_chunkPosition(x, y, z) {
-	std::memset(m_blocks, 0, sizeof(m_blocks));
+	m_blocks = new game::Block[chunkXSize * chunkYSize * chunkZSize]();
 }
 
 Chunk::Chunk(glm::ivec3 chunkPosition) : m_chunkPosition(chunkPosition) {
-	std::memset(m_blocks, 0, sizeof(m_blocks));
+	m_blocks = new game::Block[chunkXSize * chunkYSize * chunkZSize]();
 }
 
 game::Block&	Chunk::getBlock(unsigned short x, unsigned short y, unsigned short z) {
-	return m_blocks[x][y][z];
+	return m_blocks[x * chunkYSize * chunkZSize + y * chunkZSize + z];
 }
 
 const game::Block&	Chunk::getBlock(unsigned short x, unsigned short y, unsigned short z) const {
-	return m_blocks[x][y][z];
+	return m_blocks[x * chunkYSize * chunkZSize + y * chunkZSize + z];
 }
 
 glm::ivec3	Chunk::getBlockPosition(unsigned short x, unsigned short y, unsigned short z) const {
@@ -35,9 +35,13 @@ void	Chunk::setChunkPosition(glm::ivec3 chunkPosition) {
 }
 
 void	Chunk::setBlock(unsigned short x, unsigned short y, unsigned short z, const game::Block& block) {
-	m_blocks[x][y][z] = block;
+	m_blocks[x * chunkYSize * chunkZSize + y * chunkZSize + z] = block;
 }
 
 void	Chunk::removeBlock(unsigned short x, unsigned short y, unsigned short z) {
-	m_blocks[x][y][z] = game::Block();
+	m_blocks[x * chunkYSize * chunkZSize + y * chunkZSize + z] = game::Block();
+}
+
+Chunk::~Chunk() {
+	delete[] m_blocks;
 }

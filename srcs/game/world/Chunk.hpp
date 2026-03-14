@@ -17,13 +17,13 @@ constexpr unsigned short	chunkZSize = 16;
  */
 class Chunk {
 private:
-	game::Block	m_blocks[chunkXSize][chunkYSize][chunkZSize];
-	glm::ivec3	m_chunkPosition;
+	game::Block*	m_blocks;
+	glm::ivec3		m_chunkPosition;
 
 public:
 	Chunk(unsigned short x = 0, unsigned short y = 0, unsigned short z = 0);
 	Chunk(glm::ivec3 chunkPosition);
-	Chunk(const Chunk&) = default;
+	~Chunk();
 
 	game::Block&		getBlock(unsigned short x, unsigned short y, unsigned short z);
 	const game::Block&	getBlock(unsigned short x, unsigned short y, unsigned short z) const;

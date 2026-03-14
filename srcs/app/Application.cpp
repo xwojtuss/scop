@@ -4,6 +4,7 @@
 #include "../game/block/BlockData.hpp"
 #include "../game/world/Chunk.hpp"
 #include "../game/world/ChunkMesher.hpp"
+#include "../game/world/ChunkManager.hpp"
 
 using namespace app;
 
@@ -98,49 +99,52 @@ void	Application::init() {
 	defaultTextureData.pixelPerfect = true;
 	game::block::BlockDatas blockDatas(m_modelLoader->toMeshData("models/cube.obj"), defaultTextureData);
 
-	auto testChunk = m_world->createEntity();
-	ecs::component::Transform testChunkTransform{};
-	ecs::component::Mesh testChunkMesh{};
-	ecs::component::Texture testChunkTexture{};
+	// auto testChunk = m_world->createEntity();
+	// ecs::component::Transform testChunkTransform{};
+	// ecs::component::Mesh testChunkMesh{};
+	// ecs::component::Texture testChunkTexture{};
 
-	testChunkTransform.position = glm::vec3(4.0f, 0.0f, 0.0f);
-	testChunkTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	testChunkTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	game::world::Chunk chunk;
-	chunk.setBlock(0, 1, 0, game::Block(1));
-	chunk.setBlock(0, 3, 0, game::Block(1));
-	chunk.setBlock(0, 5, 0, game::Block(1));
-	chunk.setBlock(1, 1, 0, game::Block(1));
-	chunk.setBlock(1, 3, 0, game::Block(1));
-	chunk.setBlock(1, 5, 0, game::Block(1));
-	chunk.setBlock(3, 5, 0, game::Block(1));
-	chunk.setBlock(3, 6, 0, game::Block(1));
-	chunk.setBlock(3, 5, 1, game::Block(1));
-	chunk.setBlock(3, 6, 1, game::Block(1));
-	game::world::ChunkMesher mesher(blockDatas);
-	testChunk.addComponent(testChunkTransform);
-	testChunkMesh.mesh = m_renderer->createMesh(mesher.toMeshData(chunk));
-	testChunkTexture.texture = m_renderer->createTexture(blockDatas.getBlockData(1).textureData);
-	testChunkMesh.pipelineType = assets::PipelineType::Textured;
-	testChunk.addComponent(testChunkMesh);
-	testChunk.addComponent(testChunkTexture);
-	testChunk.registerToSystem<ecs::RenderSystem>();
+	// testChunkTransform.position = glm::vec3(4.0f, 0.0f, 0.0f);
+	// testChunkTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	// testChunkTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	// game::world::Chunk chunk;
+	// chunk.setBlock(0, 1, 0, game::Block(1));
+	// chunk.setBlock(0, 3, 0, game::Block(1));
+	// chunk.setBlock(0, 5, 0, game::Block(1));
+	// chunk.setBlock(1, 1, 0, game::Block(1));
+	// chunk.setBlock(1, 3, 0, game::Block(1));
+	// chunk.setBlock(1, 5, 0, game::Block(1));
+	// chunk.setBlock(3, 5, 0, game::Block(1));
+	// chunk.setBlock(3, 6, 0, game::Block(1));
+	// chunk.setBlock(3, 5, 1, game::Block(1));
+	// chunk.setBlock(3, 6, 1, game::Block(1));
+	// game::world::ChunkMesher mesher(blockDatas);
+	// testChunk.addComponent(testChunkTransform);
+	// testChunkMesh.mesh = m_renderer->createMesh(mesher.toMeshData(chunk));
+	// testChunkTexture.texture = m_renderer->createTexture(blockDatas.getBlockData(1).textureData);
+	// testChunkMesh.pipelineType = assets::PipelineType::Textured;
+	// testChunk.addComponent(testChunkMesh);
+	// testChunk.addComponent(testChunkTexture);
+	// testChunk.registerToSystem<ecs::RenderSystem>();
 
-	auto testCube = m_world->createEntity();
-	ecs::component::Transform testCubeTransform{};
-	ecs::component::Mesh testCubeMesh{};
-	ecs::component::Texture testCubeTexture{};
+	// auto testCube = m_world->createEntity();
+	// ecs::component::Transform testCubeTransform{};
+	// ecs::component::Mesh testCubeMesh{};
+	// ecs::component::Texture testCubeTexture{};
 
-	testCubeTransform.position = glm::vec3(2.0f, 0.0f, 0.0f);
-	testCubeTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
-	testCubeTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	testCubeMesh.mesh = m_renderer->createMesh(blockDatas.getBlockData(1).meshData);
-	testCubeTexture.texture = testChunkTexture.texture;
-	testCubeMesh.pipelineType = assets::PipelineType::Textured;
-	testCube.addComponent(testCubeTransform);
-	testCube.addComponent(testCubeMesh);
-	testCube.addComponent(testCubeTexture);
-	testCube.registerToSystem<ecs::RenderSystem>();
+	// testCubeTransform.position = glm::vec3(2.0f, 0.0f, 0.0f);
+	// testCubeTransform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
+	// testCubeTransform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	// testCubeMesh.mesh = m_renderer->createMesh(blockDatas.getBlockData(1).meshData);
+	// testCubeTexture.texture = testChunkTexture.texture;
+	// testCubeMesh.pipelineType = assets::PipelineType::Textured;
+	// testCube.addComponent(testCubeTransform);
+	// testCube.addComponent(testCubeMesh);
+	// testCube.addComponent(testCubeTexture);
+	// testCube.registerToSystem<ecs::RenderSystem>();
+
+	game::world::ChunkManager chunkManager(blockDatas);
+	chunkManager.createChunkEntities(*m_world, *m_renderer);
 
 	m_renderer->setClearColor(0x0a2882);
 }

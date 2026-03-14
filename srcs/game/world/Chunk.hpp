@@ -21,12 +21,16 @@ private:
 	glm::ivec3	m_chunkPosition;
 
 public:
-	Chunk();
+	Chunk(unsigned short x = 0, unsigned short y = 0, unsigned short z = 0);
+	Chunk(glm::ivec3 chunkPosition);
+	Chunk(const Chunk&) = default;
 
 	game::Block&		getBlock(unsigned short x, unsigned short y, unsigned short z);
 	const game::Block&	getBlock(unsigned short x, unsigned short y, unsigned short z) const;
 	glm::ivec3			getBlockPosition(unsigned short x, unsigned short y, unsigned short z) const;
 	glm::ivec3			getChunkPosition() const;
+	void				setChunkPosition(unsigned short x, unsigned short y, unsigned short z);
+	void				setChunkPosition(glm::ivec3 chunkPosition);
 	void				setBlock(unsigned short x, unsigned short y, unsigned short z, const game::Block& block);
 	void				removeBlock(unsigned short x, unsigned short y, unsigned short z);
 };

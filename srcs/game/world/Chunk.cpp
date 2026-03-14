@@ -2,7 +2,11 @@
 
 using namespace game::world;
 
-Chunk::Chunk() {
+Chunk::Chunk(unsigned short x, unsigned short y, unsigned short z) : m_chunkPosition(x, y, z) {
+	std::memset(m_blocks, 0, sizeof(m_blocks));
+}
+
+Chunk::Chunk(glm::ivec3 chunkPosition) : m_chunkPosition(chunkPosition) {
 	std::memset(m_blocks, 0, sizeof(m_blocks));
 }
 
@@ -20,6 +24,14 @@ glm::ivec3	Chunk::getBlockPosition(unsigned short x, unsigned short y, unsigned 
 
 glm::ivec3	Chunk::getChunkPosition() const {
 	return m_chunkPosition;
+}
+
+void	Chunk::setChunkPosition(unsigned short x, unsigned short y, unsigned short z) {
+	m_chunkPosition = glm::ivec3(x, y, z);
+}
+
+void	Chunk::setChunkPosition(glm::ivec3 chunkPosition) {
+	m_chunkPosition = chunkPosition;
 }
 
 void	Chunk::setBlock(unsigned short x, unsigned short y, unsigned short z, const game::Block& block) {

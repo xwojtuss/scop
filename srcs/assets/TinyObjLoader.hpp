@@ -7,6 +7,7 @@
 #include "IModelLoader.hpp"
 #include "Resources.hpp"
 #include "../render/GpuTypes.hpp"
+#include "../app/ApplicationInfo.hpp"
 
 namespace assets {
 class TinyObjLoader : public IModelLoader {

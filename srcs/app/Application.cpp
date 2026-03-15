@@ -13,11 +13,15 @@ Application::Application() {
 	m_renderer = std::make_unique<render::vulkan::VulkanRenderer >(*m_window);
 	auto* vulkanRenderer = static_cast<render::vulkan::VulkanRenderer*>(m_renderer.get());
 	m_gui = std::make_unique<render::gui::vulkan::ImGuiGui>(vulkanRenderer->getContext(), vulkanRenderer->getSwapchain(), *m_window);
-	m_world = std::make_unique<ecs::World>();
 	// m_modelLoader = std::make_unique<assets::BasicObjLoader>();
 	m_modelLoader = std::make_unique<assets::TinyObjLoader>();
 	m_textureLoader = std::make_unique<assets::StbTextureLoader>();
 	// m_textureLoader = std::make_unique<assets::PpmTextureLoader>();
+
+	auto defaultTextureData = m_textureLoader->toTextureData("textures/default.png");
+	defaultTextureData.pixelPerfect = true;
+	game::block::BlockDatas blockDatas(m_modelLoader->toMeshData("models/cube.obj"), defaultTextureData);
+	m_world = std::make_unique<ecs::World>(blockDatas);
 
 	m_window->getInputManager().getKeyInputProcessor().resetBindings();
 
@@ -35,6 +39,7 @@ void	Application::init() {
 	m_world->createSystem<ecs::ToggleShaderSystem>();
 	m_world->createSystem<ecs::SimpleAnimationSystem>();
 	m_world->createSystem<ecs::GuiSystem>(*m_gui);
+	m_world->createSystem<ecs::ChunkSystem>(*m_world, *m_renderer);
 	m_world->getSystemManager().onWorldReady();
 
 	ecs::EntityHandle camera = m_world->createEntity();
@@ -94,13 +99,6 @@ void	Application::init() {
 	floor.addComponent(floorMesh);
 	floor.addComponent(floorTexture);
 	floor.registerToSystem<ecs::RenderSystem>();
-
-	auto defaultTextureData = m_textureLoader->toTextureData("textures/default.png");
-	defaultTextureData.pixelPerfect = true;
-	game::block::BlockDatas blockDatas(m_modelLoader->toMeshData("models/cube.obj"), defaultTextureData);
-
-	game::world::ChunkManager chunkManager(blockDatas);
-	chunkManager.createChunkEntities(*m_world, *m_renderer);
 
 	m_renderer->setClearColor(0x0a2882);
 }

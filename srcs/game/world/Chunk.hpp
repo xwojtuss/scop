@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstring>
 #include <glm/vec3.hpp>
 
@@ -17,20 +18,15 @@ constexpr unsigned short	chunkZSize = 16;
  */
 class Chunk {
 private:
-	game::Block*	m_blocks;
-	glm::ivec3		m_chunkPosition;
+	std::array<game::Block, chunkXSize * chunkYSize * chunkZSize>	m_blocks;
 
 public:
-	Chunk(int x = 0, int y = 0, int z = 0);
-	Chunk(glm::ivec3 chunkPosition);
-	~Chunk();
+	Chunk() = default;
+	~Chunk() = default;
 
 	game::Block&		getBlock(unsigned short x, unsigned short y, unsigned short z);
 	const game::Block&	getBlock(unsigned short x, unsigned short y, unsigned short z) const;
 	glm::ivec3			getBlockPosition(unsigned short x, unsigned short y, unsigned short z) const;
-	glm::ivec3			getChunkPosition() const;
-	void				setChunkPosition(int x, int y, int z);
-	void				setChunkPosition(glm::ivec3 chunkPosition);
 	void				setBlock(unsigned short x, unsigned short y, unsigned short z, const game::Block& block);
 	void				removeBlock(unsigned short x, unsigned short y, unsigned short z);
 };

@@ -15,6 +15,6 @@ public:
 	EarthGenerator();
 	~EarthGenerator() = default;
 
-	Chunk*	generateChunk(int x, int y, int z);
+	void	generateChunk(Chunk* chunk, glm::ivec3 chunkPosition);
 };
 }

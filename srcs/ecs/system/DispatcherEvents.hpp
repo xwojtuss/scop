@@ -63,4 +63,11 @@ struct SimulateEvent : public DispatchEvent {
 
 	SimulateEvent(float deltaTime, float time) : DispatchEvent("SimulateEvent"), deltaTime(deltaTime), time(time) {}
 };
+
+struct PlayerMoveEvent : public DispatchEvent {
+	glm::vec3	previousPosition;
+	glm::vec3	currentPosition;
+
+	PlayerMoveEvent(glm::vec3 previousPosition, glm::vec3 currentPosition) : DispatchEvent("PlayerMoveEvent"), previousPosition(previousPosition), currentPosition(currentPosition) {}
+};
 }

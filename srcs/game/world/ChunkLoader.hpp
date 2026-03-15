@@ -2,6 +2,7 @@
 
 #include "generation/EarthGenerator.hpp"
 
+#include <memory>
 #include <stdexcept>
 
 namespace game::world {
@@ -13,7 +14,7 @@ public:
 	ChunkLoader() = default;
 	~ChunkLoader() = default;
 
-	Chunk&	loadChunk(int x, int y, int z);
-	void	saveChunk(int x, int y, int z);
+	std::unique_ptr<Chunk>	loadChunk(glm::ivec3 chunkPosition);
+	void					saveChunk(glm::ivec3 chunkPosition);
 };
 }

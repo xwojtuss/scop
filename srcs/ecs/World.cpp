@@ -4,6 +4,9 @@
 
 using namespace ecs;
 
+World::World(game::block::BlockDatas& blockDatas) : m_blockDatas(blockDatas) {
+}
+
 EntityHandle	World::createEntity() {
 	Entity entity = m_entityManager.createEntity();
 	return EntityHandle{entity, this};
@@ -41,4 +44,8 @@ std::vector<IComponent*>	World::getAllComponents(const Entity& entity) {
 
 SystemManager&	World::getSystemManager() {
 	return m_systemManager;
+}
+
+game::block::BlockDatas&	World::getBlockDatas() {
+	return m_blockDatas;
 }

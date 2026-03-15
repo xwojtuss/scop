@@ -2,44 +2,85 @@
 
 using namespace game::world;
 
-ChunkManager::ChunkManager(game::block::BlockDatas& blockDatas) : m_chunkMesher(blockDatas), m_blockDatas(blockDatas) {
+ChunkManager::ChunkManager(game::block::BlockDatas& blockDatas, ecs::World& world, render::IRenderer& renderer) : m_chunkMesher(blockDatas), m_blockDatas(blockDatas), m_world(world), m_renderer(renderer) {
+	m_chunkTexture = renderer.createTexture(m_blockDatas.getBlockData(1).textureData);
+
 	for (short x = -scene::worldinfo::maxHorizontalRenderDistance / 2; x <= scene::worldinfo::maxHorizontalRenderDistance / 2; ++x) {
 		for (short z = -scene::worldinfo::maxHorizontalRenderDistance / 2; z <= scene::worldinfo::maxHorizontalRenderDistance / 2; ++z) {
 			for (short y = 0; y < scene::worldinfo::maxVerticalRenderDistance; ++y) {
-				m_chunks.push_back(&m_chunkLoader.loadChunk(x, y, z));
+				loadChunk({x, y, z});
 			}
 		}
 	}
 }
 
-void	ChunkManager::createChunkEntities(ecs::World& world, render::IRenderer& renderer) {
-	const assets::TextureHandle sharedChunkTexture = renderer.createTexture(m_blockDatas.getBlockData(1).textureData);
+void	ChunkManager::makeChunkRenderable(ecs::World& world, render::IRenderer& renderer, glm::ivec3 chunkPosition) {
+	auto it = m_chunks.find(chunkPosition);
+	if (it == m_chunks.end())
+		return;
 
-	for (const auto& chunk : m_chunks) {
-		const assets::MeshData meshData = m_chunkMesher.toMeshData(*chunk);
-		if (meshData.vertices.empty() || meshData.indices.empty())
-			continue;
+	const assets::MeshData meshData = m_chunkMesher.toMeshData(*it->second);
+	if (meshData.vertices.empty() || meshData.indices.empty())
+		return;
 
-		ecs::EntityHandle chunkEntity = world.createEntity();
-		ecs::component::Mesh meshComponent;
-		ecs::component::Texture textureComponent;
-		ecs::component::Transform positionComponent;
+	ecs::EntityHandle chunkEntity = world.createEntity();
+	ecs::component::Mesh meshComponent;
+	ecs::component::Texture textureComponent;
+	ecs::component::Transform positionComponent;
 
-		meshComponent.mesh = renderer.createMesh(meshData);
-		meshComponent.pipelineType = assets::PipelineType::Textured;
-		textureComponent.texture = sharedChunkTexture;
-		positionComponent.position = glm::vec3(chunk->getChunkPosition() * glm::ivec3(chunkXSize, chunkYSize, chunkZSize));
+	meshComponent.mesh = renderer.createMesh(meshData);
+	meshComponent.pipelineType = assets::PipelineType::Textured;
+	textureComponent.texture = m_chunkTexture;
+	positionComponent.position = glm::vec3(chunkPosition * glm::ivec3(chunkXSize, chunkYSize, chunkZSize));
 
-		chunkEntity.addComponent(meshComponent);
-		chunkEntity.addComponent(textureComponent);
-		chunkEntity.addComponent(positionComponent);
+	chunkEntity.addComponent(meshComponent);
+	chunkEntity.addComponent(textureComponent);
+	chunkEntity.addComponent(positionComponent);
 
-		chunkEntity.registerToSystem<ecs::RenderSystem>();
+	chunkEntity.registerToSystem<ecs::RenderSystem>();
+}
+
+void	ChunkManager::unloadChunk(glm::ivec3 chunkPosition) {
+	auto it = m_chunks.find(chunkPosition);
+	if (it != m_chunks.end()) {
+		m_chunks.erase(it);
 	}
 }
 
-ChunkManager::~ChunkManager() {
-	for (auto chunk : m_chunks) {
-		delete chunk;
+void	ChunkManager::unloadChunk(int x, int y, int z) {
+	unloadChunk({x, y, z});
+}
+
+void	ChunkManager::unloadRange(glm::ivec3 start, glm::ivec3 end) {
+	for (int x = start.x; x <= end.x; ++x) {
+		for (int y = start.y; y <= end.y; ++y) {
+			for (int z = start.z; z <= end.z; ++z) {
+				unloadChunk({x, y, z});
+			}
+		}
 	}
+}
+
+void	ChunkManager::loadRange(glm::ivec3 start, glm::ivec3 end) {
+	for (int x = start.x; x <= end.x; ++x) {
+		for (int y = start.y; y <= end.y; ++y) {
+			for (int z = start.z; z <= end.z; ++z) {
+				loadChunk({x, y, z});
+			}
+		}
+	}
+}
+
+void	ChunkManager::loadChunk(glm::ivec3 chunkPosition) {
+	m_chunks[chunkPosition] = std::move(m_chunkLoader.loadChunk(chunkPosition));
+
+	makeChunkRenderable(m_world, m_renderer, chunkPosition);
+}
+
+void	ChunkManager::loadChunk(int x, int y, int z) {
+	loadChunk({x, y, z});
+}
+
+ChunkManager::~ChunkManager() {
+	m_chunks.clear();
 }

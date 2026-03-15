@@ -12,7 +12,8 @@ constexpr glm::vec3			backward = -forward;
 
 constexpr float				drag = 0.9999999f;
 
-constexpr unsigned short	maxHorizontalRenderDistance = 16;
-constexpr unsigned short	maxVerticalRenderDistance = 8;
-constexpr unsigned short	terrainMaxHeightBlocks = 64;
+constexpr unsigned short				maxHorizontalRenderDistance = 20;
+constexpr unsigned short				maxVerticalRenderDistance = 4;
+constexpr glm::vec<3, unsigned short>	renderDistance = {maxHorizontalRenderDistance, maxVerticalRenderDistance, maxHorizontalRenderDistance};
+constexpr unsigned short				terrainMaxHeightBlocks = 64;
 }

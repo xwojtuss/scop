@@ -2,7 +2,7 @@
 
 using namespace game::world;
 
-Chunk&	ChunkLoader::loadChunk(unsigned short x, unsigned short y, unsigned short z) {
+Chunk&	ChunkLoader::loadChunk(int x, int y, int z) {
 	Chunk* chunk;
 
 	chunk = m_earthGenerator.generateChunk(x, y, z);
@@ -11,7 +11,7 @@ Chunk&	ChunkLoader::loadChunk(unsigned short x, unsigned short y, unsigned short
 	return *chunk;
 }
 
-void	ChunkLoader::saveChunk(unsigned short x, unsigned short y, unsigned short z) {
+void	ChunkLoader::saveChunk(int x, int y, int z) {
 	(void)x;
 	(void)y;
 	(void)z;

@@ -7,7 +7,7 @@ using namespace game::world;
 EarthGenerator::EarthGenerator() : m_heightMap(16, 16, 4, 0.01f) {
 }
 
-Chunk*	EarthGenerator::generateChunk(unsigned short x, unsigned short y, unsigned short z) {
+Chunk*	EarthGenerator::generateChunk(int x, int y, int z) {
 	Chunk* chunk = new Chunk(x, y, z);
 	const int worldChunkBaseY = static_cast<int>(y) * chunkYSize;
 	const int maxTerrainHeight = std::min<int>(scene::worldinfo::terrainMaxHeightBlocks, chunkYSize * scene::worldinfo::maxVerticalRenderDistance);

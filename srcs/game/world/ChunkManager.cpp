@@ -3,9 +3,9 @@
 using namespace game::world;
 
 ChunkManager::ChunkManager(game::block::BlockDatas& blockDatas) : m_chunkMesher(blockDatas), m_blockDatas(blockDatas) {
-	for (unsigned short x = 0; x < scene::worldinfo::maxHorizontalRenderDistance; ++x) {
-		for (unsigned short z = 0; z < scene::worldinfo::maxHorizontalRenderDistance; ++z) {
-			for (unsigned short y = 0; y < scene::worldinfo::maxVerticalRenderDistance; ++y) {
+	for (short x = -scene::worldinfo::maxHorizontalRenderDistance / 2; x <= scene::worldinfo::maxHorizontalRenderDistance / 2; ++x) {
+		for (short z = -scene::worldinfo::maxHorizontalRenderDistance / 2; z <= scene::worldinfo::maxHorizontalRenderDistance / 2; ++z) {
+			for (short y = 0; y < scene::worldinfo::maxVerticalRenderDistance; ++y) {
 				m_chunks.push_back(&m_chunkLoader.loadChunk(x, y, z));
 			}
 		}

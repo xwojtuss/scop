@@ -15,6 +15,6 @@ public:
 	EarthGenerator();
 	~EarthGenerator() = default;
 
-	Chunk*	generateChunk(unsigned short x, unsigned short y, unsigned short z);
+	Chunk*	generateChunk(int x, int y, int z);
 };
 }

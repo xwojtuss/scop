@@ -13,7 +13,7 @@ public:
 	ChunkLoader() = default;
 	~ChunkLoader() = default;
 
-	Chunk&	loadChunk(unsigned short x, unsigned short y, unsigned short z);
-	void	saveChunk(unsigned short x, unsigned short y, unsigned short z);
+	Chunk&	loadChunk(int x, int y, int z);
+	void	saveChunk(int x, int y, int z);
 };
 }

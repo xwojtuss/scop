@@ -16,7 +16,7 @@ void	CameraSystem::onRender(const RenderEvent& event) {
 		if (!transform || !camera)
 			continue;
 
-		camera->projection = glm::perspective(glm::radians(camera->fov), event.aspectRatio, 0.1f, 100.0f);
+		camera->projection = glm::perspective(glm::radians(camera->fov), event.aspectRatio, 0.1f, 1e10f);
 		camera->view = glm::lookAt(transform->position, transform->position + transform->forward(), scene::worldinfo::up);
 	}
 }

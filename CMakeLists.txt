@@ -132,9 +132,20 @@ endforeach()
 add_custom_target(shaders ALL DEPENDS ${SHADER_OUTPUTS})
 add_dependencies(scop shaders)
 
+set(DOCS_INDEX_HTML "${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen/html/index.html")
+
+if(WIN32)
+  set(OPEN_DOCS_COMMAND cmd /c start "" "${DOCS_INDEX_HTML}")
+elseif(APPLE)
+  set(OPEN_DOCS_COMMAND open "${DOCS_INDEX_HTML}")
+else()
+  set(OPEN_DOCS_COMMAND xdg-open "${DOCS_INDEX_HTML}")
+endif()
+
 add_custom_target(generate_docs
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen/generateDoxygen.sh"
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/docs/plantuml/generatePlantuml.sh"
+  COMMAND ${OPEN_DOCS_COMMAND}
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   COMMENT "Generating documentation"
 )

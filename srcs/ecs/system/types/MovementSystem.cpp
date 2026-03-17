@@ -30,8 +30,13 @@ void	MovementSystem::onSimulate(const SimulateEvent& event) {
 		} else if ((speed = glm::length(velocity->velocity)) > 0.0f) {
 			speed = std::max(0.0f, speed - velocity->decelleration * event.deltaTime);
 			velocity->velocity = (speed > 0.0f) ? glm::normalize(velocity->velocity) * speed : glm::vec3(0.0f);
+		} else {
+			continue;
 		}
+		glm::vec3 previousPosition = transform->position;
 		transform->position += velocity->velocity * event.deltaTime;
+
+		m_world->getSystemManager().getDispatcher().emit(PlayerMoveEvent(previousPosition, transform->position));
 	}
 }
 

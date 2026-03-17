@@ -11,6 +11,9 @@ A simple voxel engine built with modern C++ and Vulkan. The project is designed 
 - GLFW (auto-fetched)
 - GLM (auto-fetched)
 - ImGui (auto-fetched)
+- stb_image (single header, included)
+- tinyobjloader (single header, included)
+- nlohmann/json (single header, included)
 
 ## Getting Started
 After cloning the repository you can build the project using cmake:

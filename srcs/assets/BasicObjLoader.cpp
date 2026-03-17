@@ -70,6 +70,12 @@ MeshData	BasicObjLoader::toMeshData(const char* path) {
 	std::ifstream file(path);
 	MeshData meshData;
 
+	m_vertices.clear();
+	m_normals.clear();
+	m_textureCoordinates.clear();
+	m_indices.clear();
+	m_faces.clear();
+
 	if (!file.is_open()) {
 		file.open(std::string(app::buildToRoot) + path);
 		if (!file.is_open()) {

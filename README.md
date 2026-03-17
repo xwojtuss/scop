@@ -1,9 +1,7 @@
-# scop
-A program to parse and render .obj files, built with C++17 and Vulkan.
-The foundation for ft_vox and ft_minecraft, designed with scalability as the priority.
+# ft_vox
+A simple voxel engine built with modern C++ and Vulkan. The project is designed to be a learning experience for graphics programming and engine development, with a focus on clean code and modular design.
 
-![Image Placeholder](docs/img/alpha-hero.png)
-![Image Placeholder](docs/img/alpha-anim.gif)
+**WORK IN PROGRESS**
 
 ## Prerequisites
 

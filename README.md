@@ -3,6 +3,8 @@ A simple voxel engine built with modern C++ and Vulkan. The project is designed 
 
 **WORK IN PROGRESS**
 
+![WIP image of ft_vox](https://github.com/xwojtuss/scop/blob/6d7157b6b6f3806dffff252d198427a8c6543e07/ft_vox/WIP.png)
+
 ## Prerequisites
 
 - C++17 compatible compiler
